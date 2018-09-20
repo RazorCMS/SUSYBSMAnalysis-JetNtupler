@@ -69,6 +69,7 @@ using namespace std;
 #include "SimDataFormats/GeneratorProducts/interface/HepMCProduct.h"
 
 #include "DataFormats/DetId/interface/DetId.h"
+#include "DataFormats/Math/interface/deltaR.h"
 
 //ROOT includes
 #include "TTree.h"
