@@ -80,6 +80,11 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   JetTree = fs->make<TTree>("Jets", "selected miniAOD information");
   NEvents = fs->make<TH1F>("NEvents",";;NEvents;",1,-0.5,0.5);
 
+  fJetPhotonRecHitEta = new std::vector<float>; fJetPhotonRecHitEta->clear();
+  fJetPhotonRecHitPhi = new std::vector<float>; fJetPhotonRecHitPhi->clear();
+  fJetPhotonRecHitE = new std::vector<float>; fJetPhotonRecHitE->clear();
+  fJetPhotonRecHitTime = new std::vector<float>; fJetPhotonRecHitTime->clear();
+
 }
 
 JetNtupler::~JetNtupler()
@@ -135,14 +140,10 @@ void JetNtupler::setBranches(){
   JetTree->Branch("phoSeedRecHitE", fJetPhotonSeedRecHitE, "phoSeedRecHitE[nPhotons]/F");
   JetTree->Branch("phoSeedRecHitT", fJetPhotonSeedRecHitTime, "phoSeedRecHitT[nPhotons]/F");
 
-  fJetPhotonRecHitEta = new std::vector<float>; fJetPhotonRecHitEta->clear();
-  fJetPhotonRecHitPhi = new std::vector<float>; fJetPhotonRecHitPhi->clear();
-  fJetPhotonRecHitE = new std::vector<float>; fJetPhotonRecHitE->clear();
-  fJetPhotonRecHitTime = new std::vector<float>; fJetPhotonRecHitTime->clear();
-  JetTree->Branch("fJetPhotonRecHitEta", "std::vector<float>",&fJetPhotonRecHitEta);
-  JetTree->Branch("fJetPhotonRecHitPhi", "std::vector<float>",&fJetPhotonRecHitPhi);
-  JetTree->Branch("fJetPhotonRecHitE", "std::vector<float>",&fJetPhotonRecHitE);
-  JetTree->Branch("fJetPhotonRecHitTime", "std::vector<float>",&fJetPhotonRecHitTime);
+  // JetTree->Branch("fJetPhotonRecHitEta", "std::vector<float>",&fJetPhotonRecHitEta);
+  // JetTree->Branch("fJetPhotonRecHitPhi", "std::vector<float>",&fJetPhotonRecHitPhi);
+  // JetTree->Branch("fJetPhotonRecHitE", "std::vector<float>",&fJetPhotonRecHitE);
+  // JetTree->Branch("fJetPhotonRecHitTime", "std::vector<float>",&fJetPhotonRecHitTime);
 
   cout << "BRANCHES\n";
 
@@ -351,7 +352,6 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     }
 
 
-
     //*************************************
     //Fill Jet-Level Info
     //*************************************
@@ -387,10 +387,12 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     //*************************************
     //find photons inside the jet
     //*************************************
-
     for (const reco::Photon &pho : *photons) {
-      if (pho.pt() < 20) continue;
-      
+      //cout << "Nphoton: " << fJetNPhotons << "\n";
+    
+      if (!(deltaR(pho.eta(), pho.phi() , j.eta(), j.phi()) < 0.5)) continue;
+
+
       fJetPhotonPt[fJetNPhotons]  = pho.pt();
       fJetPhotonEta[fJetNPhotons] = pho.eta(); //correct this for the vertex
       fJetPhotonPhi[fJetNPhotons] = pho.phi(); //correct this for the vertex
@@ -416,10 +418,11 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       fJetNPhotons++;
 
     }
+    //cout << "Last Nphoton: " << fJetNPhotons << "\n";
 
     JetTree->Fill();
   } //loop over jets
-  
+
 }
 
 //------ Method called once each job just before starting event loop ------//
