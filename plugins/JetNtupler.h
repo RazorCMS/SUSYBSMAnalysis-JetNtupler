@@ -71,6 +71,24 @@ using namespace std;
 #include "DataFormats/DetId/interface/DetId.h"
 #include "DataFormats/Math/interface/deltaR.h"
 
+//ECAL Rechits
+#include "DataFormats/DetId/interface/DetId.h"
+#include "DataFormats/EcalDetId/interface/EBDetId.h"
+#include "DataFormats/EcalDetId/interface/EEDetId.h"
+#include "DataFormats/EcalDetId/interface/EcalSubdetector.h"
+#include "DataFormats/EcalRecHit/interface/EcalRecHit.h"
+#include "DataFormats/EcalRecHit/interface/EcalRecHitCollections.h"
+
+//ECAL conditions
+#include "CalibCalorimetry/EcalLaserCorrection/interface/EcalLaserDbService.h"
+#include "CalibCalorimetry/EcalLaserCorrection/interface/EcalLaserDbRecord.h"
+
+// Geometry
+#include "Geometry/Records/interface/CaloGeometryRecord.h"
+#include "Geometry/CaloGeometry/interface/CaloGeometry.h"
+#include "Geometry/CaloGeometry/interface/CaloSubdetectorGeometry.h"
+#include "Geometry/CaloGeometry/interface/CaloCellGeometry.h"
+
 //ROOT includes
 #include "TTree.h"
 #include "TFile.h"
@@ -92,14 +110,14 @@ public:
   //analyzer constructor and destructor
   explicit JetNtupler(const edm::ParameterSet&);
   ~JetNtupler();
-  
+
   void loadEvent(const edm::Event& iEvent); //call at the beginning of each event to get input handles from the python config
   virtual void resetBranches();
-  
+
   //enable desired output variables
   virtual void setBranches();
-    
-  //------ HELPER FUNCTIONS ------//  
+
+  //------ HELPER FUNCTIONS ------//
   bool passJetID( const reco::PFJet *jet, int cutLevel);
 
 protected:
@@ -109,7 +127,7 @@ protected:
   virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
   virtual void endJob() override;
 
-  
+
   //----- Member data ------//
 
   // Control Switches
@@ -117,7 +135,7 @@ protected:
   bool    useGen_;
   bool    isFastsim_;
   bool enableTriggerInfo_;
-  
+
   // Mapping of the HLT Triggers and Filters
   string triggerPathNamesFile_;
   string eleHLTFilterNamesFile_;
@@ -134,13 +152,13 @@ protected:
 
   //EDM tokens for each miniAOD input object
   edm::EDGetTokenT<reco::VertexCollection> verticesToken_;
-  //edm::InputTag tracksTag_; 
-  //edm::InputTag trackTimeTag_; 
-  //edm::InputTag trackTimeResoTag_; 
+  //edm::InputTag tracksTag_;
+  //edm::InputTag trackTimeTag_;
+  //edm::InputTag trackTimeResoTag_;
   edm::EDGetTokenT<edm::View<reco::Track> > tracksTag_;
   edm::EDGetTokenT<edm::ValueMap<float> > trackTimeTag_;
   edm::EDGetTokenT<edm::ValueMap<float>> trackTimeResoTag_;
-  
+
   edm::EDGetTokenT<reco::MuonCollection> muonsToken_;
   edm::EDGetTokenT<reco::GsfElectronCollection> electronsToken_;
   edm::EDGetTokenT<reco::PFTauCollection> tausToken_;
@@ -192,8 +210,8 @@ protected:
   edm::EDGetTokenT<vector<reco::PhotonCore> > gedPhotonCoresToken_;
 //  edm::EDGetTokenT<vector<reco::SuperCluster> > superClustersToken_;
 //  edm::EDGetTokenT<vector<reco::PFCandidate> > lostTracksToken_;
-  
-  
+
+
   //EDM handles for each miniAOD input object
   edm::Handle<edm::TriggerResults> triggerBits;
   edm::Handle<edm::HepMCProduct> hepMC;
@@ -266,13 +284,13 @@ protected:
   float jetCISV;
   float jetMass;
   float jetJetArea;
-  float jetPileupE;  
+  float jetPileupE;
   float jetPileupId;
   int   jetPileupIdFlag;
   bool  jetPassIDLoose;
   bool  jetPassIDTight;
   bool  jetPassMuFrac;
-  bool  jetPassEleFrac;  
+  bool  jetPassEleFrac;
   int   jetPartonFlavor;
   int   jetHadronFlavor;
   float jetChargedEMEnergyFraction;
@@ -300,14 +318,14 @@ protected:
   vector<float> *fJetPhotonRecHitEta;
   vector<float> *fJetPhotonRecHitPhi;
   vector<float> *fJetPhotonRecHitTime;
-  
+
   //event info
   bool isData;
   uint runNum;
   uint lumiNum;
   uint eventNum;
   float pvX;
-  float pvY; 
+  float pvY;
   float pvZ;
   int nPV;
   float Rho;

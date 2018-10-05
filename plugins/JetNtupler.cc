@@ -8,11 +8,11 @@
 
 #include "JetNtupler.h"
 //------ Constructors and destructor ------//
-JetNtupler::JetNtupler(const edm::ParameterSet& iConfig): 
+JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   //get inputs from config file
   isData_(iConfig.getParameter<bool> ("isData")),
-  useGen_(iConfig.getParameter<bool> ("useGen")),  
-  isFastsim_(iConfig.getParameter<bool> ("isFastsim")),  
+  useGen_(iConfig.getParameter<bool> ("useGen")),
+  isFastsim_(iConfig.getParameter<bool> ("isFastsim")),
   enableTriggerInfo_(iConfig.getParameter<bool> ("enableTriggerInfo")),
   triggerPathNamesFile_(iConfig.getParameter<string> ("triggerPathNamesFile")),
   eleHLTFilterNamesFile_(iConfig.getParameter<string> ("eleHLTFilterNamesFile")),
@@ -36,7 +36,7 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   triggerBitsToken_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBits"))),
   hepMCToken_(consumes<edm::HepMCProduct>(iConfig.getParameter<edm::InputTag>("hepMC"))),
   //triggerObjectsToken_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjects"))),
-  //triggerPrescalesToken_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPrescales"))),     
+  //triggerPrescalesToken_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPrescales"))),
   metToken_(consumes<reco::PFMETCollection>(iConfig.getParameter<edm::InputTag>("mets"))),
 //  metNoHFToken_(consumes<reco::PFMETCollection>(iConfig.getParameter<edm::InputTag>("metsNoHF"))),
   metPuppiToken_(consumes<reco::PFMETCollection>(iConfig.getParameter<edm::InputTag>("metsPuppi"))),
@@ -75,7 +75,7 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
 {
   //declare the TFileService for output
   edm::Service<TFileService> fs;
-  
+
   //set up output tree
   JetTree = fs->make<TTree>("Jets", "selected miniAOD information");
   NEvents = fs->make<TH1F>("NEvents",";;NEvents;",1,-0.5,0.5);
@@ -122,10 +122,10 @@ void JetNtupler::setBranches(){
   JetTree->Branch("jetPassEleFrac", &jetPassEleFrac, "jetPassEleFrac/O");
   JetTree->Branch("jetPartonFlavor", &jetPartonFlavor, "jetPartonFlavor/I");
   JetTree->Branch("jetHadronFlavor", &jetHadronFlavor, "jetHadronFlavor/I");
-  JetTree->Branch("jetChargedEMEnergyFraction", &jetChargedEMEnergyFraction, "jetChargedEMEnergyFraction/F"); 
-  JetTree->Branch("jetNeutralEMEnergyFraction", &jetNeutralEMEnergyFraction, "jetNeutralEMEnergyFraction/F"); 
-  JetTree->Branch("jetChargedHadronEnergyFraction", &jetChargedHadronEnergyFraction, "jetChargedHadronEnergyFraction/F"); 
-  JetTree->Branch("jetNeutralHadronEnergyFraction", &jetNeutralHadronEnergyFraction, "jetNeutralHadronEnergyFraction/F"); 
+  JetTree->Branch("jetChargedEMEnergyFraction", &jetChargedEMEnergyFraction, "jetChargedEMEnergyFraction/F");
+  JetTree->Branch("jetNeutralEMEnergyFraction", &jetNeutralEMEnergyFraction, "jetNeutralEMEnergyFraction/F");
+  JetTree->Branch("jetChargedHadronEnergyFraction", &jetChargedHadronEnergyFraction, "jetChargedHadronEnergyFraction/F");
+  JetTree->Branch("jetNeutralHadronEnergyFraction", &jetNeutralHadronEnergyFraction, "jetNeutralHadronEnergyFraction/F");
   JetTree->Branch("jetMatchedGenPt", &jetMatchedGenPt,"jetMatchedGenPt/F");
   JetTree->Branch("jetMatchedGenEta", &jetMatchedGenEta,"jetMatchedGenEta/F");
   JetTree->Branch("jetMatchedGenPhi", &jetMatchedGenPhi,"jetMatchedGenPhi/F");
@@ -205,14 +205,14 @@ void JetNtupler::loadEvent(const edm::Event& iEvent){
     iEvent.getByToken(genJetsToken_,genJets);
 
     //for Spring16 fastsim, this has been changed and removed
-//    if (!isFastsim_) iEvent.getByToken(lheInfoToken_, lheInfo);     
-    
+//    if (!isFastsim_) iEvent.getByToken(lheInfoToken_, lheInfo);
+
     iEvent.getByToken(genInfoToken_,genInfo);
     iEvent.getByToken(puInfoToken_,puInfo);
   }
-  
 
-}   
+
+}
 
 //called by the loadEvent() method
 void JetNtupler::resetBranches(){
@@ -225,7 +225,7 @@ void JetNtupler::resetBranches(){
     pvY = -99.0;
     pvZ = -99.0;
     nPV = -1;
-    Rho = -99.0; 
+    Rho = -99.0;
     nPUmean = -1;
     nPU = -1;
 
@@ -240,12 +240,12 @@ void JetNtupler::resetBranches(){
       fJetPhotonSeedRecHitPhi[i]      = -99.0;
       fJetPhotonSeedRecHitTime[i]      = -99.0;
     }
-    
+
     fJetPhotonRecHitE->clear();
     fJetPhotonRecHitEta->clear();
     fJetPhotonRecHitPhi->clear();
     fJetPhotonRecHitTime->clear();
-    
+
     //Jet
     jetE = 0.0;
     jetPt = 0.0;
@@ -273,7 +273,7 @@ void JetNtupler::resetBranches(){
     jetMatchedGenMass = 0.0;
     jetMatchedGenTime = 0.0;
 
- 
+
 }
 
 //------ Methods to fill tree variables ------//
@@ -284,8 +284,8 @@ void JetNtupler::resetBranches(){
 //------ Method called for each run ------//
 
 void JetNtupler::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup) {
-  
- 
+
+
 }
 
 
@@ -299,7 +299,7 @@ void JetNtupler::beginLuminosityBlock(edm::LuminosityBlock const& iLumi, edm::Ev
 
 void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
   using namespace edm;
-  
+
   //initialize
   loadEvent(iEvent); //loads objects and resets tree branches
   NEvents->Fill(0); //increment event count
@@ -318,7 +318,7 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     runNum = iEvent.id().run();
     lumiNum = iEvent.luminosityBlock();
     eventNum = iEvent.id().event();
-  
+
    //select the primary vertex, if any
     nPV = 0;
     myPV = &(vertices->front());
@@ -329,11 +329,11 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	if (!foundPV) {
 	  myPV = &(vertices->at(i));
 	  foundPV = true;
-	}   
+	}
 	nPV++;
       }
     }
- 
+
     pvX = myPV->x();
     pvY = myPV->y();
     pvZ = myPV->z();
@@ -347,7 +347,7 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	if ( pu.getBunchCrossing() == 0) {
 	  nPU = pu.getPU_NumInteractions();
 	  nPUmean = pu.getTrueNumInteractions();
-	}    
+	}
       }
     }
 
@@ -360,7 +360,7 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     jetEta = j.eta();
     jetPhi = j.phi();
     jetMass = j.mass();
-     
+
     //jetCISV = j.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
 
     jetJetArea = j.jetArea();
@@ -371,37 +371,37 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     jetPassIDTight = passJetID(&j, 1);
     jetPassMuFrac  = ( j.muonEnergyFraction() < 0.80 );
     jetPassEleFrac  = ( j.electronEnergyFraction() < 0.90 );
- 
-    
+
+
     // if (useGen_) {
     //   jetPartonFlavor = j.partonFlavour();
     //   jetHadronFlavor = j.hadronFlavour();
-    // } 
-    
+    // }
+
     jetChargedEMEnergyFraction = j.chargedEmEnergyFraction();
     jetNeutralEMEnergyFraction = j.neutralEmEnergyFraction();
     jetChargedHadronEnergyFraction = j.chargedHadronEnergyFraction();
     jetNeutralHadronEnergyFraction = j.neutralHadronEnergyFraction();
-   
+
 
     //*************************************
     //find photons inside the jet
     //*************************************
     for (const reco::Photon &pho : *photons) {
       //cout << "Nphoton: " << fJetNPhotons << "\n";
-    
+
       if (!(deltaR(pho.eta(), pho.phi() , j.eta(), j.phi()) < 0.5)) continue;
 
 
       fJetPhotonPt[fJetNPhotons]  = pho.pt();
       fJetPhotonEta[fJetNPhotons] = pho.eta(); //correct this for the vertex
       fJetPhotonPhi[fJetNPhotons] = pho.phi(); //correct this for the vertex
-      
+
       fJetPhotonSeedRecHitE[fJetNPhotons]      = pho.superCluster()->seed()->x();
       fJetPhotonSeedRecHitEta[fJetNPhotons]      = pho.superCluster()->seed()->y();
-      fJetPhotonSeedRecHitPhi[fJetNPhotons]      = pho.superCluster()->seed()->z();    
+      fJetPhotonSeedRecHitPhi[fJetNPhotons]      = pho.superCluster()->seed()->z();
       fJetPhotonSeedRecHitTime[fJetNPhotons]      = pho.superCluster()->seed()->energy();
-      
+
       // //get time coordinate for the seed
       // for (const reco::PFCluster &pfcluster : *pfClusters) {
       // 	if(pfcluster.seed() == pho.superCluster()->seed()->seed())
@@ -409,17 +409,37 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       // 	    pho_superClusterSeedT[fJetNPhotons] = pfcluster.time();
       // 	    pho_pfClusterSeedE[fJetNPhotons]      = pfcluster.energy();
       // 	  }
-      // } 
-      
+      // }
+
       //*************************************
       //fill all rechits inside photons
       //*************************************
-      
+
       fJetNPhotons++;
 
     }
-    //cout << "Last Nphoton: " << fJetNPhotons << "\n";
+    //***************************
+    //Find RecHits Inside the Jet
+    //***************************
+    // geometry (from ECAL ELF)
+    /*
+    edm::ESHandle<CaloGeometry> geoHandle;
+    iSetup.get<CaloGeometryRecord>().get(geoHandle);
+    const CaloSubdetectorGeometry *barrelGeometry = geoHandle->getSubdetectorGeometry(DetId::Ecal, EcalBarrel);
+    const CaloSubdetectorGeometry *endcapGeometry = geoHandle->getSubdetectorGeometry(DetId::Ecal, EcalEndcap);
 
+    for (EcalRecHitCollection::const_iterator recHit = ebRecHits->begin(); recHit != ebRecHits->end(); ++recHit)
+      {
+        if ( recHit->checkFlag(0) )
+        {
+          const DetId recHitId = recHit->detid();
+          const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
+          std::cout << recHitPos.eta() << std::endl;
+        }
+        //std::cout << recHitId << std::endl;
+      }
+    //cout << "Last Nphoton: " << fJetNPhotons << "\n";
+*/
     JetTree->Fill();
   } //loop over jets
 
@@ -450,36 +470,36 @@ bool JetNtupler::passJetID( const reco::PFJet *jet, int cutLevel) {
   //Loose
   if (cutLevel == 0) {
     if ( fabs(jet->eta()) <= 2.4) {
-      if ( NHF  < 0.99 && NEMF < 0.99 && NumConst > 1 
-	   && CHF > 0 && CHM > 0 && CEMF < 0.99 ) result = true;	   
+      if ( NHF  < 0.99 && NEMF < 0.99 && NumConst > 1
+	   && CHF > 0 && CHM > 0 && CEMF < 0.99 ) result = true;
     } else if( fabs(jet->eta()) <= 3.0)  {
-      if ( NHF  < 0.99 && NEMF < 0.99 && NumConst > 1 ) result = true;	  
+      if ( NHF  < 0.99 && NEMF < 0.99 && NumConst > 1 ) result = true;
     } else {
-      if ( NEMF < 0.90 && NumNeutralParticles > 10 ) result = true;	  
+      if ( NEMF < 0.90 && NumNeutralParticles > 10 ) result = true;
     }
-  } 
+  }
 
   //Tight
   else if (cutLevel == 1) {
     if ( fabs(jet->eta()) <= 2.4) {
-      if ( NHF  < 0.90 && NEMF < 0.90 && NumConst > 1 
-	   && CHF > 0 && CHM > 0 && CEMF < 0.99 ) result = true;	   
+      if ( NHF  < 0.90 && NEMF < 0.90 && NumConst > 1
+	   && CHF > 0 && CHM > 0 && CEMF < 0.99 ) result = true;
     } else if( fabs(jet->eta()) <= 3.0)  {
-      if ( NHF  < 0.90 && NEMF < 0.90 && NumConst > 1 ) result = true;	  
+      if ( NHF  < 0.90 && NEMF < 0.90 && NumConst > 1 ) result = true;
     } else {
-      if ( NEMF < 0.90 && NumNeutralParticles > 10 ) result = true;	  
+      if ( NEMF < 0.90 && NumNeutralParticles > 10 ) result = true;
     }
   }
 
   //Tight Lep Veto
   else if (cutLevel == 2) {
     if ( fabs(jet->eta()) <= 2.4) {
-      if ( NHF  < 0.90 && NEMF < 0.90 && NumConst > 1 
-	   && CHF > 0 && CHM > 0 && CEMF < 0.99 && MUF < 0.8 ) result = true;	   
+      if ( NHF  < 0.90 && NEMF < 0.90 && NumConst > 1
+	   && CHF > 0 && CHM > 0 && CEMF < 0.99 && MUF < 0.8 ) result = true;
     } else if( fabs(jet->eta()) <= 3.0)  {
-      if ( NHF  < 0.90 && NEMF < 0.90 && NumConst > 1 ) result = true;	  
+      if ( NHF  < 0.90 && NEMF < 0.90 && NumConst > 1 ) result = true;
     } else {
-      if ( NEMF < 0.90 && NumNeutralParticles > 10 ) result = true;	  
+      if ( NEMF < 0.90 && NumNeutralParticles > 10 ) result = true;
     }
   }
 
