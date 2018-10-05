@@ -99,7 +99,7 @@ public:
   //enable desired output variables
   virtual void setBranches();
     
-  //------ HELPER FUNCTIONS ------//  
+  // //------ HELPER FUNCTIONS ------//  
   bool passJetID( const reco::PFJet *jet, int cutLevel);
 
 protected:
@@ -295,11 +295,11 @@ protected:
   Float_t                 fJetPhotonSeedRecHitPhi[OBJECTARRAYSIZE];
   Float_t                 fJetPhotonSeedRecHitTime[OBJECTARRAYSIZE];
 
-  //All RecHits matched to the Photon within the Jet
-  vector<float> *fJetPhotonRecHitE;
-  vector<float> *fJetPhotonRecHitEta;
-  vector<float> *fJetPhotonRecHitPhi;
-  vector<float> *fJetPhotonRecHitTime;
+  // //All RecHits matched to the Photon within the Jet
+  // vector<float> *fJetPhotonRecHitE;
+  // vector<float> *fJetPhotonRecHitEta;
+  // vector<float> *fJetPhotonRecHitPhi;
+  // vector<float> *fJetPhotonRecHitTime;
   
   //event info
   bool isData;

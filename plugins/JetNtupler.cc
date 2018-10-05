@@ -80,10 +80,10 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   JetTree = fs->make<TTree>("Jets", "selected miniAOD information");
   NEvents = fs->make<TH1F>("NEvents",";;NEvents;",1,-0.5,0.5);
 
-  fJetPhotonRecHitEta = new std::vector<float>; fJetPhotonRecHitEta->clear();
-  fJetPhotonRecHitPhi = new std::vector<float>; fJetPhotonRecHitPhi->clear();
-  fJetPhotonRecHitE = new std::vector<float>; fJetPhotonRecHitE->clear();
-  fJetPhotonRecHitTime = new std::vector<float>; fJetPhotonRecHitTime->clear();
+  // fJetPhotonRecHitEta = new std::vector<float>; fJetPhotonRecHitEta->clear();
+  // fJetPhotonRecHitPhi = new std::vector<float>; fJetPhotonRecHitPhi->clear();
+  // fJetPhotonRecHitE = new std::vector<float>; fJetPhotonRecHitE->clear();
+  // fJetPhotonRecHitTime = new std::vector<float>; fJetPhotonRecHitTime->clear();
 
 }
 
@@ -94,17 +94,17 @@ JetNtupler::~JetNtupler()
 //------ Enable the desired set of branches ------//
 void JetNtupler::setBranches(){
 
-  JetTree->Branch("isData", &isData, "isData/O");
-  JetTree->Branch("runNum", &runNum, "runNum/i");
-  JetTree->Branch("lumiNum", &lumiNum, "lumiNum/i");
-  JetTree->Branch("eventNum", &eventNum, "eventNum/i");
-  JetTree->Branch("pvX", &pvX, "pvX/F");
-  JetTree->Branch("pvY", &pvY, "pvY/F");
-  JetTree->Branch("pvZ", &pvZ, "pvZ/F");
-  JetTree->Branch("nPV", &nPV, "nPV/I");
-  JetTree->Branch("Rho", &Rho, "Rho/F");
-  JetTree->Branch("nPU", nPU, "nPU/I");
-  JetTree->Branch("nPUmean", nPUmean, "nPUmean/F");
+  // JetTree->Branch("isData", &isData, "isData/O");
+  // JetTree->Branch("runNum", &runNum, "runNum/i");
+  // JetTree->Branch("lumiNum", &lumiNum, "lumiNum/i");
+  // JetTree->Branch("eventNum", &eventNum, "eventNum/i");
+  // JetTree->Branch("pvX", &pvX, "pvX/F");
+  // JetTree->Branch("pvY", &pvY, "pvY/F");
+  // JetTree->Branch("pvZ", &pvZ, "pvZ/F");
+  // JetTree->Branch("nPV", &nPV, "nPV/I");
+  // JetTree->Branch("Rho", &Rho, "Rho/F");
+  // JetTree->Branch("nPU", nPU, "nPU/I");
+  // JetTree->Branch("nPUmean", nPUmean, "nPUmean/F");
 
   JetTree->Branch("jetE", &jetE,"jetE/F");
   JetTree->Branch("jetPt", &jetPt,"jetPt/F");
@@ -139,7 +139,7 @@ void JetNtupler::setBranches(){
   JetTree->Branch("phoSeedRecHitPhi", fJetPhotonSeedRecHitPhi, "phoSeedRecHitPhi[nPhotons]/F");
   JetTree->Branch("phoSeedRecHitE", fJetPhotonSeedRecHitE, "phoSeedRecHitE[nPhotons]/F");
   JetTree->Branch("phoSeedRecHitT", fJetPhotonSeedRecHitTime, "phoSeedRecHitT[nPhotons]/F");
-
+ 
   // JetTree->Branch("fJetPhotonRecHitEta", "std::vector<float>",&fJetPhotonRecHitEta);
   // JetTree->Branch("fJetPhotonRecHitPhi", "std::vector<float>",&fJetPhotonRecHitPhi);
   // JetTree->Branch("fJetPhotonRecHitE", "std::vector<float>",&fJetPhotonRecHitE);
@@ -241,12 +241,12 @@ void JetNtupler::resetBranches(){
       fJetPhotonSeedRecHitTime[i]      = -99.0;
     }
     
-    fJetPhotonRecHitE->clear();
-    fJetPhotonRecHitEta->clear();
-    fJetPhotonRecHitPhi->clear();
-    fJetPhotonRecHitTime->clear();
+    // fJetPhotonRecHitE->clear();
+    // fJetPhotonRecHitEta->clear();
+    // fJetPhotonRecHitPhi->clear();
+    // fJetPhotonRecHitTime->clear();
     
-    //Jet
+    // //Jet
     jetE = 0.0;
     jetPt = 0.0;
     jetEta = 0.0;
@@ -326,11 +326,11 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     bool foundPV = false;
     for(unsigned int i = 0; i < vertices->size(); i++){
       if(vertices->at(i).isValid() && !vertices->at(i).isFake()){
-	if (!foundPV) {
-	  myPV = &(vertices->at(i));
-	  foundPV = true;
-	}   
-	nPV++;
+   	if (!foundPV) {
+   	  myPV = &(vertices->at(i));
+   	  foundPV = true;
+   	}   
+   	nPV++;
       }
     }
  
@@ -344,10 +344,10 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     //Fill Pileup info
     if (!isData) {
       for(const PileupSummaryInfo &pu : *puInfo){
-	if ( pu.getBunchCrossing() == 0) {
-	  nPU = pu.getPU_NumInteractions();
-	  nPUmean = pu.getTrueNumInteractions();
-	}    
+   	if ( pu.getBunchCrossing() == 0) {
+   	  nPU = pu.getPU_NumInteractions();
+   	  nPUmean = pu.getTrueNumInteractions();
+   	}    
       }
     }
 
@@ -419,8 +419,9 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
     }
     //cout << "Last Nphoton: " << fJetNPhotons << "\n";
-
+    cout << "before fill\n";
     JetTree->Fill();
+    cout << "after fill\n";
   } //loop over jets
 
 }
