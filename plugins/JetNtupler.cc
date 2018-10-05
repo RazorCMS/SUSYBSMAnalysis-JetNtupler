@@ -77,14 +77,16 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   edm::Service<TFileService> fs;
 
   //set up output tree
-  JetTree = fs->make<TTree>("Jets", "selected miniAOD information");
+  //JetTree = fs->make<TTree>("Jets", "selected miniAOD information");
+  JetTree = new TTree("Jets", "selected AOD information");
   NEvents = fs->make<TH1F>("NEvents",";;NEvents;",1,-0.5,0.5);
 
+  /*
   fJetPhotonRecHitEta = new std::vector<float>; fJetPhotonRecHitEta->clear();
   fJetPhotonRecHitPhi = new std::vector<float>; fJetPhotonRecHitPhi->clear();
   fJetPhotonRecHitE = new std::vector<float>; fJetPhotonRecHitE->clear();
   fJetPhotonRecHitTime = new std::vector<float>; fJetPhotonRecHitTime->clear();
-
+*/
 }
 
 JetNtupler::~JetNtupler()
@@ -93,6 +95,7 @@ JetNtupler::~JetNtupler()
 
 //------ Enable the desired set of branches ------//
 void JetNtupler::setBranches(){
+
 
   JetTree->Branch("isData", &isData, "isData/O");
   JetTree->Branch("runNum", &runNum, "runNum/i");
@@ -103,8 +106,9 @@ void JetNtupler::setBranches(){
   JetTree->Branch("pvZ", &pvZ, "pvZ/F");
   JetTree->Branch("nPV", &nPV, "nPV/I");
   JetTree->Branch("Rho", &Rho, "Rho/F");
-  JetTree->Branch("nPU", nPU, "nPU/I");
-  JetTree->Branch("nPUmean", nPUmean, "nPUmean/F");
+  JetTree->Branch("nPU", &nPU, "nPU/I");
+  JetTree->Branch("nPUmean", &nPUmean, "nPUmean/F");
+
 
   JetTree->Branch("jetE", &jetE,"jetE/F");
   JetTree->Branch("jetPt", &jetPt,"jetPt/F");
@@ -241,11 +245,12 @@ void JetNtupler::resetBranches(){
       fJetPhotonSeedRecHitTime[i]      = -99.0;
     }
 
+/*
     fJetPhotonRecHitE->clear();
     fJetPhotonRecHitEta->clear();
     fJetPhotonRecHitPhi->clear();
     fJetPhotonRecHitTime->clear();
-
+*/
     //Jet
     jetE = 0.0;
     jetPt = 0.0;
@@ -422,7 +427,7 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     //Find RecHits Inside the Jet
     //***************************
     // geometry (from ECAL ELF)
-    /*
+
     edm::ESHandle<CaloGeometry> geoHandle;
     iSetup.get<CaloGeometryRecord>().get(geoHandle);
     const CaloSubdetectorGeometry *barrelGeometry = geoHandle->getSubdetectorGeometry(DetId::Ecal, EcalBarrel);
@@ -439,7 +444,7 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
         //std::cout << recHitId << std::endl;
       }
     //cout << "Last Nphoton: " << fJetNPhotons << "\n";
-*/
+
     JetTree->Fill();
   } //loop over jets
 
