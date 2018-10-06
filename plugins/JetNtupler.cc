@@ -134,6 +134,9 @@ void JetNtupler::setBranches(){
   JetTree->Branch("jetMatchedGenEta", &jetMatchedGenEta,"jetMatchedGenEta/F");
   JetTree->Branch("jetMatchedGenPhi", &jetMatchedGenPhi,"jetMatchedGenPhi/F");
   JetTree->Branch("jetMatchedGenMass", &jetMatchedGenMass, "jetMatchedGenMass/F");
+  JetTree->Branch("jet_n_rechits", &jet_n_rechits, "jet_n_rechits/I");
+  JetTree->Branch("jet_rechit_E", &jet_rechit_E, "jet_rechit_E/F");
+  JetTree->Branch("jet_rechit_T", &jet_rechit_T, "jet_rechit_T/F");
 
   JetTree->Branch("nPhotons", &fJetNPhotons,"nPhotons/I");
   JetTree->Branch("phoPt", fJetPhotonPt,"phoPt[nPhotons]/F");
@@ -277,8 +280,9 @@ void JetNtupler::resetBranches(){
     jetMatchedGenPhi = 0.0;
     jetMatchedGenMass = 0.0;
     jetMatchedGenTime = 0.0;
-
-
+    jet_n_rechits = 0;
+    jet_rechit_E = 0.0;
+    jet_rechit_T = 0.0;
 }
 
 //------ Methods to fill tree variables ------//
@@ -312,7 +316,7 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   for (const reco::PFJet &j : *jets) {
     resetBranches();
     if (j.pt() < 10) continue;
-
+    if (fabs(j.eta()) > 1.4) continue;
 
     //*************************************
     //Fill Event-Level Info
@@ -366,6 +370,8 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     jetPhi = j.phi();
     jetMass = j.mass();
 
+    TLorentzVector thisJet;
+    thisJet.SetPtEtaPhiE(jetPt, jetEta, jetPhi, jetE);
     //jetCISV = j.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
 
     jetJetArea = j.jetArea();
@@ -433,18 +439,27 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     const CaloSubdetectorGeometry *barrelGeometry = geoHandle->getSubdetectorGeometry(DetId::Ecal, EcalBarrel);
     const CaloSubdetectorGeometry *endcapGeometry = geoHandle->getSubdetectorGeometry(DetId::Ecal, EcalEndcap);
 
+    int n_matched_rechits = 0;
     for (EcalRecHitCollection::const_iterator recHit = ebRecHits->begin(); recHit != ebRecHits->end(); ++recHit)
       {
         if ( recHit->checkFlag(0) )
         {
           const DetId recHitId = recHit->detid();
           const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
-          std::cout << recHitPos.eta() << std::endl;
+          if ( deltaR(jetEta, jetPhi, recHitPos.eta(), recHitPos.phi())  < 0.4)
+          {
+            n_matched_rechits++;
+            jet_rechit_E += recHit->energy();
+            jet_rechit_T += recHit->time()*recHit->energy();
+          }
+          //std::cout << recHitPos.eta() << std::endl;
         }
         //std::cout << recHitId << std::endl;
       }
     //cout << "Last Nphoton: " << fJetNPhotons << "\n";
-
+    //std::cout << "n: " << n_matched_rechits << std::endl;
+    jet_n_rechits = n_matched_rechits;
+    jet_rechit_T = jet_rechit_T/jet_rechit_E;
     JetTree->Fill();
   } //loop over jets
 
@@ -511,6 +526,26 @@ bool JetNtupler::passJetID( const reco::PFJet *jet, int cutLevel) {
   return result;
 }
 
+double JetNtupler::deltaPhi(double phi1, double phi2)
+{
+  double dphi = phi1-phi2;
+  while (dphi > TMath::Pi())
+  {
+    dphi -= TMath::TwoPi();
+  }
+  while (dphi <= -TMath::Pi())
+  {
+    dphi += TMath::TwoPi();
+  }
+  return dphi;
+};
+
+double JetNtupler::deltaR(double eta1, double phi1, double eta2, double phi2)
+{
+double dphi = deltaPhi(phi1,phi2);
+double deta = eta1 - eta2;
+return sqrt( dphi*dphi + deta*deta);
+};
 
 //define this as a plug-in
 DEFINE_FWK_MODULE(JetNtupler);

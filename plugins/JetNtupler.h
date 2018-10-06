@@ -120,6 +120,9 @@ public:
   //------ HELPER FUNCTIONS ------//
   bool passJetID( const reco::PFJet *jet, int cutLevel);
 
+  double deltaPhi(double phi1, double phi2);
+  double deltaR(double eta1, double phi1, double eta2, double phi2);
+
 protected:
   virtual void beginJob() override;
   virtual void beginRun(const edm::Run&, const edm::EventSetup&) override;
@@ -302,6 +305,9 @@ protected:
   float jetMatchedGenPhi;
   float jetMatchedGenMass;
   float jetMatchedGenTime;
+  int   jet_n_rechits;
+  float jet_rechit_E;
+  float jet_rechit_T;
 
   //All Photons Match To the Jet (Take Seed RecHit as a reference)
   Int_t                   fJetNPhotons;
