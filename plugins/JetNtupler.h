@@ -122,6 +122,12 @@ public:
 
   double deltaPhi(double phi1, double phi2);
   double deltaR(double eta1, double phi1, double eta2, double phi2);
+  void enableMCBranches();
+  void enableGenParticleBranches();
+  bool fillMC();
+  bool fillGenParticles();
+  const reco::Candidate* findFirstMotherWithDifferentID(const reco::Candidate *particle);
+  const reco::Candidate* findOriginalMotherWithSameID(const reco::Candidate *particle);
 
 protected:
   virtual void beginJob() override;
@@ -338,7 +344,61 @@ protected:
   int nPUmean;
   int nPU;
 
+  //MC
+int nGenJets;
+float genJetE[OBJECTARRAYSIZE];
+float genJetPt[OBJECTARRAYSIZE];
+float genJetEta[OBJECTARRAYSIZE];
+float genJetPhi[OBJECTARRAYSIZE];
+float genMetPt;
+float genMetPhi;
+float genVertexX;
+float genVertexY;
+float genVertexZ;
+float genVertexT;
+float genWeight;
+unsigned int genSignalProcessID;
+float genQScale;
+float genAlphaQCD;
+float genAlphaQED;
+string lheComments;
+vector<float> *scaleWeights;
+vector<float> *pdfWeights;
+vector<float> *alphasWeights;
 
+int firstPdfWeight;
+int lastPdfWeight;
+int firstAlphasWeight;
+int lastAlphasWeight;
+
+//gen info
+int nGenParticle;
+int gParticleMotherId[GENPARTICLEARRAYSIZE];
+int gParticleMotherIndex[GENPARTICLEARRAYSIZE];
+int gParticleId[GENPARTICLEARRAYSIZE];
+int gParticleStatus[GENPARTICLEARRAYSIZE];
+float gParticleE[GENPARTICLEARRAYSIZE];
+float gParticlePt[GENPARTICLEARRAYSIZE];
+float gParticlePx[GENPARTICLEARRAYSIZE];
+float gParticlePy[GENPARTICLEARRAYSIZE];
+float gParticlePz[GENPARTICLEARRAYSIZE];
+float gParticleEta[GENPARTICLEARRAYSIZE];
+float gParticlePhi[GENPARTICLEARRAYSIZE];
+
+float gParticleDecayVertexX[GENPARTICLEARRAYSIZE];
+float gParticleDecayVertexY[GENPARTICLEARRAYSIZE];
+float gParticleDecayVertexZ[GENPARTICLEARRAYSIZE];
+float gLLP_prod_vertex_x[2];
+float gLLP_prod_vertex_y[2];
+float gLLP_prod_vertex_z[2];
+float gLLP_decay_vertex_x[2];
+float gLLP_decay_vertex_y[2];
+float gLLP_decay_vertex_z[2];
+float gLLP_beta[2];
+float gLLP_decays_px[4];
+float gLLP_decays_py[4];
+float gLLP_decays_pz[4];
+float gLLP_decays_e[4];
 };
 
 #endif

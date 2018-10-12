@@ -77,8 +77,8 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   edm::Service<TFileService> fs;
 
   //set up output tree
-  //JetTree = fs->make<TTree>("Jets", "selected miniAOD information");
-  JetTree = new TTree("Jets", "selected AOD information");
+  JetTree = fs->make<TTree>("Jets", "selected AOD information");
+  //JetTree = new TTree("Jets", "selected AOD information");
   NEvents = fs->make<TH1F>("NEvents",";;NEvents;",1,-0.5,0.5);
 
   /*
@@ -153,7 +153,67 @@ void JetNtupler::setBranches(){
   // JetTree->Branch("fJetPhotonRecHitTime", "std::vector<float>",&fJetPhotonRecHitTime);
 
   cout << "BRANCHES\n";
+  //enableMCBranches();
+  enableGenParticleBranches();
+};
 
+
+void JetNtupler::enableMCBranches(){
+  JetTree->Branch("nGenJets", &nGenJets, "nGenJets/I");
+  JetTree->Branch("genJetE", genJetE, "genJetE[nGenJets]/F");
+  JetTree->Branch("genJetPt", genJetPt, "genJetPt[nGenJets]/F");
+  JetTree->Branch("genJetEta", genJetEta, "genJetEta[nGenJets]/F");
+  JetTree->Branch("genJetPhi", genJetPhi, "genJetPhi[nGenJets]/F");
+  JetTree->Branch("genMetPt", &genMetPt, "genMetPt/F");
+  JetTree->Branch("genMetPhi", &genMetPhi, "genMetPhi/F");
+  JetTree->Branch("genVertexX", &genVertexX, "genVertexX/F");
+  JetTree->Branch("genVertexY", &genVertexY, "genVertexY/F");
+  JetTree->Branch("genVertexZ", &genVertexZ, "genVertexZ/F");
+  JetTree->Branch("genVertexT", &genVertexT, "genVertexT/F");
+  JetTree->Branch("genWeight", &genWeight, "genWeight/F");
+  JetTree->Branch("genSignalProcessID", &genSignalProcessID, "genSignalProcessID/i");
+  JetTree->Branch("genQScale", &genQScale, "genQScale/F");
+  JetTree->Branch("genAlphaQCD", &genAlphaQCD, "genAlphaQCD/F");
+  JetTree->Branch("genAlphaQED", &genAlphaQED, "genAlphaQED/F");
+  /*scaleWeights = new std::vector<float>; scaleWeights->clear();
+  pdfWeights = new std::vector<float>; pdfWeights->clear();
+  alphasWeights = new std::vector<float>; alphasWeights->clear();
+  if (isFastsim_) {
+    JetTree->Branch("lheComments", "std::string",&lheComments);
+  }
+  JetTree->Branch("scaleWeights", "std::vector<float>",&scaleWeights);
+  JetTree->Branch("pdfWeights", "std::vector<float>",&pdfWeights);
+  JetTree->Branch("alphasWeights", "std::vector<float>",&alphasWeights);
+  */
+}
+
+void JetNtupler::enableGenParticleBranches(){
+  JetTree->Branch("gLLP_prod_vertex_x", gLLP_prod_vertex_x, "gLLP_prod_vertex_x[2]/F");
+  JetTree->Branch("gLLP_prod_vertex_y", gLLP_prod_vertex_y, "gLLP_prod_vertex_y[2]/F");
+  JetTree->Branch("gLLP_prod_vertex_z", gLLP_prod_vertex_z, "gLLP_prod_vertex_z[2]/F");
+  JetTree->Branch("gLLP_decay_vertex_x", gLLP_decay_vertex_x, "gLLP_decay_vertex_x[2]/F");
+  JetTree->Branch("gLLP_decay_vertex_y", gLLP_decay_vertex_y, "gLLP_decay_vertex_y[2]/F");
+  JetTree->Branch("gLLP_decay_vertex_z", gLLP_decay_vertex_z, "gLLP_decay_vertex_z[2]/F");
+  JetTree->Branch("gLLP_beta", gLLP_beta, "gLLP_beta[2]/F");
+  JetTree->Branch("gLLP_decays_px", gLLP_decays_px, "gLLP_decays_px[4]/F");
+  JetTree->Branch("gLLP_decays_py", gLLP_decays_py, "gLLP_decays_py[4]/F");
+  JetTree->Branch("gLLP_decays_pz", gLLP_decays_pz, "gLLP_decays_pz[4]/F");
+  JetTree->Branch("gLLP_decays_e", gLLP_decays_e, "gLLP_decays_e[4]/F");
+  JetTree->Branch("nGenParticle", &nGenParticle, "nGenParticle/I");
+  JetTree->Branch("gParticleMotherId", gParticleMotherId, "gParticleMotherId[nGenParticle]/I");
+  JetTree->Branch("gParticleMotherIndex", gParticleMotherIndex, "gParticleMotherIndex[nGenParticle]/I");
+  JetTree->Branch("gParticleId", gParticleId, "gParticleId[nGenParticle]/I");
+  JetTree->Branch("gParticleStatus", gParticleStatus, "gParticleStatus[nGenParticle]/I");
+  JetTree->Branch("gParticleE", gParticleE, "gParticleE[nGenParticle]/F");
+  JetTree->Branch("gParticlePt", gParticlePt, "gParticlePt[nGenParticle]/F");
+  JetTree->Branch("gParticlePx", gParticlePx, "gParticlePx[nGenParticle]/F");
+  JetTree->Branch("gParticlePy", gParticlePy, "gParticlePy[nGenParticle]/F");
+  JetTree->Branch("gParticlePz", gParticlePz, "gParticlePz[nGenParticle]/F");
+  JetTree->Branch("gParticleEta", gParticleEta, "gParticleEta[nGenParticle]/F");
+  JetTree->Branch("gParticlePhi", gParticlePhi, "gParticlePhi[nGenParticle]/F");
+  JetTree->Branch("gParticleDecayVertexX", gParticleDecayVertexX, "gParticleDecayVertexX[nGenParticle]/F");
+  JetTree->Branch("gParticleDecayVertexY", gParticleDecayVertexY, "gParticleDecayVertexY[nGenParticle]/F");
+  JetTree->Branch("gParticleDecayVertexZ", gParticleDecayVertexZ, "gParticleDecayVertexZ[nGenParticle]/F");
 }
 
 
@@ -283,6 +343,24 @@ void JetNtupler::resetBranches(){
     jet_n_rechits = 0;
     jet_rechit_E = 0.0;
     jet_rechit_T = 0.0;
+    for ( int i = 0; i < 2; i++ )
+    {
+      gLLP_prod_vertex_x[i] = -666.;
+      gLLP_prod_vertex_y[i] = -666.;
+      gLLP_prod_vertex_z[i] = -666.;
+      gLLP_decay_vertex_x[i] = -666.;
+      gLLP_decay_vertex_y[i] = -666.;
+      gLLP_decay_vertex_z[i] = -666.;
+      gLLP_beta[i] = -666.;
+    }
+
+    for ( int i = 0; i < 4; i++ )
+    {
+      gLLP_decays_px[i] = -666.;
+      gLLP_decays_py[i] = -666.;
+      gLLP_decays_pz[i] = -666.;
+      gLLP_decays_e[i] = -666.;
+    }
 }
 
 //------ Methods to fill tree variables ------//
@@ -460,6 +538,10 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     //std::cout << "n: " << n_matched_rechits << std::endl;
     jet_n_rechits = n_matched_rechits;
     jet_rechit_T = jet_rechit_T/jet_rechit_E;
+
+    //MC AND GEN LEVEL INFO
+    fillGenParticles();
+    //fillMC();
     JetTree->Fill();
   } //loop over jets
 
@@ -545,6 +627,312 @@ double JetNtupler::deltaR(double eta1, double phi1, double eta2, double phi2)
 double dphi = deltaPhi(phi1,phi2);
 double deta = eta1 - eta2;
 return sqrt( dphi*dphi + deta*deta);
+};
+
+
+bool JetNtupler::fillMC()
+{
+  for(const reco::GenJet &j : *genJets)
+  {
+    genJetE[nGenJets] = j.energy();
+    genJetPt[nGenJets] = j.pt();
+    genJetEta[nGenJets] = j.eta();
+    genJetPhi[nGenJets] = j.phi();
+    nGenJets++;
+  }
+
+  const pat::MET &Met = mets->front();
+  genMetPt = Met.genMET()->pt();
+  genMetPhi = Met.genMET()->phi();
+
+  bool foundGenVertex = false;
+  for(size_t i=0; i<genParticles->size();i++)
+  {
+    if (!foundGenVertex)
+    {
+      for (unsigned int j=0; j<(*genParticles)[i].numberOfDaughters(); ++j)
+      {
+        const reco::Candidate *dau = (*genParticles)[i].daughter(j);
+        if (dau)
+        {
+          genVertexX = dau->vx();
+          genVertexY = dau->vy();
+          genVertexZ = dau->vz();
+          // if(readGenVertexTime_) genVertexT = *genParticles_t0;
+          foundGenVertex = true;
+          break;
+        }
+      }
+    }
+  }
+
+  genWeight = genInfo->weight();
+  genSignalProcessID = genInfo->signalProcessID();
+  genQScale = genInfo->qScale();
+  genAlphaQCD = genInfo->alphaQCD();
+  genAlphaQED = genInfo->alphaQED();
+
+    /*
+    if (isFastsim_) {
+
+      //get lhe weights for systematic uncertainties:
+      double nomlheweight = genInfo->weights()[0];
+
+      //fill scale variation weights
+      if (genInfo->weights().size()>=10) {
+	for (unsigned int iwgt=1; iwgt<10; ++iwgt) {
+	  //normalize to
+	  double wgtval = genInfo->weights()[iwgt]*genWeight/genInfo->weights()[1];
+	  scaleWeights->push_back(wgtval);
+	}
+      }
+
+      //fill pdf variation weights
+      if (firstPdfWeight>=0 && lastPdfWeight>=0 && lastPdfWeight<int(genInfo->weights().size()) && (lastPdfWeight-firstPdfWeight+1)==100) {
+
+	//fill pdf variation weights after converting with mc2hessian transformation
+	std::array<double, 100> inpdfweights;
+	for (int iwgt=firstPdfWeight, ipdf=0; iwgt<=lastPdfWeight; ++iwgt, ++ipdf) {
+	  inpdfweights[ipdf] = genInfo->weights()[iwgt]/genInfo->weights()[firstPdfWeight-1];
+	}
+
+	std::array<double, 60> outpdfweights;
+	pdfweightshelper.DoMC2Hessian(inpdfweights.data(),outpdfweights.data());
+
+	for (unsigned int iwgt=0; iwgt<60; ++iwgt) {
+	  double wgtval = outpdfweights[iwgt]*genWeight;
+	  pdfWeights->push_back(wgtval);
+	}
+
+	//fill alpha_s variation weights
+	if (firstAlphasWeight>=0 && lastAlphasWeight>=0 && lastAlphasWeight<int(genInfo->weights().size())) {
+	  for (int iwgt = firstAlphasWeight; iwgt<=lastAlphasWeight; ++iwgt) {
+	    double wgtval = genInfo->weights()[iwgt]*genWeight/nomlheweight;
+	    alphasWeights->push_back(wgtval);
+	  }
+	}
+
+      }
+    } else {
+
+      if (lheInfo.isValid() && lheInfo->weights().size()>0) {
+
+	double nomlheweight = lheInfo->weights()[0].wgt;
+
+	//fill scale variation weights
+	if (lheInfo->weights().size()>=9) {
+	  for (unsigned int iwgt=0; iwgt<9; ++iwgt) {
+	    double wgtval = lheInfo->weights()[iwgt].wgt*genWeight/nomlheweight;
+	    scaleWeights->push_back(wgtval);
+	  }
+	}
+
+	//fill pdf variation weights
+	if (firstPdfWeight>=0 && lastPdfWeight>=0 && lastPdfWeight<int(lheInfo->weights().size()) && (lastPdfWeight-firstPdfWeight+1)==100) {
+
+	  //fill pdf variation weights after converting with mc2hessian transformation
+	  std::array<double, 100> inpdfweights;
+	  for (int iwgt=firstPdfWeight, ipdf=0; iwgt<=lastPdfWeight; ++iwgt, ++ipdf) {
+	    inpdfweights[ipdf] = lheInfo->weights()[iwgt].wgt/nomlheweight;
+	  }
+
+	  std::array<double, 60> outpdfweights;
+	  pdfweightshelper.DoMC2Hessian(inpdfweights.data(),outpdfweights.data());
+
+	  for (unsigned int iwgt=0; iwgt<60; ++iwgt) {
+	    double wgtval = outpdfweights[iwgt]*genWeight;
+	    pdfWeights->push_back(wgtval);
+	  }
+
+	  //fill alpha_s variation weights
+	  if (firstAlphasWeight>=0 && lastAlphasWeight>=0 && lastAlphasWeight<int(lheInfo->weights().size())) {
+	    for (int iwgt = firstAlphasWeight; iwgt<=lastAlphasWeight; ++iwgt) {
+	      double wgtval = lheInfo->weights()[iwgt].wgt*genWeight/nomlheweight;
+	      alphasWeights->push_back(wgtval);
+	    }
+	  }
+	}
+      }
+    }
+
+    //fill sum of weights histograms
+    sumWeights->Fill(0.,genWeight);
+
+    for (unsigned int iwgt=0; iwgt<scaleWeights->size(); ++iwgt) {
+      sumScaleWeights->Fill(double(iwgt),(*scaleWeights)[iwgt]);
+    }
+    for (unsigned int iwgt=0; iwgt<pdfWeights->size(); ++iwgt) {
+      sumPdfWeights->Fill(double(iwgt),(*pdfWeights)[iwgt]);
+    }
+    for (unsigned int iwgt=0; iwgt<alphasWeights->size(); ++iwgt) {
+      sumAlphasWeights->Fill(double(iwgt),(*alphasWeights)[iwgt]);
+    }
+*/
+    return true;
+};
+
+bool JetNtupler::fillGenParticles(){
+  std::vector<const reco::Candidate*> prunedV;//Allows easier comparison for mother finding
+  //Fills selected gen particles
+  for(size_t i=0; i<genParticles->size();i++)
+  {
+    if( (abs((*genParticles)[i].pdgId()) >= 1 && abs((*genParticles)[i].pdgId()) <= 6 && ( (*genParticles)[i].status() < 30 ))
+       || (abs((*genParticles)[i].pdgId()) >= 11 && abs((*genParticles)[i].pdgId()) <= 16)
+       || (abs((*genParticles)[i].pdgId()) == 21 && (*genParticles)[i].status() < 30)
+       || (abs((*genParticles)[i].pdgId()) >= 22 && abs((*genParticles)[i].pdgId()) <= 25 && ( (*genParticles)[i].status() < 30))
+       || (abs((*genParticles)[i].pdgId()) >= 32 && abs((*genParticles)[i].pdgId()) <= 42)
+       || (abs((*genParticles)[i].pdgId()) >= 1000001 && abs((*genParticles)[i].pdgId()) <= 1000039) )
+       {
+         prunedV.push_back(&(*genParticles)[i]);
+       }
+     }
+
+  //Total number of gen particles
+  nGenParticle = prunedV.size();
+
+  //Look for mother particle and Fill gen variables
+  for(unsigned int i = 0; i < prunedV.size(); i++)
+  {
+    gParticleId[i] = prunedV[i]->pdgId();
+    gParticleStatus[i] = prunedV[i]->status();
+    gParticleE[i] = prunedV[i]->energy();
+    gParticlePt[i] = prunedV[i]->pt();
+    gParticlePx[i] = prunedV[i]->px();
+    gParticlePy[i] = prunedV[i]->py();
+    gParticlePz[i] = prunedV[i]->pz();
+    gParticleEta[i] = prunedV[i]->eta();
+    gParticlePhi[i] = prunedV[i]->phi();
+    gParticleMotherId[i] = 0;
+    gParticleMotherIndex[i] = -1;
+
+    //For Neutralinos we try to find the decay vertex locaton.
+    //Algorithm: Find the first daughter particle that is not a neutralino,
+    //and call that the daughter. get the creation vertex of that daughter.
+    if ( (gParticleId[i] == 1000022 && gParticleStatus[i] == 22) )
+    {
+      const reco::Candidate *dau = 0;
+      bool foundDaughter = false;
+      bool noDaughter = false;
+      const reco::Candidate *tmpParticle = prunedV[i];
+
+      while (!foundDaughter && !noDaughter)
+      {
+        if (tmpParticle->numberOfDaughters() > 0)
+        {
+          dau = tmpParticle->daughter(0);
+          if (dau && dau->pdgId() != 1000022)
+          {
+            foundDaughter = true;
+          } else
+          {
+            tmpParticle = dau;
+          }
+        }
+        else
+        {
+          noDaughter = true;
+        }
+      }
+
+      if (foundDaughter)
+      {
+        gParticleDecayVertexX[i] = dau->vx();
+        gParticleDecayVertexY[i] = dau->vy();
+        gParticleDecayVertexZ[i] = dau->vz();
+      }
+    }
+
+    //LLPs vextex
+    if ( (gParticleId[i] == 35 || gParticleId[i] == 36) && gParticleStatus[i] == 22 )
+    {
+      if (gParticleId[i] == 35)
+      {
+        gLLP_prod_vertex_x[0] = prunedV[i]->vx();
+        gLLP_prod_vertex_y[0] = prunedV[i]->vy();
+        gLLP_prod_vertex_z[0] = prunedV[i]->vz();
+        //std::cout << prunedV[i]->tau() << std::endl;
+      }
+      else if (gParticleId[i] == 36)
+      {
+        gLLP_prod_vertex_x[1] = prunedV[i]->vx();
+        gLLP_prod_vertex_y[1] = prunedV[i]->vy();
+        gLLP_prod_vertex_z[1] = prunedV[i]->vz();
+      }
+
+      const reco::Candidate *dau = 0;
+      bool foundDaughter = false;
+      bool noDaughter = false;
+      const reco::Candidate *tmpParticle = prunedV[i];
+
+      while (!foundDaughter && !noDaughter)
+      {
+        if (tmpParticle->numberOfDaughters() > 0)
+        {
+          dau = tmpParticle->daughter(0);
+          if (dau && (dau->pdgId() != 35 && dau->pdgId() != 36))
+          {
+            foundDaughter = true;
+          } else
+          {
+            tmpParticle = dau;
+          }
+        }
+        else
+        {
+          noDaughter = true;
+        }
+      }
+
+      if (foundDaughter)
+      {
+        //gParticleDecayVertexX[i] = dau->vx();
+        //gParticleDecayVertexY[i] = dau->vy();
+        //gParticleDecayVertexZ[i] = dau->vz();
+        if (gParticleId[i] == 35)
+        {
+          gLLP_decay_vertex_x[0] = dau->vx();
+          gLLP_decay_vertex_y[0] = dau->vy();
+          gLLP_decay_vertex_z[0] = dau->vz();
+          gLLP_beta[0] = sqrt(gParticlePx[i]*gParticlePx[i]+gParticlePy[i]*gParticlePy[i]+gParticlePz[i]*gParticlePz[i])/gParticleE[i];
+          //gLLP_decays_px[0]
+        }
+        else if (gParticleId[i] == 36)
+        {
+          gLLP_decay_vertex_x[1] = dau->vx();
+          gLLP_decay_vertex_y[1] = dau->vy();
+          gLLP_decay_vertex_z[1] = dau->vz();
+          gLLP_beta[1] = sqrt(gParticlePx[i]*gParticlePx[i]+gParticlePy[i]*gParticlePy[i]+gParticlePz[i]*gParticlePz[i])/gParticleE[i];
+        }
+      }
+    }
+
+    if(prunedV[i]->numberOfMothers() > 0)
+    {
+      //find the ID of the first mother that has a different ID than the particle itself
+      const reco::Candidate* firstMotherWithDifferentID = findFirstMotherWithDifferentID(prunedV[i]);
+      if (firstMotherWithDifferentID)
+      {
+        gParticleMotherId[i] = firstMotherWithDifferentID->pdgId();
+      }
+
+      //find the mother and keep going up the mother chain if the ID's are the same
+      const reco::Candidate* originalMotherWithSameID = findOriginalMotherWithSameID(prunedV[i]);
+      for(unsigned int j = 0; j < prunedV.size(); j++)
+      {
+        if(prunedV[j] == originalMotherWithSameID)
+        {
+          gParticleMotherIndex[i] = j;
+          break;
+        }
+      }
+    }
+    else
+    {
+      gParticleMotherIndex[i] = -1;
+    }
+  }
+
+  return true;
 };
 
 //define this as a plug-in
