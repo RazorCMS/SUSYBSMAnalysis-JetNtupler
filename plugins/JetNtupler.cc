@@ -109,34 +109,34 @@ void JetNtupler::setBranches(){
   JetTree->Branch("nPU", &nPU, "nPU/I");
   JetTree->Branch("nPUmean", &nPUmean, "nPUmean/F");
 
-
-  JetTree->Branch("jetE", &jetE,"jetE/F");
-  JetTree->Branch("jetPt", &jetPt,"jetPt/F");
-  JetTree->Branch("jetEta", &jetEta,"jetEta/F");
-  JetTree->Branch("jetPhi", &jetPhi,"jetPhi/F");
-  JetTree->Branch("jetCISV", &jetCISV,"jetCISV/F");
-  JetTree->Branch("jetMass", &jetMass, "jetMass/F");
-  JetTree->Branch("jetJetArea", &jetJetArea, "jetJetArea/F");
-  JetTree->Branch("jetPileupE", &jetPileupE, "jetPileupE/F");
-  JetTree->Branch("jetPileupId", &jetPileupId, "jetPileupId/F");
-  JetTree->Branch("jetPileupIdFlag", &jetPileupIdFlag, "jetPileupIdFlag/I");
-  JetTree->Branch("jetPassIDLoose", &jetPassIDLoose, "jetPassIDLoose/O");
-  JetTree->Branch("jetPassIDTight", &jetPassIDTight, "jetPassIDTight/O");
-  JetTree->Branch("jetPassMuFrac", &jetPassMuFrac, "jetPassMuFrac/O");
-  JetTree->Branch("jetPassEleFrac", &jetPassEleFrac, "jetPassEleFrac/O");
-  JetTree->Branch("jetPartonFlavor", &jetPartonFlavor, "jetPartonFlavor/I");
-  JetTree->Branch("jetHadronFlavor", &jetHadronFlavor, "jetHadronFlavor/I");
-  JetTree->Branch("jetChargedEMEnergyFraction", &jetChargedEMEnergyFraction, "jetChargedEMEnergyFraction/F");
-  JetTree->Branch("jetNeutralEMEnergyFraction", &jetNeutralEMEnergyFraction, "jetNeutralEMEnergyFraction/F");
-  JetTree->Branch("jetChargedHadronEnergyFraction", &jetChargedHadronEnergyFraction, "jetChargedHadronEnergyFraction/F");
-  JetTree->Branch("jetNeutralHadronEnergyFraction", &jetNeutralHadronEnergyFraction, "jetNeutralHadronEnergyFraction/F");
-  JetTree->Branch("jetMatchedGenPt", &jetMatchedGenPt,"jetMatchedGenPt/F");
-  JetTree->Branch("jetMatchedGenEta", &jetMatchedGenEta,"jetMatchedGenEta/F");
-  JetTree->Branch("jetMatchedGenPhi", &jetMatchedGenPhi,"jetMatchedGenPhi/F");
-  JetTree->Branch("jetMatchedGenMass", &jetMatchedGenMass, "jetMatchedGenMass/F");
-  JetTree->Branch("jet_n_rechits", &jet_n_rechits, "jet_n_rechits/I");
-  JetTree->Branch("jet_rechit_E", &jet_rechit_E, "jet_rechit_E/F");
-  JetTree->Branch("jet_rechit_T", &jet_rechit_T, "jet_rechit_T/F");
+  JetTree->Branch("nJets", &nJets,"nJets/I");
+  JetTree->Branch("jetE", jetE,"jetE[nJets]/F");
+  JetTree->Branch("jetPt", jetPt,"jetPt[nJets]/F");
+  JetTree->Branch("jetEta", jetEta,"jetEta[nJets]/F");
+  JetTree->Branch("jetPhi", jetPhi,"jetPhi[nJets]/F");
+  JetTree->Branch("jetCISV", jetCISV,"jetCISV[nJets]/F");
+  JetTree->Branch("jetMass", jetMass, "jetMass[nJets]/F");
+  JetTree->Branch("jetJetArea", jetJetArea, "jetJetArea[nJets]/F");
+  JetTree->Branch("jetPileupE", jetPileupE, "jetPileupE[nJets]/F");
+  JetTree->Branch("jetPileupId", jetPileupId, "jetPileupId[nJets]/F");
+  JetTree->Branch("jetPileupIdFlag", jetPileupIdFlag, "jetPileupIdFlag[nJets]/I");
+  JetTree->Branch("jetPassIDLoose", jetPassIDLoose, "jetPassIDLoose[nJets]/O");
+  JetTree->Branch("jetPassIDTight", jetPassIDTight, "jetPassIDTight[nJets]/O");
+  JetTree->Branch("jetPassMuFrac", jetPassMuFrac, "jetPassMuFrac[nJets]/O");
+  JetTree->Branch("jetPassEleFrac", jetPassEleFrac, "jetPassEleFrac[nJets]/O");
+  JetTree->Branch("jetPartonFlavor", jetPartonFlavor, "jetPartonFlavor[nJets]/I");
+  JetTree->Branch("jetHadronFlavor", jetHadronFlavor, "jetHadronFlavor[nJets]/I");
+  JetTree->Branch("jetChargedEMEnergyFraction", jetChargedEMEnergyFraction, "jetChargedEMEnergyFraction[nJets]/F");
+  JetTree->Branch("jetNeutralEMEnergyFraction", jetNeutralEMEnergyFraction, "jetNeutralEMEnergyFraction[nJets]/F");
+  JetTree->Branch("jetChargedHadronEnergyFraction", jetChargedHadronEnergyFraction, "jetChargedHadronEnergyFraction[nJets]/F");
+  JetTree->Branch("jetNeutralHadronEnergyFraction", jetNeutralHadronEnergyFraction, "jetNeutralHadronEnergyFraction[nJets]/F");
+  JetTree->Branch("jetMatchedGenPt", jetMatchedGenPt,"jetMatchedGenPt[nJets]/F");
+  JetTree->Branch("jetMatchedGenEta", jetMatchedGenEta,"jetMatchedGenEta[nJets]/F");
+  JetTree->Branch("jetMatchedGenPhi", jetMatchedGenPhi,"jetMatchedGenPhi[nJets]/F");
+  JetTree->Branch("jetMatchedGenMass", jetMatchedGenMass, "jetMatchedGenMass[nJets]/F");
+  JetTree->Branch("jet_n_rechits", jet_n_rechits, "jet_n_rechits[nJets]/I");
+  JetTree->Branch("jet_rechit_E", jet_rechit_E, "jet_rechit_E[nJets]/F");
+  JetTree->Branch("jet_rechit_T", jet_rechit_T, "jet_rechit_T[nJets]/F");
 
   JetTree->Branch("nPhotons", &fJetNPhotons,"nPhotons/I");
   JetTree->Branch("phoPt", fJetPhotonPt,"phoPt[nPhotons]/F");
@@ -195,10 +195,15 @@ void JetNtupler::enableGenParticleBranches(){
   JetTree->Branch("gLLP_decay_vertex_y", gLLP_decay_vertex_y, "gLLP_decay_vertex_y[2]/F");
   JetTree->Branch("gLLP_decay_vertex_z", gLLP_decay_vertex_z, "gLLP_decay_vertex_z[2]/F");
   JetTree->Branch("gLLP_beta", gLLP_beta, "gLLP_beta[2]/F");
-  JetTree->Branch("gLLP_decays_px", gLLP_decays_px, "gLLP_decays_px[4]/F");
-  JetTree->Branch("gLLP_decays_py", gLLP_decays_py, "gLLP_decays_py[4]/F");
-  JetTree->Branch("gLLP_decays_pz", gLLP_decays_pz, "gLLP_decays_pz[4]/F");
-  JetTree->Branch("gLLP_decays_e", gLLP_decays_e, "gLLP_decays_e[4]/F");
+
+  JetTree->Branch("gLLP_daughter_travel_time", gLLP_daughter_travel_time, "gLLP_daughter_travel_time[4]/F");
+  JetTree->Branch("gLLP_daughter_pt", gLLP_daughter_pt, "gLLP_daughter_pt[4]/F");
+  JetTree->Branch("gLLP_daughter_eta", gLLP_daughter_eta, "gLLP_daughter_eta[4]/F");
+  JetTree->Branch("gLLP_daughter_phi", gLLP_daughter_phi, "gLLP_daughter_phi[4]/F");
+  JetTree->Branch("gLLP_daughter_e", gLLP_daughter_e, "gLLP_daughter_e[4]/F");
+  JetTree->Branch("gLLP_daughter_match_jet_index", gLLP_daughter_match_jet_index, "gLLP_daughter_match_jet_index[4]/i");
+  JetTree->Branch("gLLP_min_delta_r_match_jet", gLLP_min_delta_r_match_jet, "gLLP_min_delta_r_match_jet[4]/F");
+
   JetTree->Branch("nGenParticle", &nGenParticle, "nGenParticle/I");
   JetTree->Branch("gParticleMotherId", gParticleMotherId, "gParticleMotherId[nGenParticle]/I");
   JetTree->Branch("gParticleMotherIndex", gParticleMotherIndex, "gParticleMotherIndex[nGenParticle]/I");
@@ -315,34 +320,39 @@ void JetNtupler::resetBranches(){
     fJetPhotonRecHitTime->clear();
 */
     //Jet
-    jetE = 0.0;
-    jetPt = 0.0;
-    jetEta = 0.0;
-    jetPhi = 0.0;
-    jetCISV = 0.0;
-    jetMass =  -99.0;
-    jetJetArea = -99.0;
-    jetPileupE = -99.0;
-    jetPileupId = -99.0;
-    jetPileupIdFlag = -1;
-    jetPassIDLoose = false;
-    jetPassIDTight = false;
-    jetPassMuFrac = false;
-    jetPassEleFrac = false;
-    jetPartonFlavor = 0;
-    jetHadronFlavor = 0;
-    jetChargedEMEnergyFraction = -99.0;
-    jetNeutralEMEnergyFraction = -99.0;
-    jetChargedHadronEnergyFraction = -99.0;
-    jetNeutralHadronEnergyFraction = -99.0;
-    jetMatchedGenPt = 0.0;
-    jetMatchedGenEta = 0.0;
-    jetMatchedGenPhi = 0.0;
-    jetMatchedGenMass = 0.0;
-    jetMatchedGenTime = 0.0;
-    jet_n_rechits = 0;
-    jet_rechit_E = 0.0;
-    jet_rechit_T = 0.0;
+    nJets = 0;
+    for ( int i = 0; i < 1000; i++)
+    {
+      jetE[i] = 0.0;
+      jetPt[i] = 0.0;
+      jetEta[i] = 0.0;
+      jetPhi[i] = 0.0;
+      jetCISV[i] = 0.0;
+      jetMass[i] =  -99.0;
+      jetJetArea[i] = -99.0;
+      jetPileupE[i] = -99.0;
+      jetPileupId[i] = -99.0;
+      jetPileupIdFlag[i] = -1;
+      jetPassIDLoose[i] = false;
+      jetPassIDTight[i] = false;
+      jetPassMuFrac[i] = false;
+      jetPassEleFrac[i] = false;
+      jetPartonFlavor[i] = 0;
+      jetHadronFlavor[i] = 0;
+      jetChargedEMEnergyFraction[i] = -99.0;
+      jetNeutralEMEnergyFraction[i] = -99.0;
+      jetChargedHadronEnergyFraction[i] = -99.0;
+      jetNeutralHadronEnergyFraction[i] = -99.0;
+      jetMatchedGenPt[i] = 0.0;
+      jetMatchedGenEta[i] = 0.0;
+      jetMatchedGenPhi[i] = 0.0;
+      jetMatchedGenMass[i] = 0.0;
+      jetMatchedGenTime[i] = 0.0;
+      jet_n_rechits[i] = 0;
+      jet_rechit_E[i] = 0.0;
+      jet_rechit_T[i] = 0.0;
+    }
+
     for ( int i = 0; i < 2; i++ )
     {
       gLLP_prod_vertex_x[i] = -666.;
@@ -356,10 +366,13 @@ void JetNtupler::resetBranches(){
 
     for ( int i = 0; i < 4; i++ )
     {
-      gLLP_decays_px[i] = -666.;
-      gLLP_decays_py[i] = -666.;
-      gLLP_decays_pz[i] = -666.;
-      gLLP_decays_e[i] = -666.;
+      gLLP_daughter_pt[i] = -666.;
+      gLLP_daughter_eta[i] = -666.;
+      gLLP_daughter_phi[i] = -666.;
+      gLLP_daughter_e[i] = -666.;
+      gLLP_daughter_travel_time[i] = -666.;
+      gLLP_daughter_match_jet_index[i] = 666;
+      gLLP_min_delta_r_match_jet[i] = -666.;
     }
 }
 
@@ -390,76 +403,85 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   //initialize
   loadEvent(iEvent); //loads objects and resets tree branches
   NEvents->Fill(0); //increment event count
+  //resetting output tree branches
+  resetBranches();
 
-  for (const reco::PFJet &j : *jets) {
-    resetBranches();
+
+  //*************************************
+  //Fill Event-Level Info
+  //*************************************
+
+  //store basic event info
+  isData = isData_;
+  runNum = iEvent.id().run();
+  lumiNum = iEvent.luminosityBlock();
+  eventNum = iEvent.id().event();
+
+ //select the primary vertex, if any
+  nPV = 0;
+  myPV = &(vertices->front());
+
+  bool foundPV = false;
+  for(unsigned int i = 0; i < vertices->size(); i++)
+  {
+    if(vertices->at(i).isValid() && !vertices->at(i).isFake())
+    {
+      if (!foundPV)
+      {
+        myPV = &(vertices->at(i));
+        foundPV = true;
+      }
+      nPV++;
+    }
+  }
+
+  pvX = myPV->x();
+  pvY = myPV->y();
+  pvZ = myPV->z();
+
+  //get rho
+  Rho = *rhoFastjetAll;
+
+  //Fill Pileup info
+  if (!isData)
+  {
+    for(const PileupSummaryInfo &pu : *puInfo)
+    {
+      if ( pu.getBunchCrossing() == 0)
+      {
+        nPU = pu.getPU_NumInteractions();
+        nPUmean = pu.getTrueNumInteractions();
+      }
+    }
+  }
+
+  int i_jet = 0;
+  for (const reco::PFJet &j : *jets)
+  {
+    //resetBranches();
     if (j.pt() < 10) continue;
-    if (fabs(j.eta()) > 1.4) continue;
-
-    //*************************************
-    //Fill Event-Level Info
-    //*************************************
-
-    //store basic event info
-    isData = isData_;
-    runNum = iEvent.id().run();
-    lumiNum = iEvent.luminosityBlock();
-    eventNum = iEvent.id().event();
-
-   //select the primary vertex, if any
-    nPV = 0;
-    myPV = &(vertices->front());
-
-    bool foundPV = false;
-    for(unsigned int i = 0; i < vertices->size(); i++){
-      if(vertices->at(i).isValid() && !vertices->at(i).isFake()){
-	if (!foundPV) {
-	  myPV = &(vertices->at(i));
-	  foundPV = true;
-	}
-	nPV++;
-      }
-    }
-
-    pvX = myPV->x();
-    pvY = myPV->y();
-    pvZ = myPV->z();
-
-    //get rho
-    Rho = *rhoFastjetAll;
-
-    //Fill Pileup info
-    if (!isData) {
-      for(const PileupSummaryInfo &pu : *puInfo){
-	if ( pu.getBunchCrossing() == 0) {
-	  nPU = pu.getPU_NumInteractions();
-	  nPUmean = pu.getTrueNumInteractions();
-	}
-      }
-    }
-
-
+    if (fabs(j.eta()) > 2.4) continue;
     //*************************************
     //Fill Jet-Level Info
     //*************************************
-    jetE = j.energy();
-    jetPt = j.pt();
-    jetEta = j.eta();
-    jetPhi = j.phi();
-    jetMass = j.mass();
+    jetE[i_jet] = j.energy();
+    jetPt[i_jet] = j.pt();
+    jetEta[i_jet] = j.eta();
+    jetPhi[i_jet] = j.phi();
+    jetMass[i_jet] = j.mass();
 
     TLorentzVector thisJet;
-    thisJet.SetPtEtaPhiE(jetPt, jetEta, jetPhi, jetE);
+    thisJet.SetPtEtaPhiE(jetPt[i_jet], jetEta[i_jet], jetPhi[i_jet], jetE[i_jet]);
     //jetCISV = j.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
 
-    jetJetArea = j.jetArea();
-    jetPileupE = j.pileup();
+    jetJetArea[i_jet] = j.jetArea();
+    jetPileupE[i_jet] = j.pileup();
 
-    jetPileupIdFlag = 0;
-    jetPassIDLoose = passJetID(&j, 0);
-    jetPassIDTight = passJetID(&j, 1);
-    jetPassMuFrac  = ( j.muonEnergyFraction() < 0.80 );
-    jetPassEleFrac  = ( j.electronEnergyFraction() < 0.90 );
+    jetPileupIdFlag[i_jet] = 0;
+    jetPassIDLoose[i_jet] = passJetID(&j, 0);
+    jetPassIDTight[i_jet] = passJetID(&j, 1);
+    jetPassMuFrac[i_jet]  = ( j.muonEnergyFraction() < 0.80 );
+    jetPassEleFrac[i_jet]  = ( j.electronEnergyFraction() < 0.90 );
 
 
     // if (useGen_) {
@@ -467,10 +489,10 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     //   jetHadronFlavor = j.hadronFlavour();
     // }
 
-    jetChargedEMEnergyFraction = j.chargedEmEnergyFraction();
-    jetNeutralEMEnergyFraction = j.neutralEmEnergyFraction();
-    jetChargedHadronEnergyFraction = j.chargedHadronEnergyFraction();
-    jetNeutralHadronEnergyFraction = j.neutralHadronEnergyFraction();
+    jetChargedEMEnergyFraction[i_jet] = j.chargedEmEnergyFraction();
+    jetNeutralEMEnergyFraction[i_jet] = j.neutralEmEnergyFraction();
+    jetChargedHadronEnergyFraction[i_jet] = j.chargedHadronEnergyFraction();
+    jetNeutralHadronEnergyFraction[i_jet] = j.neutralHadronEnergyFraction();
 
 
     //*************************************
@@ -524,11 +546,11 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
         {
           const DetId recHitId = recHit->detid();
           const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
-          if ( deltaR(jetEta, jetPhi, recHitPos.eta(), recHitPos.phi())  < 0.4)
+          if ( deltaR(jetEta[i_jet], jetPhi[i_jet], recHitPos.eta(), recHitPos.phi())  < 0.4)
           {
             n_matched_rechits++;
-            jet_rechit_E += recHit->energy();
-            jet_rechit_T += recHit->time()*recHit->energy();
+            jet_rechit_E[i_jet] += recHit->energy();
+            jet_rechit_T[i_jet] += recHit->time()*recHit->energy();
           }
           //std::cout << recHitPos.eta() << std::endl;
         }
@@ -536,15 +558,18 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       }
     //cout << "Last Nphoton: " << fJetNPhotons << "\n";
     //std::cout << "n: " << n_matched_rechits << std::endl;
-    jet_n_rechits = n_matched_rechits;
-    jet_rechit_T = jet_rechit_T/jet_rechit_E;
+    jet_n_rechits[i_jet] = n_matched_rechits;
+    jet_rechit_T[i_jet] = jet_rechit_T[i_jet]/jet_rechit_E[i_jet];
 
-    //MC AND GEN LEVEL INFO
-    fillGenParticles();
-    //fillMC();
-    JetTree->Fill();
+    //incrementing jet counter
+    nJets++;
+    i_jet++;
   } //loop over jets
 
+  //MC AND GEN LEVEL INFO
+  fillGenParticles();
+  //fillMC();
+  JetTree->Fill();
 }
 
 //------ Method called once each job just before starting event loop ------//
@@ -864,6 +889,8 @@ bool JetNtupler::fillGenParticles(){
       bool noDaughter = false;
       const reco::Candidate *tmpParticle = prunedV[i];
 
+      //std::cout << "tmpParticle->numberOfDaughters(): " << tmpParticle->numberOfDaughters() << std::endl;
+
       while (!foundDaughter && !noDaughter)
       {
         if (tmpParticle->numberOfDaughters() > 0)
@@ -895,6 +922,42 @@ bool JetNtupler::fillGenParticles(){
           gLLP_decay_vertex_z[0] = dau->vz();
           gLLP_beta[0] = sqrt(gParticlePx[i]*gParticlePx[i]+gParticlePy[i]*gParticlePy[i]+gParticlePz[i]*gParticlePz[i])/gParticleE[i];
           //gLLP_decays_px[0]
+
+          //std::cout << tmpParticle->pdgId() << " number of daughters: " << tmpParticle->numberOfDaughters() << std::endl;
+          /*
+          First two LLP daughters belong to LLP->pdgID()=35
+          */
+          for (unsigned int id = 0; id < tmpParticle->numberOfDaughters(); id++ )
+          {
+            //std::cout << "====================" << std::endl;
+            //std::cout << " -> "<< tmpParticle->daughter(id)->pdgId() << std::endl;
+            if( id > 1 ) break;
+            TLorentzVector tmp;
+            tmp.SetPxPyPzE(tmpParticle->daughter(id)->px(), tmpParticle->daughter(id)->py(), tmpParticle->daughter(id)->pz(), tmpParticle->daughter(id)->energy());
+            gLLP_daughter_pt[id] = tmp.Pt();
+            gLLP_daughter_eta[id] = tmp.Eta();
+            gLLP_daughter_phi[id] = tmp.Phi();
+            gLLP_daughter_e[id]  = tmp.E();
+            double min_delta_r = 666.;
+            unsigned int match_jet_index = 666;
+            for ( int i_jet = 0; i_jet < nJets; i_jet++ )
+            {
+              double current_delta_r = deltaR(tmp.Eta(), tmp.Phi() , jetEta[i_jet], jetPhi[i_jet]);
+              //std::cout << i_jet << " current dR = " << current_delta_r << std::endl;
+              if ( current_delta_r < min_delta_r )
+              {
+                min_delta_r = current_delta_r;
+                match_jet_index = i_jet;
+                //std::cout << i_jet << " min dR = " << min_delta_r << std::endl;
+              }
+            }//end matching to jets
+            if ( min_delta_r < 0.3 )
+            {
+              gLLP_daughter_match_jet_index[id] = match_jet_index;
+              gLLP_min_delta_r_match_jet[id] = min_delta_r;
+              //std::cout << "min dR = " << min_delta_r << " matched to jet index " << match_jet_index << std::endl;
+            }
+          }
         }
         else if (gParticleId[i] == 36)
         {
@@ -902,6 +965,36 @@ bool JetNtupler::fillGenParticles(){
           gLLP_decay_vertex_y[1] = dau->vy();
           gLLP_decay_vertex_z[1] = dau->vz();
           gLLP_beta[1] = sqrt(gParticlePx[i]*gParticlePx[i]+gParticlePy[i]*gParticlePy[i]+gParticlePz[i]*gParticlePz[i])/gParticleE[i];
+          /*
+          Second two LLP daughters belong to LLP->pdgID()=36
+          */
+          for (unsigned int id = 0; id < tmpParticle->numberOfDaughters(); id++ )
+          {
+            //std::cout << " -> "<< tmpParticle->daughter(id)->pdgId() << std::endl;
+            if( id > 1 ) break;
+            TLorentzVector tmp;
+            tmp.SetPxPyPzE(tmpParticle->daughter(id)->px(), tmpParticle->daughter(id)->py(), tmpParticle->daughter(id)->pz(), tmpParticle->daughter(id)->energy());
+            gLLP_daughter_pt[id+2] = tmp.Pt();
+            gLLP_daughter_eta[id+2] = tmp.Eta();
+            gLLP_daughter_phi[id+2] = tmp.Phi();
+            gLLP_daughter_e[id+2]  = tmp.E();
+            double min_delta_r = 666;
+            unsigned int match_jet_index = 666;
+            for ( int i_jet = 0; i_jet < nJets; i_jet++ )
+            {
+              double current_delta_r = deltaR(tmp.Eta(), tmp.Phi() , jetEta[i_jet], jetPhi[i_jet]);
+              if ( current_delta_r < min_delta_r )
+              {
+                min_delta_r = current_delta_r;
+                match_jet_index = i_jet;
+              }
+            }//end matching to jets
+            if ( min_delta_r < 0.3 )
+            {
+              gLLP_daughter_match_jet_index[id+2] = match_jet_index;
+              gLLP_min_delta_r_match_jet[id+2] = min_delta_r;
+            }
+          }
         }
       }
     }

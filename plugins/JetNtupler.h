@@ -286,34 +286,35 @@ protected:
 
 
   //AK4 Jets
-  float jetE;
-  float jetPt;
-  float jetEta;
-  float jetPhi;
-  float jetCISV;
-  float jetMass;
-  float jetJetArea;
-  float jetPileupE;
-  float jetPileupId;
-  int   jetPileupIdFlag;
-  bool  jetPassIDLoose;
-  bool  jetPassIDTight;
-  bool  jetPassMuFrac;
-  bool  jetPassEleFrac;
-  int   jetPartonFlavor;
-  int   jetHadronFlavor;
-  float jetChargedEMEnergyFraction;
-  float jetNeutralEMEnergyFraction;
-  float jetChargedHadronEnergyFraction;
-  float jetNeutralHadronEnergyFraction;
-  float jetMatchedGenPt;
-  float jetMatchedGenEta;
-  float jetMatchedGenPhi;
-  float jetMatchedGenMass;
-  float jetMatchedGenTime;
-  int   jet_n_rechits;
-  float jet_rechit_E;
-  float jet_rechit_T;
+  int nJets;
+  float jetE[1000];
+  float jetPt[1000];
+  float jetEta[1000];
+  float jetPhi[1000];
+  float jetCISV[1000];
+  float jetMass[1000];
+  float jetJetArea[1000];
+  float jetPileupE[1000];
+  float jetPileupId[1000];
+  int   jetPileupIdFlag[1000];
+  bool  jetPassIDLoose[1000];
+  bool  jetPassIDTight[1000];
+  bool  jetPassMuFrac[1000];
+  bool  jetPassEleFrac[1000];
+  int   jetPartonFlavor[1000];
+  int   jetHadronFlavor[1000];
+  float jetChargedEMEnergyFraction[1000];
+  float jetNeutralEMEnergyFraction[1000];
+  float jetChargedHadronEnergyFraction[1000];
+  float jetNeutralHadronEnergyFraction[1000];
+  float jetMatchedGenPt[1000];
+  float jetMatchedGenEta[1000];
+  float jetMatchedGenPhi[1000];
+  float jetMatchedGenMass[1000];
+  float jetMatchedGenTime[1000];
+  int   jet_n_rechits[1000];
+  float jet_rechit_E[1000];
+  float jet_rechit_T[1000];
 
   //All Photons Match To the Jet (Take Seed RecHit as a reference)
   Int_t                   fJetNPhotons;
@@ -388,6 +389,7 @@ float gParticlePhi[GENPARTICLEARRAYSIZE];
 float gParticleDecayVertexX[GENPARTICLEARRAYSIZE];
 float gParticleDecayVertexY[GENPARTICLEARRAYSIZE];
 float gParticleDecayVertexZ[GENPARTICLEARRAYSIZE];
+
 float gLLP_prod_vertex_x[2];
 float gLLP_prod_vertex_y[2];
 float gLLP_prod_vertex_z[2];
@@ -395,10 +397,14 @@ float gLLP_decay_vertex_x[2];
 float gLLP_decay_vertex_y[2];
 float gLLP_decay_vertex_z[2];
 float gLLP_beta[2];
-float gLLP_decays_px[4];
-float gLLP_decays_py[4];
-float gLLP_decays_pz[4];
-float gLLP_decays_e[4];
+
+float gLLP_daughter_travel_time[4];
+float gLLP_daughter_pt[4];
+float gLLP_daughter_eta[4];
+float gLLP_daughter_phi[4];
+float gLLP_daughter_e[4];
+unsigned int gLLP_daughter_match_jet_index[4];
+float gLLP_min_delta_r_match_jet[4];
 };
 
 #endif

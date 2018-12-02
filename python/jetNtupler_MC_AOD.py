@@ -19,8 +19,9 @@ process.source = cms.Source("PoolSource",
         'file:/mnt/hadoop/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-30mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/5C922B1E-ECAB-E711-BB3C-FA163E1A8CC6.root'
    )
 )
+
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100000) )
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 #TFileService for output 
