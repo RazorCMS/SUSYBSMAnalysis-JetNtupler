@@ -195,6 +195,7 @@ void JetNtupler::enableGenParticleBranches(){
   JetTree->Branch("gLLP_decay_vertex_y", gLLP_decay_vertex_y, "gLLP_decay_vertex_y[2]/F");
   JetTree->Branch("gLLP_decay_vertex_z", gLLP_decay_vertex_z, "gLLP_decay_vertex_z[2]/F");
   JetTree->Branch("gLLP_beta", gLLP_beta, "gLLP_beta[2]/F");
+  JetTree->Branch("gLLP_travel_time", gLLP_travel_time, "gLLP_travel_time[2]/F");
 
   JetTree->Branch("gLLP_daughter_travel_time", gLLP_daughter_travel_time, "gLLP_daughter_travel_time[4]/F");
   JetTree->Branch("gLLP_daughter_pt", gLLP_daughter_pt, "gLLP_daughter_pt[4]/F");
@@ -362,6 +363,7 @@ void JetNtupler::resetBranches(){
       gLLP_decay_vertex_y[i] = -666.;
       gLLP_decay_vertex_z[i] = -666.;
       gLLP_beta[i] = -666.;
+      gLLP_travel_time[i] = -666.;
     }
 
     for ( int i = 0; i < 4; i++ )
@@ -921,6 +923,11 @@ bool JetNtupler::fillGenParticles(){
           gLLP_decay_vertex_y[0] = dau->vy();
           gLLP_decay_vertex_z[0] = dau->vz();
           gLLP_beta[0] = sqrt(gParticlePx[i]*gParticlePx[i]+gParticlePy[i]*gParticlePy[i]+gParticlePz[i]*gParticlePz[i])/gParticleE[i];
+          gLLP_travel_time[0] = sqrt(pow(gLLP_decay_vertex_x[0]-gLLP_prod_vertex_x[0],2)
+                                    +pow(gLLP_decay_vertex_y[0]-gLLP_prod_vertex_y[0],2)
+                                    +pow(gLLP_decay_vertex_z[0]-gLLP_prod_vertex_z[0],2))/(30. * gLLP_beta[0]);//1/30 is to convert cm to ns
+          double radius = sqrt( pow(gLLP_decay_vertex_x[0],2) + pow(gLLP_decay_vertex_y[0],2) );
+          double ecal_radius = 129.0;
           //gLLP_decays_px[0]
 
           //std::cout << tmpParticle->pdgId() << " number of daughters: " << tmpParticle->numberOfDaughters() << std::endl;
@@ -938,6 +945,11 @@ bool JetNtupler::fillGenParticles(){
             gLLP_daughter_eta[id] = tmp.Eta();
             gLLP_daughter_phi[id] = tmp.Phi();
             gLLP_daughter_e[id]  = tmp.E();
+            //Calculate dt from generation point to ECAL face
+
+            gLLP_daughter_travel_time[id] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E());//1/30 is to convert cm to ns
+
+
             double min_delta_r = 666.;
             unsigned int match_jet_index = 666;
             for ( int i_jet = 0; i_jet < nJets; i_jet++ )
@@ -965,6 +977,11 @@ bool JetNtupler::fillGenParticles(){
           gLLP_decay_vertex_y[1] = dau->vy();
           gLLP_decay_vertex_z[1] = dau->vz();
           gLLP_beta[1] = sqrt(gParticlePx[i]*gParticlePx[i]+gParticlePy[i]*gParticlePy[i]+gParticlePz[i]*gParticlePz[i])/gParticleE[i];
+          gLLP_travel_time[0] = sqrt(pow(gLLP_decay_vertex_x[1]-gLLP_prod_vertex_x[1],2)
+                                    +pow(gLLP_decay_vertex_y[1]-gLLP_prod_vertex_y[1],2)
+                                    +pow(gLLP_decay_vertex_z[1]-gLLP_prod_vertex_z[1],2))/(30. * gLLP_beta[1]);//1/30 is to convert cm to ns
+          double radius = sqrt( pow(gLLP_decay_vertex_x[1],2) + pow(gLLP_decay_vertex_y[1],2) );
+          double ecal_radius = 129.0;
           /*
           Second two LLP daughters belong to LLP->pdgID()=36
           */
@@ -978,6 +995,7 @@ bool JetNtupler::fillGenParticles(){
             gLLP_daughter_eta[id+2] = tmp.Eta();
             gLLP_daughter_phi[id+2] = tmp.Phi();
             gLLP_daughter_e[id+2]  = tmp.E();
+            gLLP_daughter_travel_time[id+2] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E());//1/30 is to convert cm to ns
             double min_delta_r = 666;
             unsigned int match_jet_index = 666;
             for ( int i_jet = 0; i_jet < nJets; i_jet++ )

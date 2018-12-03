@@ -397,6 +397,7 @@ float gLLP_decay_vertex_x[2];
 float gLLP_decay_vertex_y[2];
 float gLLP_decay_vertex_z[2];
 float gLLP_beta[2];
+float gLLP_travel_time[2];
 
 float gLLP_daughter_travel_time[4];
 float gLLP_daughter_pt[4];
