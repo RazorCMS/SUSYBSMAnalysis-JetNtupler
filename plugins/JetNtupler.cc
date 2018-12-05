@@ -947,7 +947,7 @@ bool JetNtupler::fillGenParticles(){
             gLLP_daughter_e[id]  = tmp.E();
             //Calculate dt from generation point to ECAL face
 
-            gLLP_daughter_travel_time[id] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E());//1/30 is to convert cm to ns
+            gLLP_daughter_travel_time[id] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E()) - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
 
 
             double min_delta_r = 666.;
@@ -995,7 +995,7 @@ bool JetNtupler::fillGenParticles(){
             gLLP_daughter_eta[id+2] = tmp.Eta();
             gLLP_daughter_phi[id+2] = tmp.Phi();
             gLLP_daughter_e[id+2]  = tmp.E();
-            gLLP_daughter_travel_time[id+2] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E());//1/30 is to convert cm to ns
+            gLLP_daughter_travel_time[id+2] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E()) - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
             double min_delta_r = 666;
             unsigned int match_jet_index = 666;
             for ( int i_jet = 0; i_jet < nJets; i_jet++ )
