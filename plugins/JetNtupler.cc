@@ -14,7 +14,6 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   useGen_(iConfig.getParameter<bool> ("useGen")),
   isFastsim_(iConfig.getParameter<bool> ("isFastsim")),
   enableTriggerInfo_(iConfig.getParameter<bool> ("enableTriggerInfo")),
-  readGenVertexTime_(iConfig.getParameter<bool> ("readGenVertexTime")),
   triggerPathNamesFile_(iConfig.getParameter<string> ("triggerPathNamesFile")),
   eleHLTFilterNamesFile_(iConfig.getParameter<string> ("eleHLTFilterNamesFile")),
   muonHLTFilterNamesFile_(iConfig.getParameter<string> ("muonHLTFilterNamesFile")),
@@ -72,7 +71,7 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   gedGsfElectronCoresToken_(consumes<vector<reco::GsfElectronCore> >(iConfig.getParameter<edm::InputTag>("gedGsfElectronCores"))),
   gedPhotonCoresToken_(consumes<vector<reco::PhotonCore> >(iConfig.getParameter<edm::InputTag>("gedPhotonCores")))
   //superClustersToken_(consumes<vector<reco::SuperCluster> >(iConfig.getParameter<edm::InputTag>("superClusters"))),
-  //  lostTracksToken_(consumes<vector<reco::PFCandidate> >(iConfig.getParameter<edm::InputTag>("lostTracks")))
+//  lostTracksToken_(consumes<vector<reco::PFCandidate> >(iConfig.getParameter<edm::InputTag>("lostTracks")))
 {
   //declare the TFileService for output
   edm::Service<TFileService> fs;
@@ -82,7 +81,6 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   //JetTree = new TTree("Jets", "selected AOD information");
   NEvents = fs->make<TH1F>("NEvents",";;NEvents;",1,-0.5,0.5);
 
-  if(readGenVertexTime_) genParticles_t0_Token_ = consumes<float>(iConfig.getParameter<edm::InputTag>("genParticles_t0"));
   /*
   fJetPhotonRecHitEta = new std::vector<float>; fJetPhotonRecHitEta->clear();
   fJetPhotonRecHitPhi = new std::vector<float>; fJetPhotonRecHitPhi->clear();
@@ -137,9 +135,12 @@ void JetNtupler::setBranches(){
   JetTree->Branch("jetMatchedGenPhi", jetMatchedGenPhi,"jetMatchedGenPhi[nJets]/F");
   JetTree->Branch("jetMatchedGenMass", jetMatchedGenMass, "jetMatchedGenMass[nJets]/F");
   JetTree->Branch("jet_n_rechits", jet_n_rechits, "jet_n_rechits[nJets]/I");
+  JetTree->Branch("jet_rechits_E", jet_rechits_E, "jet_rechits_E[nJets][1000]/F");
   JetTree->Branch("jet_rechit_E", jet_rechit_E, "jet_rechit_E[nJets]/F");
+  JetTree->Branch("jet_rechit_E_Ecut2", jet_rechit_E_Ecut2, "jet_rechit_E_Ecut2[nJets]/F");
   JetTree->Branch("jet_rechit_T", jet_rechit_T, "jet_rechit_T[nJets]/F");
-
+  JetTree->Branch("jet_rechit_T_Ecut2", jet_rechit_T_Ecut2, "jet_rechit_T_Ecut2[nJets]/F");
+  JetTree->Branch("jet_rechits_T", jet_rechits_T, "jet_rechits_T[nJets][1000]/F");
   JetTree->Branch("nPhotons", &fJetNPhotons,"nPhotons/I");
   JetTree->Branch("phoPt", fJetPhotonPt,"phoPt[nPhotons]/F");
   JetTree->Branch("phoEta", fJetPhotonEta,"phoEta[nPhotons]/F");
@@ -273,7 +274,6 @@ void JetNtupler::loadEvent(const edm::Event& iEvent){
 //  iEvent.getByToken(hbheIsoNoiseFilterToken_, hbheIsoNoiseFilter);
   //iEvent.getByToken(badChargedCandidateFilterToken_, badChargedCandidateFilter);
   //iEvent.getByToken(badMuonFilterToken_, badMuonFilter);
-  if(readGenVertexTime_) iEvent.getByToken(genParticles_t0_Token_,genParticles_t0);
 
   if (useGen_) {
 //    iEvent.getByToken(genParticlesToken_,genParticles);
@@ -304,7 +304,6 @@ void JetNtupler::resetBranches(){
     Rho = -99.0;
     nPUmean = -1;
     nPU = -1;
-
     //Photon
     fJetNPhotons = 0;
     for (int i=0; i< OBJECTARRAYSIZE; i++) {
@@ -355,7 +354,14 @@ void JetNtupler::resetBranches(){
       jet_n_rechits[i] = 0;
       jet_rechit_E[i] = 0.0;
       jet_rechit_T[i] = 0.0;
-    }
+      jet_rechit_E_Ecut2[i] = 0.0; //energy with a 2 GeV cut
+      jet_rechit_T_Ecut2[i] = 0.0;
+      for(int j =0;j<1000;j++)
+      {
+	jet_rechits_E[i][j] = -666.;
+	jet_rechits_T[i][j] = -666.;    
+      }
+   }
 
     for ( int i = 0; i < 2; i++ )
     {
@@ -553,10 +559,18 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
           const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
           if ( deltaR(jetEta[i_jet], jetPhi[i_jet], recHitPos.eta(), recHitPos.phi())  < 0.4)
           {
-            n_matched_rechits++;
             jet_rechit_E[i_jet] += recHit->energy();
             jet_rechit_T[i_jet] += recHit->time()*recHit->energy();
-          }
+	    jet_rechits_E[i_jet][n_matched_rechits] = recHit->energy(); 
+            jet_rechits_T[i_jet][n_matched_rechits] = recHit->time();
+	    //std::cout << recHit->time() << "," << jet_rechits_T[i_jet][n_matched_rechits] << "," << n_matched_rechits << std::endl;
+	    if (recHit->energy() > 2.0)
+	    {
+	      jet_rechit_E_Ecut2[i_jet] += recHit->energy();
+              jet_rechit_T_Ecut2[i_jet] += recHit->time()*recHit->energy();
+	    }
+	    n_matched_rechits++;
+         }
           //std::cout << recHitPos.eta() << std::endl;
         }
         //std::cout << recHitId << std::endl;
@@ -565,7 +579,7 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     //std::cout << "n: " << n_matched_rechits << std::endl;
     jet_n_rechits[i_jet] = n_matched_rechits;
     jet_rechit_T[i_jet] = jet_rechit_T[i_jet]/jet_rechit_E[i_jet];
-
+    jet_rechit_T_Ecut2[i_jet] = jet_rechit_T_Ecut2[i_jet]/jet_rechit_E_Ecut2[i_jet];
     //incrementing jet counter
     nJets++;
     i_jet++;
@@ -937,7 +951,6 @@ bool JetNtupler::fillGenParticles(){
           /*
           First two LLP daughters belong to LLP->pdgID()=35
           */
-
           for (unsigned int id = 0; id < tmpParticle->numberOfDaughters(); id++ )
           {
             //std::cout << "====================" << std::endl;
@@ -949,23 +962,12 @@ bool JetNtupler::fillGenParticles(){
             gLLP_daughter_eta[id] = tmp.Eta();
             gLLP_daughter_phi[id] = tmp.Phi();
             gLLP_daughter_e[id]  = tmp.E();
-
-
-            gLLP_daughter_travel_time[id] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E());// - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
             //Calculate dt from generation point to ECAL face
-            double x_ecal = gLLP_decay_vertex_x[0] + 30. * (tmp.Px()/tmp.E())*gLLP_daughter_travel_time[id];
-            double y_ecal = gLLP_decay_vertex_y[0] + 30. * (tmp.Py()/tmp.E())*gLLP_daughter_travel_time[id];
-            double z_ecal = gLLP_decay_vertex_z[0] + 30. * (tmp.Pz()/tmp.E())*gLLP_daughter_travel_time[id];
-            if( fabs(z_ecal) < 271.6561246934 )
-            {
-              gLLP_daughter_travel_time[id] = gLLP_daughter_travel_time[id] - (1./30.) * sqrt(pow(x_ecal,2)+pow(y_ecal,2)+pow(z_ecal,2));
-              //std::cout << "(x,y,z) @ ecal = (" << x_ecal << "," << y_ecal << "," << z_ecal << ")" << std::endl;
-              //std::cout << "extrapolated r = " << sqrt(pow(x_ecal,2)+pow(y_ecal,2)) << std::endl;
-            }
-            else
-            {
-              gLLP_daughter_travel_time[id] = -666;
-            }
+
+            //gLLP_daughter_travel_time[id] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E()) - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
+	    gLLP_daughter_travel_time[id] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E());
+	    double photon_travel_time = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[0] + (ecal_radius-radius) * sinh(tmp.Eta())),2)); 
+	    gLLP_daughter_travel_time[id] = gLLP_daughter_travel_time[id] - photon_travel_time;
 
             double min_delta_r = 666.;
             unsigned int match_jet_index = 666;
@@ -984,7 +986,9 @@ bool JetNtupler::fillGenParticles(){
             {
               gLLP_daughter_match_jet_index[id] = match_jet_index;
               gLLP_min_delta_r_match_jet[id] = min_delta_r;
-              //std::cout << "min dR = " << min_delta_r << " matched to jet index " << match_jet_index << std::endl;
+
+
+		//std::cout << "min dR = " << min_delta_r << " matched to jet index " << match_jet_index << std::endl;
             }
           }
         }
@@ -1013,24 +1017,10 @@ bool JetNtupler::fillGenParticles(){
             gLLP_daughter_phi[id+2] = tmp.Phi();
             gLLP_daughter_e[id+2]  = tmp.E();
             //gLLP_daughter_travel_time[id+2] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E()) - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
-            gLLP_daughter_travel_time[id+2] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E());// - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
-
-            //Calculate dt from generation point to ECAL face
-            double x_ecal = gLLP_decay_vertex_x[1] + 30. * (tmp.Px()/tmp.E())*gLLP_daughter_travel_time[id+2];
-            double y_ecal = gLLP_decay_vertex_y[1] + 30. * (tmp.Py()/tmp.E())*gLLP_daughter_travel_time[id+2];
-            double z_ecal = gLLP_decay_vertex_z[1] + 30. * (tmp.Pz()/tmp.E())*gLLP_daughter_travel_time[id+2];
-            if( fabs(z_ecal) < 271.6561246934 )
-            {
-              gLLP_daughter_travel_time[id+2] = gLLP_daughter_travel_time[id+2] - (1./30.) * sqrt(pow(x_ecal,2)+pow(y_ecal,2)+pow(z_ecal,2));
-              //std::cout << "(x,y,z) @ ecal = (" << x_ecal << "," << y_ecal << "," << z_ecal << ")" << std::endl;
-              //std::cout << "extrapolated r = " << sqrt(pow(x_ecal,2)+pow(y_ecal,2)) << std::endl;
-            }
-            else
-            {
-              gLLP_daughter_travel_time[id+2] = -666;
-            }
-
-            double min_delta_r = 666;
+	    gLLP_daughter_travel_time[id+2] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E());
+            double photon_travel_time = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[1] + (ecal_radius-radius) * sinh(tmp.Eta())),2));
+	    gLLP_daughter_travel_time[id+2] = gLLP_daughter_travel_time[id+2] - photon_travel_time;
+	    double min_delta_r = 666;
             unsigned int match_jet_index = 666;
             for ( int i_jet = 0; i_jet < nJets; i_jet++ )
             {
@@ -1045,7 +1035,7 @@ bool JetNtupler::fillGenParticles(){
             {
               gLLP_daughter_match_jet_index[id+2] = match_jet_index;
               gLLP_min_delta_r_match_jet[id+2] = min_delta_r;
-            }
+	    }
           }
         }
       }
