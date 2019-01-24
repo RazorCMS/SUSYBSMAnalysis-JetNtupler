@@ -14,6 +14,7 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   useGen_(iConfig.getParameter<bool> ("useGen")),
   isFastsim_(iConfig.getParameter<bool> ("isFastsim")),
   enableTriggerInfo_(iConfig.getParameter<bool> ("enableTriggerInfo")),
+  readGenVertexTime_(iConfig.getParameter<bool> ("readGenVertexTime")),
   triggerPathNamesFile_(iConfig.getParameter<string> ("triggerPathNamesFile")),
   eleHLTFilterNamesFile_(iConfig.getParameter<string> ("eleHLTFilterNamesFile")),
   muonHLTFilterNamesFile_(iConfig.getParameter<string> ("muonHLTFilterNamesFile")),
@@ -71,7 +72,7 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   gedGsfElectronCoresToken_(consumes<vector<reco::GsfElectronCore> >(iConfig.getParameter<edm::InputTag>("gedGsfElectronCores"))),
   gedPhotonCoresToken_(consumes<vector<reco::PhotonCore> >(iConfig.getParameter<edm::InputTag>("gedPhotonCores")))
   //superClustersToken_(consumes<vector<reco::SuperCluster> >(iConfig.getParameter<edm::InputTag>("superClusters"))),
-//  lostTracksToken_(consumes<vector<reco::PFCandidate> >(iConfig.getParameter<edm::InputTag>("lostTracks")))
+  //  lostTracksToken_(consumes<vector<reco::PFCandidate> >(iConfig.getParameter<edm::InputTag>("lostTracks")))
 {
   //declare the TFileService for output
   edm::Service<TFileService> fs;
@@ -81,6 +82,7 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   //JetTree = new TTree("Jets", "selected AOD information");
   NEvents = fs->make<TH1F>("NEvents",";;NEvents;",1,-0.5,0.5);
 
+  if(readGenVertexTime_) genParticles_t0_Token_ = consumes<float>(iConfig.getParameter<edm::InputTag>("genParticles_t0"));
   /*
   fJetPhotonRecHitEta = new std::vector<float>; fJetPhotonRecHitEta->clear();
   fJetPhotonRecHitPhi = new std::vector<float>; fJetPhotonRecHitPhi->clear();
@@ -271,6 +273,7 @@ void JetNtupler::loadEvent(const edm::Event& iEvent){
 //  iEvent.getByToken(hbheIsoNoiseFilterToken_, hbheIsoNoiseFilter);
   //iEvent.getByToken(badChargedCandidateFilterToken_, badChargedCandidateFilter);
   //iEvent.getByToken(badMuonFilterToken_, badMuonFilter);
+  if(readGenVertexTime_) iEvent.getByToken(genParticles_t0_Token_,genParticles_t0);
 
   if (useGen_) {
 //    iEvent.getByToken(genParticlesToken_,genParticles);
@@ -934,6 +937,7 @@ bool JetNtupler::fillGenParticles(){
           /*
           First two LLP daughters belong to LLP->pdgID()=35
           */
+
           for (unsigned int id = 0; id < tmpParticle->numberOfDaughters(); id++ )
           {
             //std::cout << "====================" << std::endl;
@@ -945,10 +949,23 @@ bool JetNtupler::fillGenParticles(){
             gLLP_daughter_eta[id] = tmp.Eta();
             gLLP_daughter_phi[id] = tmp.Phi();
             gLLP_daughter_e[id]  = tmp.E();
+
+
+            gLLP_daughter_travel_time[id] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E());// - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
             //Calculate dt from generation point to ECAL face
-
-            gLLP_daughter_travel_time[id] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E()) - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
-
+            double x_ecal = gLLP_decay_vertex_x[0] + 30. * (tmp.Px()/tmp.E())*gLLP_daughter_travel_time[id];
+            double y_ecal = gLLP_decay_vertex_y[0] + 30. * (tmp.Py()/tmp.E())*gLLP_daughter_travel_time[id];
+            double z_ecal = gLLP_decay_vertex_z[0] + 30. * (tmp.Pz()/tmp.E())*gLLP_daughter_travel_time[id];
+            if( fabs(z_ecal) < 271.6561246934 )
+            {
+              gLLP_daughter_travel_time[id] = gLLP_daughter_travel_time[id] - (1./30.) * sqrt(pow(x_ecal,2)+pow(y_ecal,2)+pow(z_ecal,2));
+              //std::cout << "(x,y,z) @ ecal = (" << x_ecal << "," << y_ecal << "," << z_ecal << ")" << std::endl;
+              //std::cout << "extrapolated r = " << sqrt(pow(x_ecal,2)+pow(y_ecal,2)) << std::endl;
+            }
+            else
+            {
+              gLLP_daughter_travel_time[id] = -666;
+            }
 
             double min_delta_r = 666.;
             unsigned int match_jet_index = 666;
@@ -977,7 +994,7 @@ bool JetNtupler::fillGenParticles(){
           gLLP_decay_vertex_y[1] = dau->vy();
           gLLP_decay_vertex_z[1] = dau->vz();
           gLLP_beta[1] = sqrt(gParticlePx[i]*gParticlePx[i]+gParticlePy[i]*gParticlePy[i]+gParticlePz[i]*gParticlePz[i])/gParticleE[i];
-          gLLP_travel_time[0] = sqrt(pow(gLLP_decay_vertex_x[1]-gLLP_prod_vertex_x[1],2)
+          gLLP_travel_time[1] = sqrt(pow(gLLP_decay_vertex_x[1]-gLLP_prod_vertex_x[1],2)
                                     +pow(gLLP_decay_vertex_y[1]-gLLP_prod_vertex_y[1],2)
                                     +pow(gLLP_decay_vertex_z[1]-gLLP_prod_vertex_z[1],2))/(30. * gLLP_beta[1]);//1/30 is to convert cm to ns
           double radius = sqrt( pow(gLLP_decay_vertex_x[1],2) + pow(gLLP_decay_vertex_y[1],2) );
@@ -995,7 +1012,24 @@ bool JetNtupler::fillGenParticles(){
             gLLP_daughter_eta[id+2] = tmp.Eta();
             gLLP_daughter_phi[id+2] = tmp.Phi();
             gLLP_daughter_e[id+2]  = tmp.E();
-            gLLP_daughter_travel_time[id+2] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E()) - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
+            //gLLP_daughter_travel_time[id+2] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E()) - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
+            gLLP_daughter_travel_time[id+2] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E());// - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
+
+            //Calculate dt from generation point to ECAL face
+            double x_ecal = gLLP_decay_vertex_x[1] + 30. * (tmp.Px()/tmp.E())*gLLP_daughter_travel_time[id+2];
+            double y_ecal = gLLP_decay_vertex_y[1] + 30. * (tmp.Py()/tmp.E())*gLLP_daughter_travel_time[id+2];
+            double z_ecal = gLLP_decay_vertex_z[1] + 30. * (tmp.Pz()/tmp.E())*gLLP_daughter_travel_time[id+2];
+            if( fabs(z_ecal) < 271.6561246934 )
+            {
+              gLLP_daughter_travel_time[id+2] = gLLP_daughter_travel_time[id+2] - (1./30.) * sqrt(pow(x_ecal,2)+pow(y_ecal,2)+pow(z_ecal,2));
+              //std::cout << "(x,y,z) @ ecal = (" << x_ecal << "," << y_ecal << "," << z_ecal << ")" << std::endl;
+              //std::cout << "extrapolated r = " << sqrt(pow(x_ecal,2)+pow(y_ecal,2)) << std::endl;
+            }
+            else
+            {
+              gLLP_daughter_travel_time[id+2] = -666;
+            }
+
             double min_delta_r = 666;
             unsigned int match_jet_index = 666;
             for ( int i_jet = 0; i_jet < nJets; i_jet++ )
