@@ -144,6 +144,7 @@ protected:
   bool    useGen_;
   bool    isFastsim_;
   bool enableTriggerInfo_;
+  bool readGenVertexTime_;
 
   // Mapping of the HLT Triggers and Filters
   string triggerPathNamesFile_;
@@ -217,8 +218,9 @@ protected:
   edm::EDGetTokenT<vector<reco::Conversion> > singleLegConversionsToken_;
   edm::EDGetTokenT<vector<reco::GsfElectronCore> > gedGsfElectronCoresToken_;
   edm::EDGetTokenT<vector<reco::PhotonCore> > gedPhotonCoresToken_;
-//  edm::EDGetTokenT<vector<reco::SuperCluster> > superClustersToken_;
-//  edm::EDGetTokenT<vector<reco::PFCandidate> > lostTracksToken_;
+  //  edm::EDGetTokenT<vector<reco::SuperCluster> > superClustersToken_;
+  //  edm::EDGetTokenT<vector<reco::PFCandidate> > lostTracksToken_;
+  edm::EDGetTokenT<float> genParticles_t0_Token_;
 
 
   //EDM handles for each miniAOD input object
@@ -273,8 +275,10 @@ protected:
   edm::Handle<vector<reco::Conversion>> singleLegConversions;
   edm::Handle<vector<reco::GsfElectronCore> > gedGsfElectronCores;
   edm::Handle<vector<reco::PhotonCore> > gedPhotonCores;
-//  edm::Handle<vector<reco::SuperCluster> > superClusters;
-//  edm::Handle<vector<reco::PFCandidate> > lostTracks;
+  //  edm::Handle<vector<reco::SuperCluster> > superClusters;
+  //  edm::Handle<vector<reco::PFCandidate> > lostTracks;
+  edm::Handle<float> genParticles_t0;
+
   const reco::Vertex *myPV;
   const reco::Vertex *myPV_GenMatch;
 
@@ -315,10 +319,11 @@ protected:
   int   jet_n_rechits[1000];
   float jet_rechit_E[1000];
   float jet_rechit_T[1000];
+
   float jet_rechit_E_Ecut2[1000];
   float jet_rechit_T_Ecut2[1000];
   float jet_rechits_E[1000][1000];
-  float jet_rechits_T[1000][1000];
+  float jet_rechits_T[1000][1000]; 
   //All Photons Match To the Jet (Take Seed RecHit as a reference)
   Int_t                   fJetNPhotons;
   Float_t                 fJetPhotonPt[OBJECTARRAYSIZE];
