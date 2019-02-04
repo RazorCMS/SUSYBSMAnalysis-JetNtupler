@@ -34,8 +34,8 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   //genParticlesToken_(consumes<edm::View<pat::PackedGenParticle> >(iConfig.getParameter<edm::InputTag>("genParticles"))),
   genParticlesToken_(consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genParticles"))),
   genJetsToken_(consumes<reco::GenJetCollection>(iConfig.getParameter<edm::InputTag>("genJets"))),
-  triggerBitsToken_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBits"))),
   hepMCToken_(consumes<edm::HepMCProduct>(iConfig.getParameter<edm::InputTag>("hepMC"))),
+  triggerBitsToken_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBits"))),
   //triggerObjectsToken_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjects"))),
   //triggerPrescalesToken_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPrescales"))),
   metToken_(consumes<reco::PFMETCollection>(iConfig.getParameter<edm::InputTag>("mets"))),
@@ -81,7 +81,42 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   JetTree = fs->make<TTree>("Jets", "selected AOD information");
   //JetTree = new TTree("Jets", "selected AOD information");
   NEvents = fs->make<TH1F>("NEvents",";;NEvents;",1,-0.5,0.5);
+  //*****************************************************************************************
+  //Read in HLT Trigger Path List from config file
+  //*****************************************************************************************
+  for (int i = 0; i<NTriggersMAX; ++i) triggerPathNames[i] = "";
+  ifstream myfile (edm::FileInPath(triggerPathNamesFile_.c_str()).fullPath().c_str()) ;
+  if (myfile.is_open())
+  {
+    std::string line;
+    int index;
+    std::string hltpathname;
 
+    while(myfile>>index>>hltpathname)
+    {
+      if (index < NTriggersMAX)
+      {
+        triggerPathNames[index] = hltpathname;
+      }
+    }
+    myfile.close();
+  }
+  else
+  {
+    std::cout << "ERROR!!! Could not open trigger path name file : " << edm::FileInPath(triggerPathNamesFile_.c_str()).fullPath().c_str() << "\n";
+  }
+
+  if(enableTriggerInfo_)
+  {
+    std::cout << "\n";
+    std::cout << "****************** Trigger Paths Defined For Razor Ntuple ******************\n";
+    for (int i = 0; i<NTriggersMAX; ++i)
+    {
+      if (triggerPathNames[i] != "") std::cout << "Trigger " << i << " " << triggerPathNames[i] << "\n";
+    }
+    std::cout << "****************************************************************************\n";
+    std::cout << "\n";
+  }
   if(readGenVertexTime_) genParticles_t0_Token_ = consumes<float>(iConfig.getParameter<edm::InputTag>("genParticles_t0"));
   /*
   fJetPhotonRecHitEta = new std::vector<float>; fJetPhotonRecHitEta->clear();
@@ -89,11 +124,12 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   fJetPhotonRecHitE = new std::vector<float>; fJetPhotonRecHitE->clear();
   fJetPhotonRecHitTime = new std::vector<float>; fJetPhotonRecHitTime->clear();
 */
+
 }
 
 JetNtupler::~JetNtupler()
 {
-}
+};
 
 //------ Enable the desired set of branches ------//
 void JetNtupler::setBranches(){
@@ -161,6 +197,7 @@ void JetNtupler::setBranches(){
   cout << "BRANCHES\n";
   //enableMCBranches();
   enableGenParticleBranches();
+  if (enableTriggerInfo_) enableTriggerBranches();
 };
 
 
@@ -192,6 +229,15 @@ void JetNtupler::enableMCBranches(){
   JetTree->Branch("alphasWeights", "std::vector<float>",&alphasWeights);
   */
 }
+
+void JetNtupler::enableTriggerBranches()
+{
+  nameHLT = new std::vector<std::string>; nameHLT->clear();
+  JetTree->Branch("HLTDecision", &triggerDecision, ("HLTDecision[" + std::to_string(NTriggersMAX) +  "]/O").c_str());
+  //JetTree->Branch("HLTPrescale", &triggerHLTPrescale, ("HLTPrescale[" + std::to_string(NTriggersMAX) +  "]/I").c_str());
+  //JetTree->Branch("HLTMR", &HLTMR, "HLTMR/F");
+  //JetTree->Branch("HLTRSQ", &HLTRSQ, "HLTRSQ/F");
+};
 
 void JetNtupler::enableGenParticleBranches(){
   JetTree->Branch("gLLP_prod_vertex_x", gLLP_prod_vertex_x, "gLLP_prod_vertex_x[2]/F");
@@ -235,8 +281,9 @@ void JetNtupler::loadEvent(const edm::Event& iEvent){
   //load all miniAOD objects for the current event
   iEvent.getByToken(triggerBitsToken_, triggerBits);
   iEvent.getByToken(hepMCToken_, hepMC);
-//  iEvent.getByToken(triggerObjectsToken_, triggerObjects);
-//  iEvent.getByToken(triggerPrescalesToken_, triggerPrescales);
+  iEvent.getByToken(triggerBitsToken_, triggerBits);
+  //iEvent.getByToken(triggerObjectsToken_, triggerObjects);
+  //iEvent.getByToken(triggerPrescalesToken_, triggerPrescales);
   iEvent.getByToken(metFilterBitsToken_, metFilterBits);
   iEvent.getByToken(verticesToken_, vertices);
   iEvent.getByToken(tracksTag_,tracks);
@@ -360,7 +407,7 @@ void JetNtupler::resetBranches(){
       jet_rechit_E[i] = 0.0;
       jet_rechit_T[i] = 0.0;
       jet_rechit_E_Ecut2[i] = 0.0; //energy with a 2 GeV cut
-  --  jet_rechit_T_Ecut2[i] = 0.0;
+      jet_rechit_T_Ecut2[i] = 0.0;
       for(int j =0;j<1000;j++)
       {
         jet_rechits_E[i][j] = -666.;
@@ -593,6 +640,8 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   //MC AND GEN LEVEL INFO
   fillGenParticles();
   //fillMC();
+  //fill trigger bits
+  if ( enableTriggerInfo_ ) fillTrigger( iEvent );
   JetTree->Fill();
 }
 
@@ -673,9 +722,9 @@ double JetNtupler::deltaPhi(double phi1, double phi2)
 
 double JetNtupler::deltaR(double eta1, double phi1, double eta2, double phi2)
 {
-double dphi = deltaPhi(phi1,phi2);
-double deta = eta1 - eta2;
-return sqrt( dphi*dphi + deta*deta);
+  double dphi = deltaPhi(phi1,phi2);
+  double deta = eta1 - eta2;
+  return sqrt( dphi*dphi + deta*deta);
 };
 
 
@@ -978,7 +1027,7 @@ bool JetNtupler::fillGenParticles(){
             if( fabs(z_ecal) < 271.6561246934 )
             {
     	      double photon_travel_time = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[0] + (ecal_radius-radius) * sinh(tmp.Eta())),2));
-              gLLP_daughter_travel_time[id] = gLLP_daughter_travel_time[id] - photon_travel_time;          
+              gLLP_daughter_travel_time[id] = gLLP_daughter_travel_time[id] - photon_travel_time;
 	      //std::cout << "(x,y,z) @ ecal = (" << x_ecal << "," << y_ecal << "," << z_ecal << ")" << std::endl;
               //std::cout << "extrapolated r = " << sqrt(pow(x_ecal,2)+pow(y_ecal,2)) << std::endl;
             }
@@ -1100,5 +1149,82 @@ bool JetNtupler::fillGenParticles(){
   return true;
 };
 
+
+bool JetNtupler::fillTrigger(const edm::Event& iEvent)
+{
+
+  //fill trigger information
+  const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
+  // std::cout << "\n === TRIGGER PATHS === " << std::endl;
+  //********************************************************************
+  //Option to save all HLT path names in the ntuple per event
+  //Expensive option in terms of ntuple size
+  //********************************************************************
+  nameHLT->clear();
+  for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i)
+  {
+    string hltPathNameReq = "HLT_";
+    //if (triggerBits->accept(i))
+    if ((names.triggerName(i)).find(hltPathNameReq) != string::npos) nameHLT->push_back(names.triggerName(i));
+    /*
+    std::cout << "Trigger " << names.triggerName(i) <<
+    ", prescale " << triggerPrescales->getPrescaleForIndex(i) <<
+    ": " << (triggerBits->accept(i) ? "PASS" : "fail (or not run)")
+    << std::endl;
+    if ((names.triggerName(i)).find(hltPathNameReq) != string::npos && triggerBits->accept(i)) std::cout << "Trigger " << names.triggerName(i) <<
+    ": " << (triggerBits->accept(i) ? "PASS" : "fail (or not run)")
+    << std::endl;
+    */
+  }
+  //std::cout << "n triggers: " <<  nameHLT->size() << std::endl;
+  //std::cout << "====================" << std::endl;
+  //for ( unsigned int i = 0; i < nameHLT->size(); i++ )
+  //{
+  //  std::cout << i << " -> " << nameHLT->at(i) << std::endl;
+  //}
+  //********************************************************************
+  // Save trigger decisions in array of booleans
+  //********************************************************************
+
+  for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i)
+  {
+    string hltPathNameReq = "HLT_";
+    if ((names.triggerName(i)).find(hltPathNameReq) == string::npos) continue;
+    if ((names.triggerName(i)).find_last_of("_") == string::npos) continue;
+    int lastUnderscorePos = (names.triggerName(i)).find_last_of("_");
+    string hltPathNameWithoutVersionNumber = (names.triggerName(i)).substr(0,lastUnderscorePos);
+
+    for (unsigned int j = 0; j < NTriggersMAX; ++j)
+    {
+      if (triggerPathNames[j] == "") continue;
+      if (hltPathNameWithoutVersionNumber == triggerPathNames[j])
+      {
+        triggerDecision[j] = triggerBits->accept(i);
+        //triggerHLTPrescale[j] = triggerPrescales->getPrescaleForIndex(i);
+      }
+    }
+  }
+
+  //********************************************************************
+  // Print Trigger Objects
+  //********************************************************************
+/*
+  for (pat::TriggerObjectStandAlone trigObject : *triggerObjects)
+  {
+    //cout << "triggerObj: " << trigObject.pt() << " " << trigObject.eta() << " " << trigObject.phi() << "\n";
+    //bool foundRazor = false;
+    //Need to unpack the filter labels before checking
+    trigObject.unpackFilterLabels(iEvent, *triggerBits);
+    for(int j=0; j<int(trigObject.filterLabels().size());j++)
+    {
+      //if ((trigObject.filterLabels())[j] == "hltRsqMR200Rsq0p0196MR100Calo") foundRazor = true;
+      // trigObject.unpackPathNames(names);
+      // cout << "filter: " << (trigObject.pathNames())[j] << " " << (trigObject.filterLabels())[j] << "\n";
+      //cout << "filter: " << (trigObject.filterLabels())[j] << "\n";
+    }
+  }
+*/
+  return true;
+};
 //define this as a plug-in
 DEFINE_FWK_MODULE(JetNtupler);
