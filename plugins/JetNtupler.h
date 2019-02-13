@@ -124,10 +124,8 @@ public:
   double deltaR(double eta1, double phi1, double eta2, double phi2);
   void enableMCBranches();
   void enableGenParticleBranches();
-  void enableTriggerBranches();
   bool fillMC();
   bool fillGenParticles();
-  bool fillTrigger(const edm::Event& iEvent);
   const reco::Candidate* findFirstMotherWithDifferentID(const reco::Candidate *particle);
   const reco::Candidate* findOriginalMotherWithSameID(const reco::Candidate *particle);
 
@@ -143,6 +141,7 @@ protected:
 
   // Control Switches
   bool    isData_;
+  bool    isFourJet_;
   bool    useGen_;
   bool    isFastsim_;
   bool enableTriggerInfo_;
@@ -153,7 +152,7 @@ protected:
   string eleHLTFilterNamesFile_;
   string muonHLTFilterNamesFile_;
   string photonHLTFilterNamesFile_;
-  static const int NTriggersMAX = 601;
+  static const int NTriggersMAX = 300;
   string triggerPathNames[NTriggersMAX];
   static const int MAX_ElectronHLTFilters = 100;
   string eleHLTFilterNames[MAX_ElectronHLTFilters];
@@ -183,12 +182,10 @@ protected:
 //  edm::EDGetTokenT<edm::View<reco::GenParticle> > prunedGenParticlesToken_;
   edm::EDGetTokenT<reco::GenParticleCollection> genParticlesToken_;
   edm::EDGetTokenT<reco::GenJetCollection> genJetsToken_;
-  edm::EDGetTokenT<edm::HepMCProduct> hepMCToken_;
-
   edm::EDGetTokenT<edm::TriggerResults> triggerBitsToken_;
-  edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectsToken_;
-  edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescalesToken_;
-
+  edm::EDGetTokenT<edm::HepMCProduct> hepMCToken_;
+//  edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectsToken_;
+//  edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescalesToken_;
   edm::EDGetTokenT<reco::PFMETCollection> metToken_;
   edm::EDGetTokenT<reco::PFMETCollection> metNoHFToken_;
   edm::EDGetTokenT<reco::PFMETCollection> metPuppiToken_;
@@ -229,9 +226,9 @@ protected:
 
   //EDM handles for each miniAOD input object
   edm::Handle<edm::TriggerResults> triggerBits;
-  edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
-  edm::Handle<pat::PackedTriggerPrescales> triggerPrescales;
   edm::Handle<edm::HepMCProduct> hepMC;
+//  edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
+//  edm::Handle<pat::PackedTriggerPrescales> triggerPrescales;
   edm::Handle<edm::TriggerResults> metFilterBits;
   edm::Handle<reco::VertexCollection> vertices;
   edm::Handle<edm::View<reco::Track> > tracks;
@@ -323,11 +320,37 @@ protected:
   int   jet_n_rechits[1000];
   float jet_rechit_E[1000];
   float jet_rechit_T[1000];
+  float jet_pv_rechit_T[1000];
 
+  float jet_rechit_E_Ecut4[1000];
+  float jet_rechit_T_Ecut4[1000];
+  float jet_rechit_E_Ecut3[1000];
+  float jet_rechit_T_Ecut3[1000];
   float jet_rechit_E_Ecut2[1000];
   float jet_rechit_T_Ecut2[1000];
+  float jet_rechit_E_Ecut1p5[1000];
+  float jet_rechit_T_Ecut1p5[1000];
+  float jet_rechit_E_Ecut1[1000];
+  float jet_rechit_T_Ecut1[1000];
+  float jet_rechit_E_Ecut0p5[1000];
+  float jet_rechit_T_Ecut0p5[1000];
   float jet_rechits_E[1000][1000];
   float jet_rechits_T[1000][1000];
+
+  float jet_pv_rechit_T_Ecut4[1000];
+  float jet_pv_rechit_T_Ecut3[1000];
+  float jet_pv_rechit_T_Ecut2[1000];
+  float jet_pv_rechit_T_Ecut1p5[1000];
+  float jet_pv_rechit_T_Ecut1[1000];
+  float jet_pv_rechit_T_Ecut0p5[1000];
+  float jet_pv_rechits_T[1000][1000];
+
+
+
+
+
+
+ 
   //All Photons Match To the Jet (Take Seed RecHit as a reference)
   Int_t                   fJetNPhotons;
   Float_t                 fJetPhotonPt[OBJECTARRAYSIZE];
@@ -346,6 +369,7 @@ protected:
 
   //event info
   bool isData;
+  bool isFourJet;
   uint runNum;
   uint lumiNum;
   uint eventNum;
@@ -418,7 +442,6 @@ float gLLP_daughter_phi[4];
 float gLLP_daughter_e[4];
 unsigned int gLLP_daughter_match_jet_index[4];
 float gLLP_min_delta_r_match_jet[4];
-
 //trigger info
 std::vector<string>  *nameHLT;
 bool triggerDecision[NTriggersMAX];
