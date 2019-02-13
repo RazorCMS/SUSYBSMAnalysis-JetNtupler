@@ -195,7 +195,7 @@ void JetNtupler::setBranches(){
   // JetTree->Branch("fJetPhotonRecHitTime", "std::vector<float>",&fJetPhotonRecHitTime);
 
   cout << "BRANCHES\n";
-  //enableMCBranches();
+  enableMCBranches();
   enableGenParticleBranches();
   if (enableTriggerInfo_) enableTriggerBranches();
 };
@@ -639,6 +639,8 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   //MC AND GEN LEVEL INFO
   fillGenParticles();
+  //if(readGenVertexTime_) genVertexT = *genParticles_t0;
+  //fillMC();
   //fillMC();
   //fill trigger bits
   if ( enableTriggerInfo_ ) fillTrigger( iEvent );
@@ -756,7 +758,7 @@ bool JetNtupler::fillMC()
           genVertexX = dau->vx();
           genVertexY = dau->vy();
           genVertexZ = dau->vz();
-          // if(readGenVertexTime_) genVertexT = *genParticles_t0;
+          if(readGenVertexTime_) genVertexT = *genParticles_t0;
           foundGenVertex = true;
           break;
         }
