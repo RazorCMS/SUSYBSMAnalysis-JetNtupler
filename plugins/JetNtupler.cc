@@ -1484,4 +1484,6 @@ bool JetNtupler::fillTrigger(const edm::Event& iEvent)
   }
 */
 //define this as a plug-in
+  return true;
+};
 DEFINE_FWK_MODULE(JetNtupler);
