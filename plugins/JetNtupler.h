@@ -124,8 +124,10 @@ public:
   double deltaR(double eta1, double phi1, double eta2, double phi2);
   void enableMCBranches();
   void enableGenParticleBranches();
+  void enableTriggerBranches();
   bool fillMC();
   bool fillGenParticles();
+  bool fillTrigger(const edm::Event& iEvent);
   const reco::Candidate* findFirstMotherWithDifferentID(const reco::Candidate *particle);
   const reco::Candidate* findOriginalMotherWithSameID(const reco::Candidate *particle);
 
@@ -152,7 +154,7 @@ protected:
   string eleHLTFilterNamesFile_;
   string muonHLTFilterNamesFile_;
   string photonHLTFilterNamesFile_;
-  static const int NTriggersMAX = 300;
+  static const int NTriggersMAX = 601;
   string triggerPathNames[NTriggersMAX];
   static const int MAX_ElectronHLTFilters = 100;
   string eleHLTFilterNames[MAX_ElectronHLTFilters];
@@ -184,8 +186,8 @@ protected:
   edm::EDGetTokenT<reco::GenJetCollection> genJetsToken_;
   edm::EDGetTokenT<edm::TriggerResults> triggerBitsToken_;
   edm::EDGetTokenT<edm::HepMCProduct> hepMCToken_;
-//  edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectsToken_;
-//  edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescalesToken_;
+  edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectsToken_;
+  edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescalesToken_;
   edm::EDGetTokenT<reco::PFMETCollection> metToken_;
   edm::EDGetTokenT<reco::PFMETCollection> metNoHFToken_;
   edm::EDGetTokenT<reco::PFMETCollection> metPuppiToken_;
@@ -227,8 +229,8 @@ protected:
   //EDM handles for each miniAOD input object
   edm::Handle<edm::TriggerResults> triggerBits;
   edm::Handle<edm::HepMCProduct> hepMC;
-//  edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
-//  edm::Handle<pat::PackedTriggerPrescales> triggerPrescales;
+  edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
+  edm::Handle<pat::PackedTriggerPrescales> triggerPrescales;
   edm::Handle<edm::TriggerResults> metFilterBits;
   edm::Handle<reco::VertexCollection> vertices;
   edm::Handle<edm::View<reco::Track> > tracks;
