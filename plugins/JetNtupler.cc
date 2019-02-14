@@ -1164,7 +1164,10 @@ bool JetNtupler::fillGenParticles(){
 	      unsigned int match_jet_index = 666;
 	      for ( int i_jet = 0; i_jet < nJets; i_jet++ )
 	      {
-		double current_delta_r = deltaR(tmp.Eta(), tmp.Phi() , jetEta[i_jet], jetPhi[i_jet]);
+		double phi = atan(y_ecal/x_ecal);
+		double theta = atan(ecal_radius/z_ecal);
+		double eta = log(tan(theta/2));
+		double current_delta_r = deltaR(eta, phi , jetEta[i_jet], jetPhi[i_jet]);
 	      //std::cout << i_jet << " current dR = " << current_delta_r << std::endl;
 	      if ( current_delta_r < min_delta_r )
 	      {
@@ -1227,7 +1230,11 @@ bool JetNtupler::fillGenParticles(){
 	      unsigned int match_jet_index = 666;
 	      for ( int i_jet = 0; i_jet < nJets; i_jet++ )
 	      {
-		double current_delta_r = deltaR(tmp.Eta(), tmp.Phi() , jetEta[i_jet], jetPhi[i_jet]);
+		double phi = atan(y_ecal/x_ecal);
+                double theta = atan(ecal_radius/z_ecal);
+                double eta = log(tan(theta/2));
+                double current_delta_r = deltaR(eta, phi , jetEta[i_jet], jetPhi[i_jet]);
+
 		if ( current_delta_r < min_delta_r )
 		{
 		  min_delta_r = current_delta_r;
