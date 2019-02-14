@@ -3,8 +3,8 @@
 /*
 Description: Base class for miniAOD analysis with CRAB
 */
-//         Author:  Caltech razor team
-//         Created:  Thu, 17 Jul 2014 15:00:06 GMT
+//         Author:  FNAL/Caltech LLP Team
+//         Created:  Wed, 13 Geb 2019 15:00:06 GMT
 
 #ifndef RAZORTUPLIZER_H
 #define RAZORTUPLIZER_H

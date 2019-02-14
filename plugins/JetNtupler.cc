@@ -135,7 +135,7 @@ JetNtupler::~JetNtupler()
 void JetNtupler::setBranches(){
 
 
-  
+
   JetTree->Branch("isData", &isData, "isData/O");
   JetTree->Branch("isFourJet", &isFourJet, "isFourJet/O");
   JetTree->Branch("runNum", &runNum, "runNum/i");
@@ -191,7 +191,7 @@ void JetNtupler::setBranches(){
   JetTree->Branch("jet_rechit_T_Ecut0p5", jet_rechit_T_Ecut0p5, "jet_rechit_T_Ecut0p5[nJets]/F");
   JetTree->Branch("jet_rechit_E", jet_rechit_E, "jet_rechit_E[nJets]/F");
   JetTree->Branch("jet_rechit_T", jet_rechit_T, "jet_rechit_T[nJets]/F");
-  
+
   JetTree->Branch("jet_pv_rechits_T", jet_rechits_T, "jet_rechits_T[nJets][1000]/F");
   JetTree->Branch("jet_pv_rechit_T_Ecut3", jet_rechit_T_Ecut3, "jet_rechit_T_Ecut3[nJets]/F");
   JetTree->Branch("jet_pv_rechit_T_Ecut4", jet_rechit_T_Ecut4, "jet_rechit_T_Ecut4[nJets]/F");
@@ -435,7 +435,7 @@ void JetNtupler::resetBranches(){
       jet_rechit_T_Ecut1[i] = 0.0;
       jet_rechit_E_Ecut0p5[i] = 0.0; //energy with a 2 GeV cut
       jet_rechit_T_Ecut0p5[i] = 0.0;
-      
+
 
       jet_pv_rechit_T[i] = 0.0;
       jet_pv_rechit_T_Ecut4[i] = 0.0;
@@ -659,8 +659,8 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	    double rechit_z = ecal_radius * sinh(recHitPos.eta());
 	    double photon_pv_travel_time = (1./30) * sqrt(pow(pvX-rechit_x,2)+pow(pvY-rechit_y,2)+pow(pvZ-rechit_z,2));
 	    jet_pv_rechits_T[i_jet][n_matched_rechits] = recHit->time()+(1./30)*ecal_radius*cosh(recHitPos.eta()) - photon_pv_travel_time;
-	    jet_pv_rechit_T[i_jet] += recHit->energy()*jet_pv_rechits_T[i_jet][n_matched_rechits]; 
-	  
+	    jet_pv_rechit_T[i_jet] += recHit->energy()*jet_pv_rechits_T[i_jet][n_matched_rechits];
+
             if (recHit->energy() > 0.5)
 	    {
 		jet_rechit_E_Ecut0p5[i_jet] += recHit->energy();
@@ -705,7 +705,7 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
             }
 	    n_matched_rechits++;
-        
+
           //std::cout << recHitPos.eta() << std::endl;
             }
         //std::cout << recHitId << std::endl;
@@ -734,7 +734,11 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   //MC AND GEN LEVEL INFO
   fillGenParticles();
-  //if(readGenVertexTime_) genVertexT = *genParticles_t0;
+  if(readGenVertexTime_)
+  {
+    genVertexT = *genParticles_t0;
+    //std::cout << genVertexT << std::endl;
+  }
   //fillMC();
   //fillMC();
 
@@ -1073,7 +1077,7 @@ bool JetNtupler::fillGenParticles(){
           gLLP_prod_vertex_y[0] = prunedV[i]->vy();
           gLLP_prod_vertex_z[0] = prunedV[i]->vz();
         //std::cout << prunedV[i]->tau() << std::endl;
-        }   
+        }
         else if (gParticleId[i] == 36)
         {
           gLLP_prod_vertex_x[1] = prunedV[i]->vx();
@@ -1151,7 +1155,7 @@ bool JetNtupler::fillGenParticles(){
               if( fabs(z_ecal) < 271.6561246934 )
               {
     	        double photon_travel_time = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[0] + (ecal_radius-radius) * sinh(tmp.Eta())),2));
-                gLLP_daughter_travel_time[id] = gLLP_daughter_travel_time[id] - photon_travel_time;          
+                gLLP_daughter_travel_time[id] = gLLP_daughter_travel_time[id] - photon_travel_time;
 	      //std::cout << "(x,y,z) @ ecal = (" << x_ecal << "," << y_ecal << "," << z_ecal << ")" << std::endl;
               //std::cout << "extrapolated r = " << sqrt(pow(x_ecal,2)+pow(y_ecal,2)) << std::endl;
               }
@@ -1256,7 +1260,7 @@ bool JetNtupler::fillGenParticles(){
 	    TLorentzVector tmp;
 	    tmp.SetPxPyPzE(tmpParticle->px(), tmpParticle->py(), tmpParticle->pz(), tmpParticle->energy());
 	    gLLP_daughter_pt[0] = tmp.Pt();
-	    
+
 	    gLLP_decay_vertex_x[0] = tmpParticle->vx();
             gLLP_decay_vertex_y[0] = tmpParticle->vy();
             gLLP_decay_vertex_z[0] = tmpParticle->vz();
@@ -1264,8 +1268,8 @@ bool JetNtupler::fillGenParticles(){
 	    double radius = sqrt( pow(gLLP_decay_vertex_x[0],2) + pow(gLLP_decay_vertex_y[0],2) );
 	    gLLP_daughter_eta[0] = tmp.Eta();
 	    gLLP_daughter_phi[0] = tmp.Phi();
-	    gLLP_daughter_e[0]  = tmp.E();    
-	    
+	    gLLP_daughter_e[0]  = tmp.E();
+
 	    gLLP_daughter_travel_time[0] = (1./30.)*(ecal_radius-radius)/(tmp.Pt()/tmp.E());// - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
 	    double x_ecal = gLLP_decay_vertex_x[0] + 30. * (tmp.Px()/tmp.E())*gLLP_daughter_travel_time[0];
 	    double y_ecal = gLLP_decay_vertex_y[0] + 30. * (tmp.Py()/tmp.E())*gLLP_daughter_travel_time[0];
@@ -1395,7 +1399,7 @@ bool JetNtupler::fillGenParticles(){
           }
 	}
 
-      }	
+      }
 
 
 
