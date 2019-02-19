@@ -374,7 +374,6 @@ void JetNtupler::resetBranches(){
     Rho = -99.0;
     nPUmean = -1;
     nPU = -1;
-
     //Photon
     fJetNPhotons = 0;
     for (int i=0; i< OBJECTARRAYSIZE; i++) {
@@ -395,7 +394,7 @@ void JetNtupler::resetBranches(){
 */
     //Jet
     nJets = 0;
-    for ( int i = 0; i < 1000; i++)
+    for ( int i = 0; i < OBJECTARRAYSIZE; i++)
     {
       jetE[i] = 0.0;
       jetPt[i] = 0.0;
@@ -444,16 +443,15 @@ void JetNtupler::resetBranches(){
       jet_pv_rechit_T_Ecut1[i] = 0.0;
       jet_pv_rechit_T_Ecut0p5[i] = 0.0;
 
-      for(int j =0;j<1000;j++)
+      for(int j =0; j < OBJECTARRAYSIZE;j++)
       {
         jet_rechits_E[i][j] = -666.;
         jet_rechits_T[i][j] = -666.;
-	jet_pv_rechits_T[i][j] = -666.;
-
+        jet_pv_rechits_T[i][j] = -666.;
       }
-   }
+    }
 
-    for ( int i = 0; i < 2; i++ )
+    for ( int i = 0; i < LLP_ARRAY_SIZE; i++ )
     {
       gLLP_prod_vertex_x[i] = -666.;
       gLLP_prod_vertex_y[i] = -666.;
@@ -465,7 +463,7 @@ void JetNtupler::resetBranches(){
       gLLP_travel_time[i] = -666.;
     }
 
-    for ( int i = 0; i < 4; i++ )
+    for ( int i = 0; i < LLP_DAUGHTER_ARRAY_SIZE; i++ )
     {
       gLLP_daughter_pt[i] = -666.;
       gLLP_daughter_eta[i] = -666.;
@@ -475,6 +473,8 @@ void JetNtupler::resetBranches(){
       gLLP_daughter_match_jet_index[i] = 666;
       gLLP_min_delta_r_match_jet[i] = -666.;
     }
+    nGenJets  = 0;
+
 }
 
 //------ Methods to fill tree variables ------//
@@ -734,12 +734,13 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   //MC AND GEN LEVEL INFO
   fillGenParticles();
-  if(readGenVertexTime_)
+  /*if(readGenVertexTime_)
   {
     genVertexT = *genParticles_t0;
     //std::cout << genVertexT << std::endl;
   }
-  //fillMC();
+  */
+  fillMC();
   //fillMC();
 
   if ( enableTriggerInfo_ ) fillTrigger( iEvent );
@@ -843,6 +844,7 @@ bool JetNtupler::fillMC()
   const pat::MET &Met = mets->front();
   genMetPt = Met.genMET()->pt();
   genMetPhi = Met.genMET()->phi();
+
 
   bool foundGenVertex = false;
   for(size_t i=0; i<genParticles->size();i++)

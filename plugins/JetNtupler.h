@@ -95,13 +95,15 @@ using namespace std;
 #include "TLorentzVector.h"
 
 //------ Array Size Constants ------//
-#define OBJECTARRAYSIZE 1000
-#define RECHITARRAYSIZE 1000
-#define GENPARTICLEARRAYSIZE 500
+#define OBJECTARRAYSIZE 2000
+#define RECHITARRAYSIZE 2000
+#define GENPARTICLEARRAYSIZE 2000
 #define MAX_NPV 600
 #define MAX_NTRACK 2000
 #define MAX_NPU 300
 #define MAX_NBX 40
+#define LLP_ARRAY_SIZE 2
+#define LLP_DAUGHTER_ARRAY_SIZE 4
 
 //------ Class declaration ------//
 
@@ -294,65 +296,65 @@ protected:
 
   //AK4 Jets
   int nJets;
-  float jetE[1000];
-  float jetPt[1000];
-  float jetEta[1000];
-  float jetPhi[1000];
-  float jetCISV[1000];
-  float jetMass[1000];
-  float jetJetArea[1000];
-  float jetPileupE[1000];
-  float jetPileupId[1000];
-  int   jetPileupIdFlag[1000];
-  bool  jetPassIDLoose[1000];
-  bool  jetPassIDTight[1000];
-  bool  jetPassMuFrac[1000];
-  bool  jetPassEleFrac[1000];
-  int   jetPartonFlavor[1000];
-  int   jetHadronFlavor[1000];
-  float jetChargedEMEnergyFraction[1000];
-  float jetNeutralEMEnergyFraction[1000];
-  float jetChargedHadronEnergyFraction[1000];
-  float jetNeutralHadronEnergyFraction[1000];
-  float jetMatchedGenPt[1000];
-  float jetMatchedGenEta[1000];
-  float jetMatchedGenPhi[1000];
-  float jetMatchedGenMass[1000];
-  float jetMatchedGenTime[1000];
-  int   jet_n_rechits[1000];
-  float jet_rechit_E[1000];
-  float jet_rechit_T[1000];
-  float jet_pv_rechit_T[1000];
+  float jetE[OBJECTARRAYSIZE];
+  float jetPt[OBJECTARRAYSIZE];
+  float jetEta[OBJECTARRAYSIZE];
+  float jetPhi[OBJECTARRAYSIZE];
+  float jetCISV[OBJECTARRAYSIZE];
+  float jetMass[OBJECTARRAYSIZE];
+  float jetJetArea[OBJECTARRAYSIZE];
+  float jetPileupE[OBJECTARRAYSIZE];
+  float jetPileupId[OBJECTARRAYSIZE];
+  int   jetPileupIdFlag[OBJECTARRAYSIZE];
+  bool  jetPassIDLoose[OBJECTARRAYSIZE];
+  bool  jetPassIDTight[OBJECTARRAYSIZE];
+  bool  jetPassMuFrac[OBJECTARRAYSIZE];
+  bool  jetPassEleFrac[OBJECTARRAYSIZE];
+  int   jetPartonFlavor[OBJECTARRAYSIZE];
+  int   jetHadronFlavor[OBJECTARRAYSIZE];
+  float jetChargedEMEnergyFraction[OBJECTARRAYSIZE];
+  float jetNeutralEMEnergyFraction[OBJECTARRAYSIZE];
+  float jetChargedHadronEnergyFraction[OBJECTARRAYSIZE];
+  float jetNeutralHadronEnergyFraction[OBJECTARRAYSIZE];
+  float jetMatchedGenPt[OBJECTARRAYSIZE];
+  float jetMatchedGenEta[OBJECTARRAYSIZE];
+  float jetMatchedGenPhi[OBJECTARRAYSIZE];
+  float jetMatchedGenMass[OBJECTARRAYSIZE];
+  float jetMatchedGenTime[OBJECTARRAYSIZE];
+  int   jet_n_rechits[OBJECTARRAYSIZE];
+  float jet_rechit_E[OBJECTARRAYSIZE];
+  float jet_rechit_T[OBJECTARRAYSIZE];
+  float jet_pv_rechit_T[OBJECTARRAYSIZE];
 
-  float jet_rechit_E_Ecut4[1000];
-  float jet_rechit_T_Ecut4[1000];
-  float jet_rechit_E_Ecut3[1000];
-  float jet_rechit_T_Ecut3[1000];
-  float jet_rechit_E_Ecut2[1000];
-  float jet_rechit_T_Ecut2[1000];
-  float jet_rechit_E_Ecut1p5[1000];
-  float jet_rechit_T_Ecut1p5[1000];
-  float jet_rechit_E_Ecut1[1000];
-  float jet_rechit_T_Ecut1[1000];
-  float jet_rechit_E_Ecut0p5[1000];
-  float jet_rechit_T_Ecut0p5[1000];
-  float jet_rechits_E[1000][1000];
-  float jet_rechits_T[1000][1000];
+  float jet_rechit_E_Ecut4[OBJECTARRAYSIZE];
+  float jet_rechit_T_Ecut4[OBJECTARRAYSIZE];
+  float jet_rechit_E_Ecut3[OBJECTARRAYSIZE];
+  float jet_rechit_T_Ecut3[OBJECTARRAYSIZE];
+  float jet_rechit_E_Ecut2[OBJECTARRAYSIZE];
+  float jet_rechit_T_Ecut2[OBJECTARRAYSIZE];
+  float jet_rechit_E_Ecut1p5[OBJECTARRAYSIZE];
+  float jet_rechit_T_Ecut1p5[OBJECTARRAYSIZE];
+  float jet_rechit_E_Ecut1[OBJECTARRAYSIZE];
+  float jet_rechit_T_Ecut1[OBJECTARRAYSIZE];
+  float jet_rechit_E_Ecut0p5[OBJECTARRAYSIZE];
+  float jet_rechit_T_Ecut0p5[OBJECTARRAYSIZE];
+  float jet_rechits_E[OBJECTARRAYSIZE][OBJECTARRAYSIZE];
+  float jet_rechits_T[OBJECTARRAYSIZE][OBJECTARRAYSIZE];
 
-  float jet_pv_rechit_T_Ecut4[1000];
-  float jet_pv_rechit_T_Ecut3[1000];
-  float jet_pv_rechit_T_Ecut2[1000];
-  float jet_pv_rechit_T_Ecut1p5[1000];
-  float jet_pv_rechit_T_Ecut1[1000];
-  float jet_pv_rechit_T_Ecut0p5[1000];
-  float jet_pv_rechits_T[1000][1000];
-
-
+  float jet_pv_rechit_T_Ecut4[OBJECTARRAYSIZE];
+  float jet_pv_rechit_T_Ecut3[OBJECTARRAYSIZE];
+  float jet_pv_rechit_T_Ecut2[OBJECTARRAYSIZE];
+  float jet_pv_rechit_T_Ecut1p5[OBJECTARRAYSIZE];
+  float jet_pv_rechit_T_Ecut1[OBJECTARRAYSIZE];
+  float jet_pv_rechit_T_Ecut0p5[OBJECTARRAYSIZE];
+  float jet_pv_rechits_T[OBJECTARRAYSIZE][OBJECTARRAYSIZE];
 
 
 
 
- 
+
+
+
   //All Photons Match To the Jet (Take Seed RecHit as a reference)
   Int_t                   fJetNPhotons;
   Float_t                 fJetPhotonPt[OBJECTARRAYSIZE];
@@ -428,22 +430,22 @@ float gParticleDecayVertexX[GENPARTICLEARRAYSIZE];
 float gParticleDecayVertexY[GENPARTICLEARRAYSIZE];
 float gParticleDecayVertexZ[GENPARTICLEARRAYSIZE];
 
-float gLLP_prod_vertex_x[2];
-float gLLP_prod_vertex_y[2];
-float gLLP_prod_vertex_z[2];
-float gLLP_decay_vertex_x[2];
-float gLLP_decay_vertex_y[2];
-float gLLP_decay_vertex_z[2];
-float gLLP_beta[2];
-float gLLP_travel_time[2];
+float gLLP_prod_vertex_x[LLP_ARRAY_SIZE];
+float gLLP_prod_vertex_y[LLP_ARRAY_SIZE];
+float gLLP_prod_vertex_z[LLP_ARRAY_SIZE];
+float gLLP_decay_vertex_x[LLP_ARRAY_SIZE];
+float gLLP_decay_vertex_y[LLP_ARRAY_SIZE];
+float gLLP_decay_vertex_z[LLP_ARRAY_SIZE];
+float gLLP_beta[LLP_ARRAY_SIZE];
+float gLLP_travel_time[LLP_ARRAY_SIZE];
 
-float gLLP_daughter_travel_time[4];
-float gLLP_daughter_pt[4];
-float gLLP_daughter_eta[4];
-float gLLP_daughter_phi[4];
-float gLLP_daughter_e[4];
-unsigned int gLLP_daughter_match_jet_index[4];
-float gLLP_min_delta_r_match_jet[4];
+float gLLP_daughter_travel_time[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_daughter_pt[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_daughter_eta[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_daughter_phi[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_daughter_e[LLP_DAUGHTER_ARRAY_SIZE];
+unsigned int gLLP_daughter_match_jet_index[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_min_delta_r_match_jet[LLP_DAUGHTER_ARRAY_SIZE];
 //trigger info
 std::vector<string>  *nameHLT;
 bool triggerDecision[NTriggersMAX];
