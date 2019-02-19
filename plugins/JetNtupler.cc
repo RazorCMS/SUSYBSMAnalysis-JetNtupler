@@ -425,6 +425,9 @@ void JetNtupler::resetBranches(){
       jet_n_rechits[i] = 0;
       jet_rechit_E[i] = 0.0;
       jet_rechit_T[i] = 0.0;
+      jet_rechit_E_Ecut3[i] = 0.0; //energy with a 2 GeV cut
+      jet_rechit_T_Ecut3[i] = 0.0;
+
       jet_rechit_E_Ecut4[i] = 0.0; //energy with a 2 GeV cut
       jet_rechit_T_Ecut4[i] = 0.0;
       jet_rechit_E_Ecut2[i] = 0.0; //energy with a 2 GeV cut
@@ -1155,7 +1158,7 @@ bool JetNtupler::fillGenParticles(){
               if( fabs(z_ecal) < 271.6561246934 )
               {
     	        double photon_travel_time = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[0] + (ecal_radius-radius) * sinh(tmp.Eta())),2));
-                gLLP_daughter_travel_time[id] = gLLP_daughter_travel_time[id] - photon_travel_time;
+                gLLP_daughter_travel_time[id] = gLLP_daughter_travel_time[id] - photon_travel_time + genVertexT;
 	      //std::cout << "(x,y,z) @ ecal = (" << x_ecal << "," << y_ecal << "," << z_ecal << ")" << std::endl;
               //std::cout << "extrapolated r = " << sqrt(pow(x_ecal,2)+pow(y_ecal,2)) << std::endl;
               }
@@ -1163,14 +1166,17 @@ bool JetNtupler::fillGenParticles(){
               {
                 gLLP_daughter_travel_time[id] = -666;
               }
-
 	      double min_delta_r = 666.;
 	      unsigned int match_jet_index = 666;
+	      const double pi = 3.1415926535897; 
+	      double phi = atan((y_ecal-genVertexY)/(x_ecal-genVertexX));
+              if  (x_ecal < 0.0){
+          	phi = pi + phi;
+	      }
+	      double theta = atan((ecal_radius-sqrt(pow(genVertexY,2)+pow(genVertexX,2)))/(z_ecal-genVertexZ));
+	      double eta = -log(tan(theta/2));
 	      for ( int i_jet = 0; i_jet < nJets; i_jet++ )
 	      {
-		double phi = atan(y_ecal/x_ecal);
-		double theta = atan(ecal_radius/z_ecal);
-		double eta = log(tan(theta/2));
 		double current_delta_r = deltaR(eta, phi , jetEta[i_jet], jetPhi[i_jet]);
 	      //std::cout << i_jet << " current dR = " << current_delta_r << std::endl;
 	      if ( current_delta_r < min_delta_r )
@@ -1222,21 +1228,25 @@ bool JetNtupler::fillGenParticles(){
 	      if( fabs(z_ecal) < 271.6561246934 )
 	      {
 		double photon_travel_time = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[1] + (ecal_radius-radius) * sinh(tmp.Eta())),2));
-		gLLP_daughter_travel_time[id+2] = gLLP_daughter_travel_time[id+2] - photon_travel_time;         //std::cout << "(x,y,z) @ ecal = (" << x_ecal << "," << y_ecal << "," << z_ecal << ")" << std::endl;
+		gLLP_daughter_travel_time[id+2] = gLLP_daughter_travel_time[id+2] - photon_travel_time + genVertexT;         //std::cout << "(x,y,z) @ ecal = (" << x_ecal << "," << y_ecal << "," << z_ecal << ")" << std::endl;
 		//std::cout << "extrapolated r = " << sqrt(pow(x_ecal,2)+pow(y_ecal,2)) << std::endl;
 	      }
 	      else
 	      {
 		gLLP_daughter_travel_time[id+2] = -666;
 	      }
-
+	      const double pi = 3.1415926535897;
 	      double min_delta_r = 666;
 	      unsigned int match_jet_index = 666;
+	      double phi = atan((y_ecal-genVertexY)/(x_ecal-genVertexX));
+              if  (x_ecal < 0.0){
+                phi = pi + phi;
+              }
+	      double theta = atan((ecal_radius-sqrt(pow(genVertexY,2)+pow(genVertexX,2)))/(z_ecal-genVertexZ));
+              double eta = -log(tan(theta/2));
 	      for ( int i_jet = 0; i_jet < nJets; i_jet++ )
 	      {
-		double phi = atan(y_ecal/x_ecal);
-                double theta = atan(ecal_radius/z_ecal);
-                double eta = log(tan(theta/2));
+		
                 double current_delta_r = deltaR(eta, phi , jetEta[i_jet], jetPhi[i_jet]);
 
 		if ( current_delta_r < min_delta_r )
@@ -1284,7 +1294,7 @@ bool JetNtupler::fillGenParticles(){
 	    if( fabs(z_ecal) < 271.6561246934 )
 	    {
 	      double photon_travel_time = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[0] + (ecal_radius-radius) * sinh(tmp.Eta())),2));
-	      gLLP_daughter_travel_time[0] = gLLP_daughter_travel_time[0] - photon_travel_time;
+	      gLLP_daughter_travel_time[0] = gLLP_daughter_travel_time[0] - photon_travel_time + genVertexT;
 	    }
 	    else
 	    {
@@ -1325,7 +1335,7 @@ bool JetNtupler::fillGenParticles(){
             if( fabs(z_ecal) < 271.6561246934 )
             {
               double photon_travel_time = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[0] + (ecal_radius-radius) * sinh(tmp.Eta())),2));
-              gLLP_daughter_travel_time[1] = gLLP_daughter_travel_time[1] - photon_travel_time;
+              gLLP_daughter_travel_time[1] = gLLP_daughter_travel_time[1] - photon_travel_time + genVertexT;
             }
             else
             {
@@ -1371,7 +1381,7 @@ bool JetNtupler::fillGenParticles(){
 	    if( fabs(z_ecal) < 271.6561246934 )
             {
               double photon_travel_time = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[1] + (ecal_radius-radius) * sinh(tmp.Eta())),2));
-              gLLP_daughter_travel_time[2] = gLLP_daughter_travel_time[2] - photon_travel_time;
+              gLLP_daughter_travel_time[2] = gLLP_daughter_travel_time[2] - photon_travel_time + genVertexT;
             }
             else
             {
@@ -1397,7 +1407,7 @@ bool JetNtupler::fillGenParticles(){
             if( fabs(z_ecal) < 271.6561246934 )
             {
               double photon_travel_time = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[1] + (ecal_radius-radius) * sinh(tmp.Eta())),2));
-              gLLP_daughter_travel_time[3] = gLLP_daughter_travel_time[3] - photon_travel_time;
+              gLLP_daughter_travel_time[3] = gLLP_daughter_travel_time[3] - photon_travel_time + genVertexT;
             }
             else
             {
