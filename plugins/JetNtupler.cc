@@ -476,8 +476,14 @@ void JetNtupler::resetBranches(){
       gLLP_daughter_match_jet_index[i] = 666;
       gLLP_min_delta_r_match_jet[i] = -666.;
     }
-    nGenJets  = 0;
-
+    nGenJets = 0;
+    for ( int i = 0; i < OBJECTARRAYSIZE; i++ )
+    {
+      genJetE[i] = -666.;
+      genJetPt[i] = -666.;
+      genJetEta[i] = -666.;
+      genJetPhi[i] = -666.;
+    }
 }
 
 //------ Methods to fill tree variables ------//
@@ -509,8 +515,6 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   NEvents->Fill(0); //increment event count
   //resetting output tree branches
   resetBranches();
-
-
   //*************************************
   //Fill Event-Level Info
   //*************************************
@@ -837,16 +841,21 @@ bool JetNtupler::fillMC()
 {
   for(const reco::GenJet &j : *genJets)
   {
+    //std::cout << nGenJets << std::endl;
     genJetE[nGenJets] = j.energy();
     genJetPt[nGenJets] = j.pt();
     genJetEta[nGenJets] = j.eta();
     genJetPhi[nGenJets] = j.phi();
     nGenJets++;
   }
+  //std::cout << "out of the loop" << std::endl;
 
-  const pat::MET &Met = mets->front();
-  genMetPt = Met.genMET()->pt();
-  genMetPhi = Met.genMET()->phi();
+  //const reco::PFMET &Met = mets->front();
+  //std::cout << "out of the loop1" << std::endl;
+  //genMetPt = Met.genMET()->pt();
+  //std::cout << "out of the loop2" << std::endl;
+  //genMetPhi = Met.genMET()->phi();
+  //std::cout << "out of the loop3" << std::endl;
 
 
   bool foundGenVertex = false;
@@ -1170,7 +1179,7 @@ bool JetNtupler::fillGenParticles(){
               }
 	      double min_delta_r = 666.;
 	      unsigned int match_jet_index = 666;
-	      const double pi = 3.1415926535897; 
+	      const double pi = 3.1415926535897;
 	      double phi = atan((y_ecal-genVertexY)/(x_ecal-genVertexX));
               if  (x_ecal < 0.0){
           	phi = pi + phi;
@@ -1248,7 +1257,7 @@ bool JetNtupler::fillGenParticles(){
               double eta = -log(tan(theta/2));
 	      for ( int i_jet = 0; i_jet < nJets; i_jet++ )
 	      {
-		
+
                 double current_delta_r = deltaR(eta, phi , jetEta[i_jet], jetPhi[i_jet]);
 
 		if ( current_delta_r < min_delta_r )
