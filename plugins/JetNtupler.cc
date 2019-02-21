@@ -363,129 +363,147 @@ void JetNtupler::loadEvent(const edm::Event& iEvent){
 //called by the loadEvent() method
 void JetNtupler::resetBranches(){
     //reset tree variables
-    //Event
-    eventNum = 0;
-    lumiNum = 0;
-    runNum = 0;
-    pvX = -99.0;
-    pvY = -99.0;
-    pvZ = -99.0;
-    nPV = -1;
-    Rho = -99.0;
-    nPUmean = -1;
-    nPU = -1;
-    //Photon
-    fJetNPhotons = 0;
-    for (int i=0; i< OBJECTARRAYSIZE; i++) {
-      fJetPhotonPt[i] = 0.0;
-      fJetPhotonEta[i] = 0.0;
-      fJetPhotonPhi[i] = 0.0;
-      fJetPhotonSeedRecHitE[i]      = -99.0;
-      fJetPhotonSeedRecHitEta[i]      = -99.0;
-      fJetPhotonSeedRecHitPhi[i]      = -99.0;
-      fJetPhotonSeedRecHitTime[i]      = -99.0;
-    }
-
-/*
-    fJetPhotonRecHitE->clear();
-    fJetPhotonRecHitEta->clear();
-    fJetPhotonRecHitPhi->clear();
-    fJetPhotonRecHitTime->clear();
-*/
-    //Jet
-    nJets = 0;
-    for ( int i = 0; i < OBJECTARRAYSIZE; i++)
-    {
-      jetE[i] = 0.0;
-      jetPt[i] = 0.0;
-      jetEta[i] = 0.0;
-      jetPhi[i] = 0.0;
-      jetCISV[i] = 0.0;
-      jetMass[i] =  -99.0;
-      jetJetArea[i] = -99.0;
-      jetPileupE[i] = -99.0;
-      jetPileupId[i] = -99.0;
-      jetPileupIdFlag[i] = -1;
-      jetPassIDLoose[i] = false;
-      jetPassIDTight[i] = false;
-      jetPassMuFrac[i] = false;
-      jetPassEleFrac[i] = false;
-      jetPartonFlavor[i] = 0;
-      jetHadronFlavor[i] = 0;
-      jetChargedEMEnergyFraction[i] = -99.0;
-      jetNeutralEMEnergyFraction[i] = -99.0;
-      jetChargedHadronEnergyFraction[i] = -99.0;
-      jetNeutralHadronEnergyFraction[i] = -99.0;
-      jetMatchedGenPt[i] = 0.0;
-      jetMatchedGenEta[i] = 0.0;
-      jetMatchedGenPhi[i] = 0.0;
-      jetMatchedGenMass[i] = 0.0;
-      jetMatchedGenTime[i] = 0.0;
-      jet_n_rechits[i] = 0;
-      jet_rechit_E[i] = 0.0;
-      jet_rechit_T[i] = 0.0;
-      jet_rechit_E_Ecut3[i] = 0.0; //energy with a 2 GeV cut
-      jet_rechit_T_Ecut3[i] = 0.0;
-
-      jet_rechit_E_Ecut4[i] = 0.0; //energy with a 2 GeV cut
-      jet_rechit_T_Ecut4[i] = 0.0;
-      jet_rechit_E_Ecut2[i] = 0.0; //energy with a 2 GeV cut
-      jet_rechit_T_Ecut2[i] = 0.0;
-      jet_rechit_E_Ecut1p5[i] = 0.0; //energy with a 2 GeV cut
-      jet_rechit_T_Ecut1p5[i] = 0.0;
-      jet_rechit_E_Ecut1[i] = 0.0; //energy with a 2 GeV cut
-      jet_rechit_T_Ecut1[i] = 0.0;
-      jet_rechit_E_Ecut0p5[i] = 0.0; //energy with a 2 GeV cut
-      jet_rechit_T_Ecut0p5[i] = 0.0;
-
-
-      jet_pv_rechit_T[i] = 0.0;
-      jet_pv_rechit_T_Ecut4[i] = 0.0;
-      jet_pv_rechit_T_Ecut2[i] = 0.0;
-      jet_pv_rechit_T_Ecut1p5[i] = 0.0;
-      jet_pv_rechit_T_Ecut1[i] = 0.0;
-      jet_pv_rechit_T_Ecut0p5[i] = 0.0;
-
-      for(int j =0; j < OBJECTARRAYSIZE;j++)
-      {
-        jet_rechits_E[i][j] = -666.;
-        jet_rechits_T[i][j] = -666.;
-        jet_pv_rechits_T[i][j] = -666.;
-      }
-    }
-
-    for ( int i = 0; i < LLP_ARRAY_SIZE; i++ )
-    {
-      gLLP_prod_vertex_x[i] = -666.;
-      gLLP_prod_vertex_y[i] = -666.;
-      gLLP_prod_vertex_z[i] = -666.;
-      gLLP_decay_vertex_x[i] = -666.;
-      gLLP_decay_vertex_y[i] = -666.;
-      gLLP_decay_vertex_z[i] = -666.;
-      gLLP_beta[i] = -666.;
-      gLLP_travel_time[i] = -666.;
-    }
-
-    for ( int i = 0; i < LLP_DAUGHTER_ARRAY_SIZE; i++ )
-    {
-      gLLP_daughter_pt[i] = -666.;
-      gLLP_daughter_eta[i] = -666.;
-      gLLP_daughter_phi[i] = -666.;
-      gLLP_daughter_e[i] = -666.;
-      gLLP_daughter_travel_time[i] = -666.;
-      gLLP_daughter_match_jet_index[i] = 666;
-      gLLP_min_delta_r_match_jet[i] = -666.;
-    }
-    nGenJets = 0;
-    for ( int i = 0; i < OBJECTARRAYSIZE; i++ )
-    {
-      genJetE[i] = -666.;
-      genJetPt[i] = -666.;
-      genJetEta[i] = -666.;
-      genJetPhi[i] = -666.;
-    }
+    reset_event_variables();
+    reset_photon_variable();
+    reset_jet_variables();
+    reset_gen_llp_variable();
+    reset_gen_jet_variable();
 }
 
+void JetNtupler::reset_event_variables()
+{
+  eventNum = 0;
+  lumiNum = 0;
+  runNum = 0;
+  pvX = -99.0;
+  pvY = -99.0;
+  pvZ = -99.0;
+  nPV = -1;
+  Rho = -99.0;
+  nPUmean = -1;
+  nPU = -1;
+  return;
+};
+
+void JetNtupler::reset_photon_variable()
+{
+  fJetNPhotons = 0;
+  for (int i=0; i< OBJECTARRAYSIZE; i++) {
+    fJetPhotonPt[i] = 0.0;
+    fJetPhotonEta[i] = 0.0;
+    fJetPhotonPhi[i] = 0.0;
+    fJetPhotonSeedRecHitE[i]      = -99.0;
+    fJetPhotonSeedRecHitEta[i]      = -99.0;
+    fJetPhotonSeedRecHitPhi[i]      = -99.0;
+    fJetPhotonSeedRecHitTime[i]      = -99.0;
+  }
+  return;
+};
+
+void JetNtupler::reset_jet_variables()
+{
+  nJets = 0;
+  for ( int i = 0; i < OBJECTARRAYSIZE; i++)
+  {
+    jetE[i] = 0.0;
+    jetPt[i] = 0.0;
+    jetEta[i] = 0.0;
+    jetPhi[i] = 0.0;
+    jetCISV[i] = 0.0;
+    jetMass[i] =  -99.0;
+    jetJetArea[i] = -99.0;
+    jetPileupE[i] = -99.0;
+    jetPileupId[i] = -99.0;
+    jetPileupIdFlag[i] = -1;
+    jetPassIDLoose[i] = false;
+    jetPassIDTight[i] = false;
+    jetPassMuFrac[i] = false;
+    jetPassEleFrac[i] = false;
+    jetPartonFlavor[i] = 0;
+    jetHadronFlavor[i] = 0;
+    jetChargedEMEnergyFraction[i] = -99.0;
+    jetNeutralEMEnergyFraction[i] = -99.0;
+    jetChargedHadronEnergyFraction[i] = -99.0;
+    jetNeutralHadronEnergyFraction[i] = -99.0;
+    jetMatchedGenPt[i] = 0.0;
+    jetMatchedGenEta[i] = 0.0;
+    jetMatchedGenPhi[i] = 0.0;
+    jetMatchedGenMass[i] = 0.0;
+    jetMatchedGenTime[i] = 0.0;
+    jet_n_rechits[i] = 0;
+    jet_rechit_E[i] = 0.0;
+    jet_rechit_T[i] = 0.0;
+    jet_rechit_E_Ecut3[i] = 0.0; //energy with a 2 GeV cut
+    jet_rechit_T_Ecut3[i] = 0.0;
+
+    jet_rechit_E_Ecut4[i] = 0.0; //energy with a 2 GeV cut
+    jet_rechit_T_Ecut4[i] = 0.0;
+    jet_rechit_E_Ecut2[i] = 0.0; //energy with a 2 GeV cut
+    jet_rechit_T_Ecut2[i] = 0.0;
+    jet_rechit_E_Ecut1p5[i] = 0.0; //energy with a 2 GeV cut
+    jet_rechit_T_Ecut1p5[i] = 0.0;
+    jet_rechit_E_Ecut1[i] = 0.0; //energy with a 2 GeV cut
+    jet_rechit_T_Ecut1[i] = 0.0;
+    jet_rechit_E_Ecut0p5[i] = 0.0; //energy with a 2 GeV cut
+    jet_rechit_T_Ecut0p5[i] = 0.0;
+
+
+    jet_pv_rechit_T[i] = 0.0;
+    jet_pv_rechit_T_Ecut4[i] = 0.0;
+    jet_pv_rechit_T_Ecut2[i] = 0.0;
+    jet_pv_rechit_T_Ecut1p5[i] = 0.0;
+    jet_pv_rechit_T_Ecut1[i] = 0.0;
+    jet_pv_rechit_T_Ecut0p5[i] = 0.0;
+
+    for(int j =0; j < OBJECTARRAYSIZE;j++)
+    {
+      jet_rechits_E[i][j] = -666.;
+      jet_rechits_T[i][j] = -666.;
+      jet_pv_rechits_T[i][j] = -666.;
+    }
+  }
+  return;
+};
+
+void JetNtupler::reset_gen_llp_variable()
+{
+  for ( int i = 0; i < LLP_ARRAY_SIZE; i++ )
+  {
+    gLLP_prod_vertex_x[i] = -666.;
+    gLLP_prod_vertex_y[i] = -666.;
+    gLLP_prod_vertex_z[i] = -666.;
+    gLLP_decay_vertex_x[i] = -666.;
+    gLLP_decay_vertex_y[i] = -666.;
+    gLLP_decay_vertex_z[i] = -666.;
+    gLLP_beta[i] = -666.;
+    gLLP_travel_time[i] = -666.;
+  }
+
+  for ( int i = 0; i < LLP_DAUGHTER_ARRAY_SIZE; i++ )
+  {
+    gLLP_daughter_pt[i] = -666.;
+    gLLP_daughter_eta[i] = -666.;
+    gLLP_daughter_phi[i] = -666.;
+    gLLP_daughter_e[i] = -666.;
+    gLLP_daughter_travel_time[i] = -666.;
+    gLLP_daughter_match_jet_index[i] = 666;
+    gLLP_min_delta_r_match_jet[i] = -666.;
+  }
+  return;
+};
+
+void JetNtupler::reset_gen_jet_variable()
+{
+  nGenJets = 0;
+  for ( int i = 0; i < OBJECTARRAYSIZE; i++ )
+  {
+    genJetE[i] = -666.;
+    genJetPt[i] = -666.;
+    genJetEta[i] = -666.;
+    genJetPhi[i] = -666.;
+  }
+  return;
+};
 //------ Methods to fill tree variables ------//
 
 

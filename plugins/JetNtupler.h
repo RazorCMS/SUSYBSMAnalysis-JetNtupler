@@ -118,6 +118,11 @@ public:
 
   //enable desired output variables
   virtual void setBranches();
+  void reset_event_variables();
+  void reset_photon_variable();
+  void reset_jet_variables();
+  void reset_gen_llp_variable();
+  void reset_gen_jet_variable();
 
   //------ HELPER FUNCTIONS ------//
   bool passJetID( const reco::PFJet *jet, int cutLevel);
