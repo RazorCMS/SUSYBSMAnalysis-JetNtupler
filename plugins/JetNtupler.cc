@@ -239,6 +239,11 @@ void JetNtupler::enableMCBranches(){
   JetTree->Branch("genQScale", &genQScale, "genQScale/F");
   JetTree->Branch("genAlphaQCD", &genAlphaQCD, "genAlphaQCD/F");
   JetTree->Branch("genAlphaQED", &genAlphaQED, "genAlphaQED/F");
+  JetTree->Branch("genJet_match_jet_index", &genJet_match_jet_index, "genJet_match_jet_index[nGenJets]/i");
+  JetTree->Branch("genJet_min_delta_r_match_jet", &genJet_min_delta_r_match_jet, "genJet_min_delta_r_match_jet[nGenJets]/F");
+
+
+
   /*scaleWeights = new std::vector<float>; scaleWeights->clear();
   pdfWeights = new std::vector<float>; pdfWeights->clear();
   alphasWeights = new std::vector<float>; alphasWeights->clear();
@@ -274,9 +279,15 @@ void JetNtupler::enableGenParticleBranches(){
   JetTree->Branch("gLLP_daughter_pt", gLLP_daughter_pt, "gLLP_daughter_pt[4]/F");
   JetTree->Branch("gLLP_daughter_eta", gLLP_daughter_eta, "gLLP_daughter_eta[4]/F");
   JetTree->Branch("gLLP_daughter_phi", gLLP_daughter_phi, "gLLP_daughter_phi[4]/F");
+  JetTree->Branch("gLLP_daughter_eta_corr", gLLP_daughter_eta_corr, "gLLP_daughter_eta_corr[4]/F");
+  JetTree->Branch("gLLP_daughter_phi_corr", gLLP_daughter_phi_corr, "gLLP_daughter_phi_corr[4]/F");
   JetTree->Branch("gLLP_daughter_e", gLLP_daughter_e, "gLLP_daughter_e[4]/F");
+  JetTree->Branch("gLLP_daughter_match_genJet_index", gLLP_daughter_match_genJet_index, "gLLP_daughter_match_genJet_index[4]/i");
+  JetTree->Branch("gLLP_min_delta_r_match_genJet", gLLP_min_delta_r_match_genJet, "gLLP_min_delta_r_match_genJet[4]/F");
   JetTree->Branch("gLLP_daughter_match_jet_index", gLLP_daughter_match_jet_index, "gLLP_daughter_match_jet_index[4]/i");
   JetTree->Branch("gLLP_min_delta_r_match_jet", gLLP_min_delta_r_match_jet, "gLLP_min_delta_r_match_jet[4]/F");
+
+
 
   JetTree->Branch("nGenParticle", &nGenParticle, "nGenParticle/I");
   JetTree->Branch("gParticleMotherId", gParticleMotherId, "gParticleMotherId[nGenParticle]/I");
@@ -484,6 +495,8 @@ void JetNtupler::reset_gen_llp_variable()
     gLLP_daughter_pt[i] = -666.;
     gLLP_daughter_eta[i] = -666.;
     gLLP_daughter_phi[i] = -666.;
+    gLLP_daughter_eta_corr[i] = -666.;
+    gLLP_daughter_phi_corr[i] = -666.;
     gLLP_daughter_e[i] = -666.;
     gLLP_daughter_travel_time[i] = -666.;
     gLLP_daughter_match_jet_index[i] = 666;
@@ -758,14 +771,13 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   } //loop over jets
 
   //MC AND GEN LEVEL INFO
+  fillMC();
   fillGenParticles();
   /*if(readGenVertexTime_)
   {
-    genVertexT = *genParticles_t0;
-    //std::cout << genVertexT << std::endl;
+    genVertexT = *genParticles_t0; //std::cout << genVertexT << std::endl;
   }
   */
-  fillMC();
   //fillMC();
 
   if ( enableTriggerInfo_ ) fillTrigger( iEvent );
@@ -854,7 +866,6 @@ double deta = eta1 - eta2;
 return sqrt( dphi*dphi + deta*deta);
 };
 
-
 bool JetNtupler::fillMC()
 {
   for(const reco::GenJet &j : *genJets)
@@ -866,14 +877,6 @@ bool JetNtupler::fillMC()
     genJetPhi[nGenJets] = j.phi();
     nGenJets++;
   }
-  //std::cout << "out of the loop" << std::endl;
-
-  //const reco::PFMET &Met = mets->front();
-  //std::cout << "out of the loop1" << std::endl;
-  //genMetPt = Met.genMET()->pt();
-  //std::cout << "out of the loop2" << std::endl;
-  //genMetPhi = Met.genMET()->phi();
-  //std::cout << "out of the loop3" << std::endl;
 
 
   bool foundGenVertex = false;
@@ -902,6 +905,33 @@ bool JetNtupler::fillMC()
   genQScale = genInfo->qScale();
   genAlphaQCD = genInfo->alphaQCD();
   genAlphaQED = genInfo->alphaQED();
+  for ( int i_genJet = 0; i_genJet < nGenJets; i_genJet++ )
+  {
+
+    unsigned int match_jet_index = 666;
+    double min_delta_r = 666.;
+
+    for (int i_jet = 0; i_jet < nJets; i_jet++)
+    {
+
+      double current_delta_r = deltaR(genJetEta[i_genJet],genJetPhi[i_genJet] , jetEta[i_jet], jetPhi[i_jet]);
+
+      if ( current_delta_r < min_delta_r )
+      {
+        min_delta_r = current_delta_r;
+        match_jet_index = i_jet;
+      }
+    }//end matching to jets
+    if ( min_delta_r < 0.3 )
+    {
+      genJet_match_jet_index[i_genJet] = match_jet_index;
+      genJet_min_delta_r_match_jet[i_genJet] = min_delta_r;
+    }
+  }
+
+
+
+
 
     /*
     if (isFastsim_) {
@@ -1200,30 +1230,53 @@ bool JetNtupler::fillGenParticles(){
               }
 	      double min_delta_r = 666.;
 	      unsigned int match_jet_index = 666;
+
+	      double genJet_min_delta_r = 666.;
+	      unsigned int match_genJet_index = 666;
 	      const double pi = 3.1415926535897;
 	      double phi = atan((y_ecal-genVertexY)/(x_ecal-genVertexX));
               if  (x_ecal < 0.0){
           	phi = pi + phi;
 	      }
-	      double theta = atan((ecal_radius-sqrt(pow(genVertexY,2)+pow(genVertexX,2)))/(z_ecal-genVertexZ));
-	      double eta = -log(tan(theta/2));
+	      phi = deltaPhi(phi,0.0);
+	      double theta = atan((ecal_radius-sqrt(pow(genVertexY,2)+pow(genVertexX,2)))/abs(z_ecal-genVertexZ));
+              double eta = -1.0*TMath::Sign(1.0, z_ecal-genVertexZ)*log(tan(theta/2));
+	      gLLP_daughter_eta_corr[id] = eta;
+              gLLP_daughter_phi_corr[id] = phi;
+	      for ( int i_jet = 0; i_jet < nGenJets; i_jet++ )
+	      {
+		double genJet_current_delta_r = deltaR(gLLP_daughter_eta[id], gLLP_daughter_phi[id],  genJetEta[i_jet], genJetPhi[i_jet]);
+	        //std::cout << i_jet << " current dR = " << genJet_current_delta_r << eta<<phi<<theta<<tan(theta/2.0)<<log(tan(theta/2.0))<<std::endl;
+		if ( genJet_current_delta_r < genJet_min_delta_r )
+	        {
+	  	  genJet_min_delta_r = genJet_current_delta_r;
+		  match_genJet_index = i_jet;
+		  //std::cout << i_jet << " min dR = " << genJet_min_delta_r << std::endl;
+	        }
+	      }//end matching to genJets
 	      for ( int i_jet = 0; i_jet < nJets; i_jet++ )
 	      {
-		double current_delta_r = deltaR(eta, phi , jetEta[i_jet], jetPhi[i_jet]);
-	      //std::cout << i_jet << " current dR = " << current_delta_r << std::endl;
-	      if ( current_delta_r < min_delta_r )
+		double current_delta_r = deltaR(eta,phi, jetEta[i_jet], jetPhi[i_jet]);
+	        if ( current_delta_r < min_delta_r )
+	        {
+	  	  min_delta_r = current_delta_r;
+		  match_jet_index = i_jet;
+		  //std::cout << i_jet << " min dR = " << min_delta_r << std::endl;
+	        }
+	      }//end matching to jets
+	      if ( min_delta_r < 0.3 )
 	      {
-		min_delta_r = current_delta_r;
-		match_jet_index = i_jet;
-		//std::cout << i_jet << " min dR = " << min_delta_r << std::endl;
+	        gLLP_daughter_match_jet_index[id] = match_jet_index;
+	        gLLP_min_delta_r_match_jet[id] = min_delta_r;
+	        //std::cout << "min dR = " << min_delta_r << " matched to jet index " << match_jet_index << std::endl;
 	      }
-	    }//end matching to jets
-	    if ( min_delta_r < 0.3 )
-	    {
-	      gLLP_daughter_match_jet_index[id] = match_jet_index;
-	      gLLP_min_delta_r_match_jet[id] = min_delta_r;
-	      //std::cout << "min dR = " << min_delta_r << " matched to jet index " << match_jet_index << std::endl;
-	    }
+	      if ( genJet_min_delta_r < 0.3 )
+	      {
+	        gLLP_daughter_match_genJet_index[id] = match_genJet_index;
+	        gLLP_min_delta_r_match_genJet[id] = genJet_min_delta_r;
+	        //std::cout << "min dR = " << min_delta_r << " matched to jet index " << match_jet_index << std::endl;
+	      }
+
 	  }
 	}
 	  else if (gParticleId[i] == 36)
@@ -1268,14 +1321,29 @@ bool JetNtupler::fillGenParticles(){
 		gLLP_daughter_travel_time[id+2] = -666;
 	      }
 	      const double pi = 3.1415926535897;
+	      double genJet_min_delta_r = 666.;
+              unsigned int match_genJet_index = 666;
 	      double min_delta_r = 666;
 	      unsigned int match_jet_index = 666;
 	      double phi = atan((y_ecal-genVertexY)/(x_ecal-genVertexX));
               if  (x_ecal < 0.0){
                 phi = pi + phi;
               }
-	      double theta = atan((ecal_radius-sqrt(pow(genVertexY,2)+pow(genVertexX,2)))/(z_ecal-genVertexZ));
-              double eta = -log(tan(theta/2));
+	      phi = deltaPhi(phi,0.0);
+	      double theta = atan((ecal_radius-sqrt(pow(genVertexY,2)+pow(genVertexX,2)))/abs(z_ecal-genVertexZ));
+	      double eta = -1.0*TMath::Sign(1.0,z_ecal-genVertexZ)*log(tan(theta/2));
+	      gLLP_daughter_eta_corr[id+2] = eta;
+	      gLLP_daughter_phi_corr[id+2] = phi;
+	      for ( int i_jet = 0; i_jet < nGenJets; i_jet++ )
+	      {
+		double genJet_current_delta_r = deltaR(gLLP_daughter_eta[id+2], gLLP_daughter_phi[id+2],genJetEta[i_jet], genJetPhi[i_jet]);
+	        if ( genJet_current_delta_r < genJet_min_delta_r )
+	        {
+	  	  genJet_min_delta_r = genJet_current_delta_r;
+		  match_genJet_index = i_jet;
+		  //std::cout << i_jet << " min dR = " << min_delta_r << std::endl;
+	        }
+	      }//end matching to genJets
 	      for ( int i_jet = 0; i_jet < nJets; i_jet++ )
 	      {
 
@@ -1287,6 +1355,12 @@ bool JetNtupler::fillGenParticles(){
 		  match_jet_index = i_jet;
 		}
 	      }//end matching to jets
+	      if ( genJet_min_delta_r < 0.3 )
+	      {
+	        gLLP_daughter_match_genJet_index[id+2] = match_genJet_index;
+	        gLLP_min_delta_r_match_genJet[id+2] = genJet_min_delta_r;
+	        //std::cout << "min dR = " << min_delta_r << " matched to jet index " << match_jet_index << std::endl;
+	      }
 	      if ( min_delta_r < 0.3 )
 	      {
 		gLLP_daughter_match_jet_index[id+2] = match_jet_index;
