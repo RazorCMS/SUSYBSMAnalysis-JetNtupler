@@ -126,7 +126,7 @@ public:
 
   //------ HELPER FUNCTIONS ------//
   bool passJetID( const reco::PFJet *jet, int cutLevel);
-
+  double sign(double x);
   double deltaPhi(double phi1, double phi2);
   double deltaR(double eta1, double phi1, double eta2, double phi2);
   void enableMCBranches();
@@ -407,6 +407,12 @@ unsigned int genSignalProcessID;
 float genQScale;
 float genAlphaQCD;
 float genAlphaQED;
+unsigned int genJet_match_jet_index[OBJECTARRAYSIZE];
+float genJet_min_delta_r_match_jet[OBJECTARRAYSIZE];
+
+
+
+
 string lheComments;
 vector<float> *scaleWeights;
 vector<float> *pdfWeights;
@@ -448,7 +454,11 @@ float gLLP_daughter_travel_time[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_pt[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_eta[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_phi[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_daughter_eta_corr[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_daughter_phi_corr[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_e[LLP_DAUGHTER_ARRAY_SIZE];
+unsigned int gLLP_daughter_match_genJet_index[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_min_delta_r_match_genJet[LLP_DAUGHTER_ARRAY_SIZE];
 unsigned int gLLP_daughter_match_jet_index[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_min_delta_r_match_jet[LLP_DAUGHTER_ARRAY_SIZE];
 //trigger info
