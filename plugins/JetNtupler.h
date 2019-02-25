@@ -126,7 +126,6 @@ public:
 
   //------ HELPER FUNCTIONS ------//
   bool passJetID( const reco::PFJet *jet, int cutLevel);
-  double sign(double x);
   double deltaPhi(double phi1, double phi2);
   double deltaR(double eta1, double phi1, double eta2, double phi2);
   void enableMCBranches();

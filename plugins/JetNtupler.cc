@@ -866,14 +866,6 @@ double deta = eta1 - eta2;
 return sqrt( dphi*dphi + deta*deta);
 };
 
-double JetNtupler::sign(double x)
-{
-  if (x > 0.0) return 1;
-  if (x < 0.0) return -1;
-  return 0.0;
-
-
-};
 bool JetNtupler::fillMC()
 {
   for(const reco::GenJet &j : *genJets)
@@ -1243,8 +1235,9 @@ bool JetNtupler::fillGenParticles(){
               if  (x_ecal < 0.0){
           	phi = pi + phi;
 	      }
+	      phi = deltaPhi(phi,0.0);
 	      double theta = atan((ecal_radius-sqrt(pow(genVertexY,2)+pow(genVertexX,2)))/abs(z_ecal-genVertexZ));
-              double eta = -1.0*sign(z_ecal-genVertexZ)*log(tan(theta/2));
+              double eta = -1.0*TMath::Sign(1.0, z_ecal-genVertexZ)*log(tan(theta/2));
 	      gLLP_daughter_eta_corr[id] = eta;
               gLLP_daughter_phi_corr[id] = phi;
 	      for ( int i_jet = 0; i_jet < nGenJets; i_jet++ )
@@ -1333,11 +1326,11 @@ bool JetNtupler::fillGenParticles(){
               if  (x_ecal < 0.0){
                 phi = pi + phi;
               }
+	      phi = deltaPhi(phi,0.0);
 	      double theta = atan((ecal_radius-sqrt(pow(genVertexY,2)+pow(genVertexX,2)))/abs(z_ecal-genVertexZ));
-	      double eta = -1.0*sign(z_ecal-genVertexZ)*log(tan(theta/2));
+	      double eta = -1.0*TMath::Sign(1.0,z_ecal-genVertexZ)*log(tan(theta/2));
 	      gLLP_daughter_eta_corr[id+2] = eta;
 	      gLLP_daughter_phi_corr[id+2] = phi;
-
 	      for ( int i_jet = 0; i_jet < nGenJets; i_jet++ )
 	      {
 		double genJet_current_delta_r = deltaR(gLLP_daughter_eta[id+2], gLLP_daughter_phi[id+2],genJetEta[i_jet], genJetPhi[i_jet]);
