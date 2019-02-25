@@ -1081,6 +1081,9 @@ bool JetNtupler::fillGenParticles(){
       if (firstMotherWithDifferentID)
       {
         gParticleMotherId[i] = firstMotherWithDifferentID->pdgId();
+        gParticleDecayVertexX[i] = firstMotherWithDifferentID->vx();
+        gParticleDecayVertexY[i] = firstMotherWithDifferentID->vy();
+        gParticleDecayVertexZ[i] = firstMotherWithDifferentID->vz();
       }
 
       //find the mother and keep going up the mother chain if the ID's are the same
