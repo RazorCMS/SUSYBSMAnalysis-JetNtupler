@@ -282,6 +282,9 @@ void JetNtupler::enableGenParticleBranches(){
   JetTree->Branch("gLLP_daughter_eta_corr", gLLP_daughter_eta_corr, "gLLP_daughter_eta_corr[4]/F");
   JetTree->Branch("gLLP_daughter_phi_corr", gLLP_daughter_phi_corr, "gLLP_daughter_phi_corr[4]/F");
   JetTree->Branch("gLLP_daughter_e", gLLP_daughter_e, "gLLP_daughter_e[4]/F");
+  JetTree->Branch("photon_travel_time", photon_travel_time, "photon_travel_time[4]/F");
+  JetTree->Branch("gLLP_daughter_gen_time", gLLP_daughter_gen_time, "gLLP_daughter_gen_time[4]/F");
+
   JetTree->Branch("gLLP_daughter_match_genJet_index", gLLP_daughter_match_genJet_index, "gLLP_daughter_match_genJet_index[4]/i");
   JetTree->Branch("gLLP_min_delta_r_match_genJet", gLLP_min_delta_r_match_genJet, "gLLP_min_delta_r_match_genJet[4]/F");
   JetTree->Branch("gLLP_daughter_match_jet_index", gLLP_daughter_match_jet_index, "gLLP_daughter_match_jet_index[4]/i");
@@ -499,9 +502,14 @@ void JetNtupler::reset_gen_llp_variable()
     gLLP_daughter_phi_corr[i] = -666.;
     gLLP_daughter_e[i] = -666.;
     gLLP_daughter_travel_time[i] = -666.;
+    gLLP_daughter_gen_time[i] = -666.;
+    photon_travel_time[i] = -666.;
     gLLP_daughter_match_jet_index[i] = 666;
     gLLP_min_delta_r_match_jet[i] = -666.;
     gLLP_min_delta_r_nocorr_match_jet[i] = -666.;
+    gLLP_daughter_match_genJet_index[i] = 666;
+    gLLP_min_delta_r_match_genJet[i] = -666.;
+
   }
   return;
 };
@@ -515,6 +523,8 @@ void JetNtupler::reset_gen_jet_variable()
     genJetPt[i] = -666.;
     genJetEta[i] = -666.;
     genJetPhi[i] = -666.;
+    genJet_match_jet_index[i] = 666;
+    genJet_min_delta_r_match_jet[i] = -666.; 
   }
   return;
 };
@@ -1220,10 +1230,8 @@ bool JetNtupler::fillGenParticles(){
               double z_ecal = gLLP_decay_vertex_z[0] + 30. * (tmp.Pz()/tmp.E())*gLLP_daughter_travel_time[id];
               if( fabs(z_ecal) < 271.6561246934 && radius <= ecal_radius)
               {
-    	        double photon_travel_time = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[0] + (ecal_radius-radius) * sinh(tmp.Eta())),2));
-                gLLP_daughter_travel_time[id] = gLLP_daughter_travel_time[id] - photon_travel_time + genVertexT;
-	      //std::cout << "(x,y,z) @ ecal = (" << x_ecal << "," << y_ecal << "," << z_ecal << ")" << std::endl;
-              //std::cout << "extrapolated r = " << sqrt(pow(x_ecal,2)+pow(y_ecal,2)) << std::endl;
+    	        photon_travel_time[id] = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[0] + (ecal_radius-radius) * sinh(tmp.Eta())),2));
+                gLLP_daughter_gen_time[id] = gLLP_daughter_travel_time[id] - photon_travel_time[id] + genVertexT;
               }
               else
               {
@@ -1241,7 +1249,7 @@ bool JetNtupler::fillGenParticles(){
           	phi = pi + phi;
 	      }
 	      phi = deltaPhi(phi,0.0);
-	      double theta = atan((ecal_radius-sqrt(pow(genVertexY,2)+pow(genVertexX,2)))/abs(z_ecal-genVertexZ));
+	      double theta = atan(sqrt(pow(x_ecal-genVertexX,2)+pow(y_ecal-genVertexY,2))/abs(z_ecal-genVertexZ));
               double eta = -1.0*TMath::Sign(1.0, z_ecal-genVertexZ)*log(tan(theta/2));
 	      gLLP_daughter_eta_corr[id] = eta;
               gLLP_daughter_phi_corr[id] = phi;
@@ -1315,13 +1323,16 @@ bool JetNtupler::fillGenParticles(){
 	      double z_ecal = gLLP_decay_vertex_z[1] + 30. * (tmp.Pz()/tmp.E())*gLLP_daughter_travel_time[id+2];
 	      if( fabs(z_ecal) < 271.6561246934 && radius <= ecal_radius)
 	      {
-		double photon_travel_time = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[1] + (ecal_radius-radius) * sinh(tmp.Eta())),2));
-		gLLP_daughter_travel_time[id+2] = gLLP_daughter_travel_time[id+2] - photon_travel_time + genVertexT;         //std::cout << "(x,y,z) @ ecal = (" << x_ecal << "," << y_ecal << "," << z_ecal << ")" << std::endl;
+		photon_travel_time[id+2] = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[1] + (ecal_radius-radius) * sinh(tmp.Eta())),2));
+		gLLP_daughter_gen_time[id+2] = gLLP_daughter_travel_time[id+2] - photon_travel_time[id+2] + genVertexT;         //std::cout << "(x,y,z) @ ecal = (" << x_ecal << "," << y_ecal << "," << z_ecal << ")" << std::endl;
+		
+
+
 		//std::cout << "extrapolated r = " << sqrt(pow(x_ecal,2)+pow(y_ecal,2)) << std::endl;
 	      }
 	      else
-	      {
-		gLLP_daughter_travel_time[id+2] = -666;
+	      {	
+	        gLLP_daughter_travel_time[id+2] = -666;
 	      }
 	      const double pi = 3.1415926535897;
 	      double genJet_min_delta_r = 666.;
@@ -1334,7 +1345,7 @@ bool JetNtupler::fillGenParticles(){
                 phi = pi + phi;
               }
 	      phi = deltaPhi(phi,0.0);
-	      double theta = atan((ecal_radius-sqrt(pow(genVertexY,2)+pow(genVertexX,2)))/abs(z_ecal-genVertexZ));
+	      double theta = atan(sqrt(pow(x_ecal-genVertexX,2)+pow(y_ecal-genVertexY,2))/abs(z_ecal-genVertexZ));
 	      double eta = -1.0*TMath::Sign(1.0,z_ecal-genVertexZ)*log(tan(theta/2));
 	      gLLP_daughter_eta_corr[id+2] = eta;
 	      gLLP_daughter_phi_corr[id+2] = phi;
