@@ -15,8 +15,8 @@ process.source = cms.Source("PoolSource",
 	#'/store/mc/RunIISummer17DRPremix/QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/AODSIM/92X_upgrade2017_realistic_v10-v2/00000/F661A06D-F0AB-E711-AB08-0242AC110004.root'
 	#'/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-1000mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/143C8F1C-D3B0-E711-87D6-FA163EA92854.root',
         #'file:/mnt/hadoop/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-1000mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/26B84519-D3B0-E711-B2CD-FA163EC714FC.root',
-        #'file:/mnt/hadoop/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-1000mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/26B84519-D3B0-E711-B2CD-FA163EC714FC.root'
-	'file:/afs/cern.ch/work/c/christiw/public/LLP/AODSIM/four_jet_M-500_ctau_1000/FCCC0FEA-D4B0-E711-BCEB-0CC47AD98BF0.root'
+        'file:/mnt/hadoop/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-1000mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/26B84519-D3B0-E711-B2CD-FA163EC714FC.root'
+	#'file:/afs/cern.ch/work/c/christiw/public/LLP/AODSIM/four_jet_M-500_ctau_1000/FCCC0FEA-D4B0-E711-BCEB-0CC47AD98BF0.root'
 	#'file:/mnt/hadoop/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-30mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/5C922B1E-ECAB-E711-BB3C-FA163E1A8CC6.root',
 	#'file:/mnt/hadoop/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-30mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/7CDC5245-ECAC-E711-8846-02163E013DE2.root',
         #'file:/mnt/hadoop/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-30mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/8250B221-13AD-E711-A78D-FA163EAD94F3.root',

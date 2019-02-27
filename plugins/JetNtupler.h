@@ -320,6 +320,15 @@ protected:
   float jetNeutralEMEnergyFraction[OBJECTARRAYSIZE];
   float jetChargedHadronEnergyFraction[OBJECTARRAYSIZE];
   float jetNeutralHadronEnergyFraction[OBJECTARRAYSIZE];
+  float jet_charged_hadron_multiplicity[OBJECTARRAYSIZE];
+  float jet_neutral_hadron_multiplicity[OBJECTARRAYSIZE];
+  float jet_photon_multiplicity[OBJECTARRAYSIZE];
+  float jet_electron_multiplicity[OBJECTARRAYSIZE];
+  float jet_muon_multiplicity[OBJECTARRAYSIZE];
+  float jet_HF_hadron_multiplicity[OBJECTARRAYSIZE];
+  float jet_HF_em_multiplicity[OBJECTARRAYSIZE];
+  float jet_charged_multiplicity[OBJECTARRAYSIZE];
+  float jet_neutral_multiplicity[OBJECTARRAYSIZE];
   float jetMatchedGenPt[OBJECTARRAYSIZE];
   float jetMatchedGenEta[OBJECTARRAYSIZE];
   float jetMatchedGenPhi[OBJECTARRAYSIZE];
