@@ -170,6 +170,15 @@ void JetNtupler::setBranches(){
   JetTree->Branch("jetNeutralEMEnergyFraction", jetNeutralEMEnergyFraction, "jetNeutralEMEnergyFraction[nJets]/F");
   JetTree->Branch("jetChargedHadronEnergyFraction", jetChargedHadronEnergyFraction, "jetChargedHadronEnergyFraction[nJets]/F");
   JetTree->Branch("jetNeutralHadronEnergyFraction", jetNeutralHadronEnergyFraction, "jetNeutralHadronEnergyFraction[nJets]/F");
+  JetTree->Branch("jet_charged_hadron_multiplicity", jet_charged_hadron_multiplicity, "jet_charged_hadron_multiplicity[nJets]/F");
+  JetTree->Branch("jet_neutral_hadron_multiplicity", jet_neutral_hadron_multiplicity, "jet_neutral_hadron_multiplicity[nJets]/F");
+  JetTree->Branch("jet_photon_multiplicity", jet_photon_multiplicity, "jet_photon_multiplicity[nJets]/F");
+  JetTree->Branch("jet_electron_multiplicity", jet_electron_multiplicity, "jet_electron_multiplicity[nJets]/F");
+  JetTree->Branch("jet_muon_multiplicity", jet_muon_multiplicity, "jet_muon_multiplicity[nJets]/F");
+  JetTree->Branch("jet_HF_hadron_multiplicity", jet_HF_hadron_multiplicity, "jet_HF_hadron_multiplicity[nJets]/F");
+  JetTree->Branch("jet_HF_em_multiplicity", jet_HF_em_multiplicity, "jet_HF_em_multiplicity[nJets]/F");
+  JetTree->Branch("jet_charged_multiplicity", jet_charged_multiplicity, "jet_charged_multiplicity[nJets]/F");
+  JetTree->Branch("jet_neutral_multiplicity", jet_neutral_multiplicity, "jet_neutral_multiplicity[nJets]/F");
   JetTree->Branch("jetMatchedGenPt", jetMatchedGenPt,"jetMatchedGenPt[nJets]/F");
   JetTree->Branch("jetMatchedGenEta", jetMatchedGenEta,"jetMatchedGenEta[nJets]/F");
   JetTree->Branch("jetMatchedGenPhi", jetMatchedGenPhi,"jetMatchedGenPhi[nJets]/F");
@@ -439,6 +448,15 @@ void JetNtupler::reset_jet_variables()
     jetNeutralEMEnergyFraction[i] = -99.0;
     jetChargedHadronEnergyFraction[i] = -99.0;
     jetNeutralHadronEnergyFraction[i] = -99.0;
+    jet_charged_hadron_multiplicity[i] = -99;
+    jet_neutral_hadron_multiplicity[i] = -99;
+    jet_photon_multiplicity[i] = -99;
+    jet_electron_multiplicity[i] = -99;
+    jet_muon_multiplicity[i] = -99;
+    jet_HF_hadron_multiplicity[i] = -99;
+    jet_HF_em_multiplicity[i] = -99;
+    jet_charged_multiplicity[i] = -99;
+    jet_neutral_multiplicity[i] = -99;
     jetMatchedGenPt[i] = 0.0;
     jetMatchedGenEta[i] = 0.0;
     jetMatchedGenPhi[i] = 0.0;
@@ -644,6 +662,15 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     jetNeutralEMEnergyFraction[i_jet] = j.neutralEmEnergyFraction();
     jetChargedHadronEnergyFraction[i_jet] = j.chargedHadronEnergyFraction();
     jetNeutralHadronEnergyFraction[i_jet] = j.neutralHadronEnergyFraction();
+    jet_charged_hadron_multiplicity[i_jet] = j.chargedHadronMultiplicity();
+    jet_neutral_hadron_multiplicity[i_jet] = j.neutralHadronMultiplicity();
+    jet_photon_multiplicity[i_jet] = j.photonMultiplicity();
+    jet_electron_multiplicity[i_jet] = j.electronMultiplicity();
+    jet_muon_multiplicity[i_jet] = j.muonMultiplicity();
+    jet_HF_hadron_multiplicity[i_jet] = j.HFHadronMultiplicity();
+    jet_HF_em_multiplicity[i_jet] = j.HFEMMultiplicity();
+    jet_charged_multiplicity[i_jet] = j.chargedMultiplicity();
+    jet_neutral_multiplicity[i_jet] = j.neutralMultiplicity();
 
 
     //*************************************
