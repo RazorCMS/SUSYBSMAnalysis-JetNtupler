@@ -294,14 +294,18 @@ void JetNtupler::enableGenParticleBranches(){
   JetTree->Branch("gLLP_daughter_phi_hcalcorr", gLLP_daughter_phi_hcalcorr, "gLLP_daughter_phi_hcalcorr[4]/F");
   JetTree->Branch("gLLP_daughter_e", gLLP_daughter_e, "gLLP_daughter_e[4]/F");
   JetTree->Branch("photon_travel_time", photon_travel_time, "photon_travel_time[4]/F");
-  JetTree->Branch("gLLP_daughter_gen_time", gLLP_daughter_gen_time, "gLLP_daughter_gen_time[4]/F");
+  JetTree->Branch("gen_time", gen_time, "gen_time[4]/F");
+  JetTree->Branch("gen_time_pv", gen_time_pv, "gen_time_pv[4]/F");
+
 
   JetTree->Branch("gLLP_daughter_match_genJet_index", gLLP_daughter_match_genJet_index, "gLLP_daughter_match_genJet_index[4]/i");
   JetTree->Branch("gLLP_min_delta_r_match_genJet", gLLP_min_delta_r_match_genJet, "gLLP_min_delta_r_match_genJet[4]/F");
   JetTree->Branch("gLLP_daughter_match_jet_index_hcal", gLLP_daughter_match_jet_index_hcal, "gLLP_daughter_match_jet_index_hcal[4]/i");
   JetTree->Branch("gLLP_min_delta_r_match_jet_hcal", gLLP_min_delta_r_match_jet_hcal, "gLLP_min_delta_r_match_jet_hcal[4]/F");
-  JetTree->Branch("gLLP_daughter_match_jet_index_r0p45", gLLP_daughter_match_jet_index_r0p45, "gLLP_daughter_match_jet_index_r0p45[4]/i");
-  JetTree->Branch("gLLP_min_delta_r_match_jet_r0p45", gLLP_min_delta_r_match_jet_r0p45, "gLLP_min_delta_r_match_jet_r0p45[4]/F");
+  JetTree->Branch("gLLP_daughter_match_jet_index_hcal_loose", gLLP_daughter_match_jet_index_hcal_loose, "gLLP_daughter_match_jet_index_hcal_loose[4]/i");
+  JetTree->Branch("gLLP_min_delta_r_match_jet_hcal_loose", gLLP_min_delta_r_match_jet_hcal_loose, "gLLP_min_delta_r_match_jet_hcal_loose[4]/F");
+  JetTree->Branch("gLLP_daughter_match_jet_index_loose", gLLP_daughter_match_jet_index_loose, "gLLP_daughter_match_jet_index_loose[4]/i");
+  JetTree->Branch("gLLP_min_delta_r_match_jet_loose", gLLP_min_delta_r_match_jet_loose, "gLLP_min_delta_r_match_jet_loose[4]/F");
   JetTree->Branch("gLLP_daughter_match_jet_index", gLLP_daughter_match_jet_index, "gLLP_daughter_match_jet_index[4]/i");
   JetTree->Branch("gLLP_min_delta_r_match_jet", gLLP_min_delta_r_match_jet, "gLLP_min_delta_r_match_jet[4]/F");
   JetTree->Branch("gLLP_min_delta_r_nocorr_match_jet", gLLP_min_delta_r_nocorr_match_jet, "gLLP_min_delta_r_nocorr_match_jet[4]/F");
@@ -528,14 +532,18 @@ void JetNtupler::reset_gen_llp_variable()
     gLLP_daughter_phi_hcalcorr[i] = -666.;
     gLLP_daughter_e[i] = -666.;
     gLLP_daughter_travel_time[i] = -666.;
-    gLLP_daughter_gen_time[i] = -666.;
+    gen_time[i] = -666.;
+    gen_time_pv[i] = -666.;
     photon_travel_time[i] = -666.;
+    photon_travel_time_pv[i] = -666.;
     gLLP_daughter_match_jet_index[i] = 666;
     gLLP_daughter_match_jet_index_hcal[i] = 666;
-    gLLP_daughter_match_jet_index_r0p45[i] = 666;
+    gLLP_daughter_match_jet_index_hcal_loose[i] = 666;
+    gLLP_daughter_match_jet_index_loose[i] = 666;
     gLLP_min_delta_r_match_jet[i] = -666.;
     gLLP_min_delta_r_match_jet_hcal[i] = -666.;
-    gLLP_min_delta_r_match_jet_r0p45[i] = -666.;
+    gLLP_min_delta_r_match_jet_loose[i] = -666.;
+    gLLP_min_delta_r_match_jet_hcal_loose[i] = -666.;
     gLLP_min_delta_r_nocorr_match_jet[i] = -666.;
     gLLP_daughter_match_genJet_index[i] = 666;
     gLLP_min_delta_r_match_genJet[i] = -666.;
@@ -640,7 +648,7 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   for (const reco::PFJet &j : *jets)
   {
     //resetBranches();
-    if (j.pt() < 10) continue;
+    if (j.pt() < 20) continue;
     if (fabs(j.eta()) > 2.4) continue;
     //*************************************
     //Fill Jet-Level Info
@@ -731,73 +739,70 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     double ecal_radius = 129.0;
     int n_matched_rechits = 0;
     for (EcalRecHitCollection::const_iterator recHit = ebRecHits->begin(); recHit != ebRecHits->end(); ++recHit)
+    {
+      if ( recHit->checkFlag(0) )
       {
-        if ( recHit->checkFlag(0) )
+        const DetId recHitId = recHit->detid();
+        const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
+        if ( deltaR(jetEta[i_jet], jetPhi[i_jet], recHitPos.eta(), recHitPos.phi())  < 0.4)
         {
-          const DetId recHitId = recHit->detid();
-          const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
-          if ( deltaR(jetEta[i_jet], jetPhi[i_jet], recHitPos.eta(), recHitPos.phi())  < 0.4)
+          jet_rechit_E[i_jet] += recHit->energy();
+          jet_rechit_T[i_jet] += recHit->time()*recHit->energy();
+          jet_rechits_E[i_jet][n_matched_rechits] = recHit->energy();
+    	    jet_rechits_T[i_jet][n_matched_rechits] = recHit->time();
+    	    double rechit_x = ecal_radius * cos(recHitPos.phi());
+    	    double rechit_y = ecal_radius * sin(recHitPos.phi());
+    	    double rechit_z = ecal_radius * sinh(recHitPos.eta());
+    	    double photon_pv_travel_time = (1./30) * sqrt(pow(pvX-rechit_x,2)+pow(pvY-rechit_y,2)+pow(pvZ-rechit_z,2));
+          jet_pv_rechits_T[i_jet][n_matched_rechits] = recHit->time()+(1./30)*ecal_radius*cosh(recHitPos.eta()) - photon_pv_travel_time;
+    	    jet_pv_rechit_T[i_jet] += recHit->energy()*jet_pv_rechits_T[i_jet][n_matched_rechits];
+
+          if (recHit->energy() > 0.5)
+    	    {
+        		jet_rechit_E_Ecut0p5[i_jet] += recHit->energy();
+        		jet_rechit_T_Ecut0p5[i_jet] += recHit->time()*recHit->energy();
+            jet_pv_rechit_T_Ecut0p5[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
+
+    	    }
+          if (recHit->energy() > 1.0)
+    	    {
+    		    jet_rechit_E_Ecut1[i_jet] += recHit->energy();
+    		    jet_rechit_T_Ecut1[i_jet] += recHit->time()*recHit->energy();
+            jet_pv_rechit_T_Ecut1[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
+
+    	    }
+          if (recHit->energy() > 1.5)
+    	    {
+    		    jet_rechit_E_Ecut1p5[i_jet] += recHit->energy();
+    		    jet_rechit_T_Ecut1p5[i_jet] += recHit->time()*recHit->energy();
+            jet_pv_rechit_T_Ecut1p5[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
+
+    	    }
+          if (recHit->energy() > 2.0)
+    	    {
+    		    jet_rechit_E_Ecut2[i_jet] += recHit->energy();
+    		    jet_rechit_T_Ecut2[i_jet] += recHit->time()*recHit->energy();
+            jet_pv_rechit_T_Ecut2[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
+
+    	    }
+    	    if (recHit->energy() > 3.0)
           {
-            jet_rechit_E[i_jet] += recHit->energy();
-            jet_rechit_T[i_jet] += recHit->time()*recHit->energy();
-            jet_rechits_E[i_jet][n_matched_rechits] = recHit->energy();
-	    jet_rechits_T[i_jet][n_matched_rechits] = recHit->time();
-	    double rechit_x = ecal_radius * cos(recHitPos.phi());
-	    double rechit_y = ecal_radius * sin(recHitPos.phi());
-	    double rechit_z = ecal_radius * sinh(recHitPos.eta());
-	    double photon_pv_travel_time = (1./30) * sqrt(pow(pvX-rechit_x,2)+pow(pvY-rechit_y,2)+pow(pvZ-rechit_z,2));
-	    jet_pv_rechits_T[i_jet][n_matched_rechits] = recHit->time()+(1./30)*ecal_radius*cosh(recHitPos.eta()) - photon_pv_travel_time;
-	    jet_pv_rechit_T[i_jet] += recHit->energy()*jet_pv_rechits_T[i_jet][n_matched_rechits];
+            jet_rechit_E_Ecut3[i_jet] += recHit->energy();
+            jet_rechit_T_Ecut3[i_jet] += recHit->time()*recHit->energy();
+            jet_pv_rechit_T_Ecut3[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
 
-            if (recHit->energy() > 0.5)
-	    {
-		jet_rechit_E_Ecut0p5[i_jet] += recHit->energy();
-		jet_rechit_T_Ecut0p5[i_jet] += recHit->time()*recHit->energy();
-                jet_pv_rechit_T_Ecut0p5[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
+          }
 
-	    }
-            if (recHit->energy() > 1.0)
-	    {
-		jet_rechit_E_Ecut1[i_jet] += recHit->energy();
-		jet_rechit_T_Ecut1[i_jet] += recHit->time()*recHit->energy();
-                jet_pv_rechit_T_Ecut1[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
+    	    if (recHit->energy() > 4.0)
+          {
+            jet_rechit_E_Ecut4[i_jet] += recHit->energy();
+            jet_rechit_T_Ecut4[i_jet] += recHit->time()*recHit->energy();
+            jet_pv_rechit_T_Ecut4[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
 
-	    }
-            if (recHit->energy() > 1.5)
-	    {
-		jet_rechit_E_Ecut1p5[i_jet] += recHit->energy();
-		jet_rechit_T_Ecut1p5[i_jet] += recHit->time()*recHit->energy();
-                jet_pv_rechit_T_Ecut1p5[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
-
-	    }
-            if (recHit->energy() > 2.0)
-	    {
-		jet_rechit_E_Ecut2[i_jet] += recHit->energy();
-		jet_rechit_T_Ecut2[i_jet] += recHit->time()*recHit->energy();
-                jet_pv_rechit_T_Ecut2[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
-
-	    }
-	    if (recHit->energy() > 3.0)
-            {
-                jet_rechit_E_Ecut3[i_jet] += recHit->energy();
-                jet_rechit_T_Ecut3[i_jet] += recHit->time()*recHit->energy();
-                jet_pv_rechit_T_Ecut3[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
-
-            }
-
-	    if (recHit->energy() > 4.0)
-            {
-                jet_rechit_E_Ecut4[i_jet] += recHit->energy();
-                jet_rechit_T_Ecut4[i_jet] += recHit->time()*recHit->energy();
-                jet_pv_rechit_T_Ecut4[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
-
-            }
-	    n_matched_rechits++;
-
-          //std::cout << recHitPos.eta() << std::endl;
-            }
-        //std::cout << recHitId << std::endl;
+          }
+    	    n_matched_rechits++;
         }
+      }
     }
     //cout << "Last Nphoton: " << fJetNPhotons << "\n";
     //std::cout << "n: " << n_matched_rechits << std::endl;
@@ -1094,8 +1099,11 @@ bool JetNtupler::fillGenParticles(){
        || (abs((*genParticles)[i].pdgId()) >= 32 && abs((*genParticles)[i].pdgId()) <= 42)
        || (abs((*genParticles)[i].pdgId()) >= 1000001 && abs((*genParticles)[i].pdgId()) <= 1000039) )
        {
-         prunedV.push_back(&(*genParticles)[i]);
+         if ((*genParticles)[i].pt()>20){
+           prunedV.push_back(&(*genParticles)[i]);
+         }
        }
+
   }
 
   //Total number of gen particles
@@ -1268,19 +1276,25 @@ bool JetNtupler::fillGenParticles(){
 	      //if( fabs(z_ecal) < 10 && radius <= 1)
               if( fabs(z_ecal) < 271.6561246934 && radius <= ecal_radius)
       	      {
-      	        photon_travel_time[id] = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[0] + (ecal_radius-radius) * sinh(tmp.Eta())),2));
-                gLLP_daughter_gen_time[id] = gLLP_daughter_travel_time[id] - photon_travel_time[id] + genVertexT;
+      	        photon_travel_time[id] = (1./30) * sqrt(pow(ecal_radius,2)+pow(z_ecal,2));
+                photon_travel_time_pv[id] = (1./30) * sqrt(pow(x_ecal-genVertexX,2) + pow(y_ecal-genVertexY,2) + pow(z_ecal-genVertexZ,2));
+                gen_time_pv[id] =  gLLP_travel_time[0] + gLLP_daughter_travel_time[id] - photon_travel_time_pv[id] + genVertexT;
+                gen_time[id] = gLLP_travel_time[0] + gLLP_daughter_travel_time[id] - photon_travel_time[id] + genVertexT;
+
               }
               else
               {
                 gLLP_daughter_travel_time[id] = -666;
+                gen_time_pv[id] = -666.;
+                gen_time[id] = -666.;
+                photon_travel_time[id] = -666.;
+                photon_travel_time_pv[id] = -666.;
               }
       	      double min_delta_r = 666.;
       	      double min_delta_r_nocorr = 666.;
               double min_delta_r_hcal = 666.;
       	      unsigned int match_jet_index = 666;
               unsigned int match_jet_index_hcal = 666;
-              unsigned int match_jet_index_r0p45 = 666;
 
       	      double genJet_min_delta_r = 666.;
       	      unsigned int match_genJet_index = 666;
@@ -1347,13 +1361,18 @@ bool JetNtupler::fillGenParticles(){
       	      }
               if ( min_delta_r < 0.45 )
               {
-                gLLP_daughter_match_jet_index_r0p45[id] = match_jet_index;
-                gLLP_min_delta_r_match_jet_r0p45[id] = min_delta_r;
+                gLLP_daughter_match_jet_index_loose[id] = match_jet_index;
+                gLLP_min_delta_r_match_jet_loose[id] = min_delta_r;
               }
               if ( min_delta_r_hcal < 0.3 )
       	      {
       	        gLLP_daughter_match_jet_index_hcal[id] = match_jet_index_hcal;
       	        gLLP_min_delta_r_match_jet_hcal[id] = min_delta_r_hcal;
+      	      }
+              if ( min_delta_r_hcal < 0.45 )
+      	      {
+      	        gLLP_daughter_match_jet_index_hcal_loose[id] = match_jet_index_hcal;
+      	        gLLP_min_delta_r_match_jet_hcal_loose[id] = min_delta_r_hcal;
       	      }
       	      if ( genJet_min_delta_r < 0.3 )
       	      {
@@ -1404,12 +1423,19 @@ bool JetNtupler::fillGenParticles(){
       	      if( fabs(z_ecal) < 271.6561246934 && radius <= ecal_radius)
       	      // if( fabs(z_ecal) < 10 && radius <= 0.1)
       	      {
-    		        photon_travel_time[id+2] = (1./30) * sqrt(pow(ecal_radius,2)+pow((gLLP_decay_vertex_z[1] + (ecal_radius-radius) * sinh(tmp.Eta())),2));
-    		        gLLP_daughter_gen_time[id+2] = gLLP_daughter_travel_time[id+2] - photon_travel_time[id+2] + genVertexT;         //std::cout << "(x,y,z) @ ecal = (" << x_ecal << "," << y_ecal << "," << z_ecal << ")" << std::endl;
+                photon_travel_time[id+2] = (1./30) * sqrt(pow(ecal_radius,2)+pow(z_ecal,2));
+                photon_travel_time_pv[id+2] = (1./30) * sqrt(pow(x_ecal-genVertexX,2) + pow(y_ecal-genVertexY,2) + pow(z_ecal-genVertexZ,2));
+                gen_time_pv[id+2] =  gLLP_travel_time[1] + gLLP_daughter_travel_time[id+2] - photon_travel_time_pv[id+2] + genVertexT;
+                gen_time[id+2] = gLLP_travel_time[1] + gLLP_daughter_travel_time[id+2] - photon_travel_time[id+2] + genVertexT;
+
       	      }
       	      else
       	      {
       	        gLLP_daughter_travel_time[id+2] = -666;
+                gen_time_pv[id+2] = -666.;
+                gen_time[id+2] = -666.;
+                photon_travel_time[id+2] = -666.;
+                photon_travel_time_pv[id+2] = -666.;
       	      }
       	      double genJet_min_delta_r = 666.;
               unsigned int match_genJet_index = 666;
@@ -1477,13 +1503,18 @@ bool JetNtupler::fillGenParticles(){
       	      }
               if ( min_delta_r < 0.45 )
               {
-                gLLP_daughter_match_jet_index_r0p45[id+2] = match_jet_index;
-                gLLP_min_delta_r_match_jet_r0p45[id+2] = min_delta_r;
+                gLLP_daughter_match_jet_index_loose[id+2] = match_jet_index;
+                gLLP_min_delta_r_match_jet_loose[id+2] = min_delta_r;
               }
               if ( min_delta_r_hcal < 0.3 )
       	      {
       	        gLLP_daughter_match_jet_index_hcal[id+2] = match_jet_index_hcal;
       	        gLLP_min_delta_r_match_jet_hcal[id+2] = min_delta_r_hcal;
+      	      }
+              if ( min_delta_r_hcal < 0.3 )
+      	      {
+      	        gLLP_daughter_match_jet_index_hcal_loose[id+2] = match_jet_index_hcal;
+      	        gLLP_min_delta_r_match_jet_hcal_loose[id+2] = min_delta_r_hcal;
       	      }
       	      if ( genJet_min_delta_r < 0.3 )
       	      {
