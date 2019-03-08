@@ -524,16 +524,27 @@ float gLLP_travel_time[LLP_ARRAY_SIZE];
 
 
 float photon_travel_time[LLP_DAUGHTER_ARRAY_SIZE];
-float gLLP_daughter_gen_time[LLP_DAUGHTER_ARRAY_SIZE];
+float photon_travel_time_pv[LLP_DAUGHTER_ARRAY_SIZE];
+
+float gen_time[LLP_DAUGHTER_ARRAY_SIZE];
+float gen_time_pv[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_travel_time[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_pt[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_eta[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_phi[LLP_DAUGHTER_ARRAY_SIZE];
-float gLLP_daughter_eta_corr[LLP_DAUGHTER_ARRAY_SIZE];
-float gLLP_daughter_phi_corr[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_daughter_eta_ecalcorr[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_daughter_phi_ecalcorr[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_daughter_eta_hcalcorr[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_daughter_phi_hcalcorr[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_e[LLP_DAUGHTER_ARRAY_SIZE];
 unsigned int gLLP_daughter_match_genJet_index[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_min_delta_r_match_genJet[LLP_DAUGHTER_ARRAY_SIZE];
+unsigned int gLLP_daughter_match_jet_index_hcal[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_min_delta_r_match_jet_hcal[LLP_DAUGHTER_ARRAY_SIZE];
+unsigned int gLLP_daughter_match_jet_index_loose[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_min_delta_r_match_jet_loose[LLP_DAUGHTER_ARRAY_SIZE];
+unsigned int gLLP_daughter_match_jet_index_hcal_loose[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_min_delta_r_match_jet_hcal_loose[LLP_DAUGHTER_ARRAY_SIZE];
 unsigned int gLLP_daughter_match_jet_index[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_min_delta_r_match_jet[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_min_delta_r_nocorr_match_jet[LLP_DAUGHTER_ARRAY_SIZE];
