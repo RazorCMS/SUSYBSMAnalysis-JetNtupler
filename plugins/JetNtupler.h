@@ -3,7 +3,7 @@
 /*
 Description: Base class for miniAOD analysis with CRAB
 */
-//         Author:  FNAL/Caltech LLP Team
+//         Author:  LPC LLP TEAM
 //         Created:  Wed, 13 Geb 2019 15:00:06 GMT
 
 #ifndef RAZORTUPLIZER_H
@@ -128,6 +128,7 @@ public:
   bool passJetID( const reco::PFJet *jet, int cutLevel);
   double deltaPhi(double phi1, double phi2);
   double deltaR(double eta1, double phi1, double eta2, double phi2);
+  void enableAK8Jets();
   void enableMCBranches();
   void enableGenParticleBranches();
   void enableTriggerBranches();
@@ -364,6 +365,69 @@ protected:
 
 
 
+  //AK8 Jets
+  int n_fat_Jets;
+  float fat_jetE[OBJECTARRAYSIZE];
+  float fat_jetPt[OBJECTARRAYSIZE];
+  float fat_jetEta[OBJECTARRAYSIZE];
+  float fat_jetPhi[OBJECTARRAYSIZE];
+  float fat_jetCISV[OBJECTARRAYSIZE];
+  float fat_jetMass[OBJECTARRAYSIZE];
+  float fat_jetJetArea[OBJECTARRAYSIZE];
+  float fat_jetPileupE[OBJECTARRAYSIZE];
+  float fat_jetPileupId[OBJECTARRAYSIZE];
+  int   fat_jetPileupIdFlag[OBJECTARRAYSIZE];
+  bool  fat_jetPassIDLoose[OBJECTARRAYSIZE];
+  bool  fat_jetPassIDTight[OBJECTARRAYSIZE];
+  bool  fat_jetPassMuFrac[OBJECTARRAYSIZE];
+  bool  fat_jetPassEleFrac[OBJECTARRAYSIZE];
+  int   fat_jetPartonFlavor[OBJECTARRAYSIZE];
+  int   fat_jetHadronFlavor[OBJECTARRAYSIZE];
+  float fat_jetChargedEMEnergyFraction[OBJECTARRAYSIZE];
+  float fat_jetNeutralEMEnergyFraction[OBJECTARRAYSIZE];
+  float fat_jetChargedHadronEnergyFraction[OBJECTARRAYSIZE];
+  float fat_jetNeutralHadronEnergyFraction[OBJECTARRAYSIZE];
+  float fat_jet_charged_hadron_multiplicity[OBJECTARRAYSIZE];
+  float fat_jet_neutral_hadron_multiplicity[OBJECTARRAYSIZE];
+  float fat_jet_photon_multiplicity[OBJECTARRAYSIZE];
+  float fat_jet_electron_multiplicity[OBJECTARRAYSIZE];
+  float fat_jet_muon_multiplicity[OBJECTARRAYSIZE];
+  float fat_jet_HF_hadron_multiplicity[OBJECTARRAYSIZE];
+  float fat_jet_HF_em_multiplicity[OBJECTARRAYSIZE];
+  float fat_jet_charged_multiplicity[OBJECTARRAYSIZE];
+  float fat_jet_neutral_multiplicity[OBJECTARRAYSIZE];
+  float fat_jetMatchedGenPt[OBJECTARRAYSIZE];
+  float fat_jetMatchedGenEta[OBJECTARRAYSIZE];
+  float fat_jetMatchedGenPhi[OBJECTARRAYSIZE];
+  float fat_jetMatchedGenMass[OBJECTARRAYSIZE];
+  float fat_jetMatchedGenTime[OBJECTARRAYSIZE];
+  int   fat_jet_n_rechits[OBJECTARRAYSIZE];
+  float fat_jet_rechit_E[OBJECTARRAYSIZE];
+  float fat_jet_rechit_T[OBJECTARRAYSIZE];
+  float fat_jet_pv_rechit_T[OBJECTARRAYSIZE];
+
+  float fat_jet_rechit_E_Ecut4[OBJECTARRAYSIZE];
+  float fat_jet_rechit_T_Ecut4[OBJECTARRAYSIZE];
+  float fat_jet_rechit_E_Ecut3[OBJECTARRAYSIZE];
+  float fat_jet_rechit_T_Ecut3[OBJECTARRAYSIZE];
+  float fat_jet_rechit_E_Ecut2[OBJECTARRAYSIZE];
+  float fat_jet_rechit_T_Ecut2[OBJECTARRAYSIZE];
+  float fat_jet_rechit_E_Ecut1p5[OBJECTARRAYSIZE];
+  float fat_jet_rechit_T_Ecut1p5[OBJECTARRAYSIZE];
+  float fat_jet_rechit_E_Ecut1[OBJECTARRAYSIZE];
+  float fat_jet_rechit_T_Ecut1[OBJECTARRAYSIZE];
+  float fat_jet_rechit_E_Ecut0p5[OBJECTARRAYSIZE];
+  float fat_jet_rechit_T_Ecut0p5[OBJECTARRAYSIZE];
+  float fat_jet_rechits_E[OBJECTARRAYSIZE][OBJECTARRAYSIZE];
+  float fat_jet_rechits_T[OBJECTARRAYSIZE][OBJECTARRAYSIZE];
+
+  float fat_jet_pv_rechit_T_Ecut4[OBJECTARRAYSIZE];
+  float fat_jet_pv_rechit_T_Ecut3[OBJECTARRAYSIZE];
+  float fat_jet_pv_rechit_T_Ecut2[OBJECTARRAYSIZE];
+  float fat_jet_pv_rechit_T_Ecut1p5[OBJECTARRAYSIZE];
+  float fat_jet_pv_rechit_T_Ecut1[OBJECTARRAYSIZE];
+  float fat_jet_pv_rechit_T_Ecut0p5[OBJECTARRAYSIZE];
+  float fat_jet_pv_rechits_T[OBJECTARRAYSIZE][OBJECTARRAYSIZE];
 
 
 
