@@ -3,7 +3,7 @@
 /*
   Description: Base class for miniAOD analysis with CRAB
 */
-//         Author:  Caltech razor team
+//         Author:  LPC LLP TEAM
 //         Created:  Thu, 17 Jul 2014 15:00:06 GMT
 
 #include "JetNtupler.h"
@@ -231,6 +231,70 @@ void JetNtupler::setBranches(){
 };
 
 
+void JetNtupler::enableAK8Jets()
+{
+  JetTree->Branch("n_fat_Jets", &n_fat_Jets,"n_fat_Jets/I");
+  JetTree->Branch("fat_jetE", fat_jetE,"fat_jetE[nfat_jets]/F");
+  JetTree->Branch("fat_jetPt", fat_jetPt,"fat_jetPt[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetEta", fat_jetEta,"fat_jetEta[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetPhi", fat_jetPhi,"fat_jetPhi[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetCISV", fat_jetCISV,"fat_jetCISV[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetMass", fat_jetMass, "fat_jetMass[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetJetArea", fat_jetJetArea, "fat_jetJetArea[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetPileupE", fat_jetPileupE, "fat_jetPileupE[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetPileupId", fat_jetPileupId, "fat_jetPileupId[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetPileupIdFlag", fat_jetPileupIdFlag, "fat_jetPileupIdFlag[n_fat_Jets]/I");
+  JetTree->Branch("fat_jetPassIDLoose", fat_jetPassIDLoose, "fat_jetPassIDLoose[n_fat_Jets]/O");
+  JetTree->Branch("fat_jetPassIDTight", fat_jetPassIDTight, "fat_jetPassIDTight[n_fat_Jets]/O");
+  JetTree->Branch("fat_jetPassMuFrac", fat_jetPassMuFrac, "fat_jetPassMuFrac[n_fat_Jets]/O");
+  JetTree->Branch("fat_jetPassEleFrac", fat_jetPassEleFrac, "fat_jetPassEleFrac[n_fat_Jets]/O");
+  JetTree->Branch("fat_jetPartonFlavor", fat_jetPartonFlavor, "fat_jetPartonFlavor[n_fat_Jets]/I");
+  JetTree->Branch("fat_jetHadronFlavor", fat_jetHadronFlavor, "fat_jetHadronFlavor[n_fat_Jets]/I");
+  JetTree->Branch("fat_jetChargedEMEnergyFraction", fat_jetChargedEMEnergyFraction, "fat_jetChargedEMEnergyFraction[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetNeutralEMEnergyFraction", fat_jetNeutralEMEnergyFraction, "fat_jetNeutralEMEnergyFraction[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetChargedHadronEnergyFraction", fat_jetChargedHadronEnergyFraction, "fat_jetChargedHadronEnergyFraction[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetNeutralHadronEnergyFraction", fat_jetNeutralHadronEnergyFraction, "fat_jetNeutralHadronEnergyFraction[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_charged_hadron_multiplicity", fat_jet_charged_hadron_multiplicity, "fat_jet_charged_hadron_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_neutral_hadron_multiplicity", fat_jet_neutral_hadron_multiplicity, "fat_jet_neutral_hadron_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_photon_multiplicity", fat_jet_photon_multiplicity, "fat_jet_photon_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_electron_multiplicity", fat_jet_electron_multiplicity, "fat_jet_electron_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_muon_multiplicity", fat_jet_muon_multiplicity, "fat_jet_muon_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_HF_hadron_multiplicity", fat_jet_HF_hadron_multiplicity, "fat_jet_HF_hadron_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_HF_em_multiplicity", fat_jet_HF_em_multiplicity, "fat_jet_HF_em_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_charged_multiplicity", fat_jet_charged_multiplicity, "fat_jet_charged_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_neutral_multiplicity", fat_jet_neutral_multiplicity, "fat_jet_neutral_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetMatchedGenPt", fat_jetMatchedGenPt,"fat_jetMatchedGenPt[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetMatchedGenEta", fat_jetMatchedGenEta,"fat_jetMatchedGenEta[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetMatchedGenPhi", fat_jetMatchedGenPhi,"fat_jetMatchedGenPhi[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetMatchedGenMass", fat_jetMatchedGenMass, "fat_jetMatchedGenMass[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_n_rechits", fat_jet_n_rechits, "fat_jet_n_rechits[n_fat_Jets]/I");
+  JetTree->Branch("fat_jet_rechits_E", fat_jet_rechits_E, "fat_jet_rechits_E[n_fat_Jets][1000]/F");
+  JetTree->Branch("fat_jet_rechits_T", fat_jet_rechits_T, "fat_jet_rechits_T[n_fat_Jets][1000]/F");
+  JetTree->Branch("fat_jet_rechit_E_Ecut3", fat_jet_rechit_E_Ecut3, "fat_jet_rechit_E_Ecut3[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_T_Ecut3", fat_jet_rechit_T_Ecut3, "fat_jet_rechit_T_Ecut3[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_E_Ecut4", fat_jet_rechit_E_Ecut4, "fat_jet_rechit_E_Ecut4[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_T_Ecut4", fat_jet_rechit_T_Ecut4, "fat_jet_rechit_T_Ecut4[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_E_Ecut2", fat_jet_rechit_E_Ecut2, "fat_jet_rechit_E_Ecut2[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_T_Ecut2", fat_jet_rechit_T_Ecut2, "fat_jet_rechit_T_Ecut2[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_E_Ecut1p5", fat_jet_rechit_E_Ecut1p5, "fat_jet_rechit_E_Ecut1p5[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_T_Ecut1p5", fat_jet_rechit_T_Ecut1p5, "fat_jet_rechit_T_Ecut1p5[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_E_Ecut1", fat_jet_rechit_E_Ecut1, "fat_jet_rechit_E_Ecut1[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_T_Ecut1", fat_jet_rechit_T_Ecut1, "fat_jet_rechit_T_Ecut1[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_E_Ecut0p5", fat_jet_rechit_E_Ecut0p5, "fat_jet_rechit_E_Ecut0p5[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_T_Ecut0p5", fat_jet_rechit_T_Ecut0p5, "fat_jet_rechit_T_Ecut0p5[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_E", fat_jet_rechit_E, "fat_jet_rechit_E[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_T", fat_jet_rechit_T, "fat_jet_rechit_T[n_fat_Jets]/F");
+
+  JetTree->Branch("fat_jet_pv_rechits_T", fat_jet_rechits_T, "fat_jet_rechits_T[n_fat_Jets][1000]/F");
+  JetTree->Branch("fat_jet_pv_rechit_T_Ecut3", fat_jet_rechit_T_Ecut3, "fat_jet_rechit_T_Ecut3[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_pv_rechit_T_Ecut4", fat_jet_rechit_T_Ecut4, "fat_jet_rechit_T_Ecut4[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_pv_rechit_T_Ecut2", fat_jet_rechit_T_Ecut2, "fat_jet_rechit_T_Ecut2[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_pv_rechit_T_Ecut1p5", fat_jet_rechit_T_Ecut1p5, "fat_jet_rechit_T_Ecut1p5[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_pv_rechit_T_Ecut1", fat_jet_rechit_T_Ecut1, "fat_jet_rechit_T_Ecut1[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_pv_rechit_T_Ecut0p5", fat_jet_rechit_T_Ecut0p5, "fat_jet_rechit_T_Ecut0p5[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_pv_rechit_T", fat_jet_rechit_T, "fat_jet_rechit_T[n_fat_Jets]/F");
+  return;
+};
 void JetNtupler::enableMCBranches(){
   JetTree->Branch("nGenJets", &nGenJets, "nGenJets/I");
   JetTree->Branch("genJetE", genJetE, "genJetE[nGenJets]/F");
