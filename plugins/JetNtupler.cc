@@ -201,14 +201,14 @@ void JetNtupler::setBranches(){
   JetTree->Branch("jet_rechit_E", jet_rechit_E, "jet_rechit_E[nJets]/F");
   JetTree->Branch("jet_rechit_T", jet_rechit_T, "jet_rechit_T[nJets]/F");
 
-  JetTree->Branch("jet_pv_rechits_T", jet_rechits_T, "jet_rechits_T[nJets][1000]/F");
-  JetTree->Branch("jet_pv_rechit_T_Ecut3", jet_rechit_T_Ecut3, "jet_rechit_T_Ecut3[nJets]/F");
-  JetTree->Branch("jet_pv_rechit_T_Ecut4", jet_rechit_T_Ecut4, "jet_rechit_T_Ecut4[nJets]/F");
-  JetTree->Branch("jet_pv_rechit_T_Ecut2", jet_rechit_T_Ecut2, "jet_rechit_T_Ecut2[nJets]/F");
-  JetTree->Branch("jet_pv_rechit_T_Ecut1p5", jet_rechit_T_Ecut1p5, "jet_rechit_T_Ecut1p5[nJets]/F");
-  JetTree->Branch("jet_pv_rechit_T_Ecut1", jet_rechit_T_Ecut1, "jet_rechit_T_Ecut1[nJets]/F");
-  JetTree->Branch("jet_pv_rechit_T_Ecut0p5", jet_rechit_T_Ecut0p5, "jet_rechit_T_Ecut0p5[nJets]/F");
-  JetTree->Branch("jet_pv_rechit_T", jet_rechit_T, "jet_rechit_T[nJets]/F");
+  JetTree->Branch("jet_pv_rechits_T", jet_pv_rechits_T, "jet_rechits_T[nJets][1000]/F");
+  JetTree->Branch("jet_pv_rechit_T_Ecut3", jet_pv_rechit_T_Ecut3, "jet_rechit_T_Ecut3[nJets]/F");
+  JetTree->Branch("jet_pv_rechit_T_Ecut4", jet_pv_rechit_T_Ecut4, "jet_rechit_T_Ecut4[nJets]/F");
+  JetTree->Branch("jet_pv_rechit_T_Ecut2", jet_pv_rechit_T_Ecut2, "jet_rechit_T_Ecut2[nJets]/F");
+  JetTree->Branch("jet_pv_rechit_T_Ecut1p5", jet_pv_rechit_T_Ecut1p5, "jet_rechit_T_Ecut1p5[nJets]/F");
+  JetTree->Branch("jet_pv_rechit_T_Ecut1", jet_pv_rechit_T_Ecut1, "jet_rechit_T_Ecut1[nJets]/F");
+  JetTree->Branch("jet_pv_rechit_T_Ecut0p5", jet_pv_rechit_T_Ecut0p5, "jet_rechit_T_Ecut0p5[nJets]/F");
+  JetTree->Branch("jet_pv_rechit_T", jet_pv_rechit_T, "jet_rechit_T[nJets]/F");
 
   JetTree->Branch("nPhotons", &fJetNPhotons,"nPhotons/I");
   JetTree->Branch("phoPt", fJetPhotonPt,"phoPt[nPhotons]/F");
@@ -756,19 +756,22 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     	    double photon_pv_travel_time = (1./30) * sqrt(pow(pvX-rechit_x,2)+pow(pvY-rechit_y,2)+pow(pvZ-rechit_z,2));
           jet_pv_rechits_T[i_jet][n_matched_rechits] = recHit->time()+(1./30)*ecal_radius*cosh(recHitPos.eta()) - photon_pv_travel_time;
     	    jet_pv_rechit_T[i_jet] += recHit->energy()*jet_pv_rechits_T[i_jet][n_matched_rechits];
-
+          // std::cout << jet_pv_rechits_T[i_jet][n_matched_rechits] << jet_rechits_T[i_jet][n_matched_rechits] << std::endl;
           if (recHit->energy() > 0.5)
     	    {
         		jet_rechit_E_Ecut0p5[i_jet] += recHit->energy();
         		jet_rechit_T_Ecut0p5[i_jet] += recHit->time()*recHit->energy();
             jet_pv_rechit_T_Ecut0p5[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
-
     	    }
           if (recHit->energy() > 1.0)
     	    {
     		    jet_rechit_E_Ecut1[i_jet] += recHit->energy();
     		    jet_rechit_T_Ecut1[i_jet] += recHit->time()*recHit->energy();
             jet_pv_rechit_T_Ecut1[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
+            // std::cout << "rechit time, with pv"<<jet_rechit_T_Ecut1[i_jet]<< jet_pv_rechit_T_Ecut1[i_jet]<< std::endl;
+            // std::cout << "rechits with pv, without" <<jet_pv_rechits_T[i_jet][n_matched_rechits] << jet_rechits_T[i_jet][n_matched_rechits] << std::endl;
+            // std::cout << "rechit energy and time"<<recHit->energy()<< recHit->time()<< std::endl;
+
 
     	    }
           if (recHit->energy() > 1.5)
@@ -812,17 +815,18 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     jet_rechit_T_Ecut3[i_jet] = jet_rechit_T_Ecut3[i_jet]/jet_rechit_E_Ecut3[i_jet];
     jet_rechit_T_Ecut2[i_jet] = jet_rechit_T_Ecut2[i_jet]/jet_rechit_E_Ecut2[i_jet];
     jet_rechit_T_Ecut1p5[i_jet] = jet_rechit_T_Ecut1p5[i_jet]/jet_rechit_E_Ecut1p5[i_jet];
-    jet_rechit_T_Ecut1[i_jet] = jet_rechit_T_Ecut1[i_jet]/jet_rechit_E_Ecut1[i_jet];
+    jet_rechit_T_Ecut1[i_jet] =  jet_rechit_T_Ecut1[i_jet]/jet_rechit_E_Ecut1[i_jet];
     jet_rechit_T_Ecut0p5[i_jet] = jet_rechit_T_Ecut0p5[i_jet]/jet_rechit_E_Ecut0p5[i_jet]; //incrementing jet counter
     jet_pv_rechit_T[i_jet] = jet_pv_rechit_T[i_jet]/jet_rechit_E[i_jet];
     jet_pv_rechit_T_Ecut4[i_jet] = jet_pv_rechit_T_Ecut4[i_jet]/jet_rechit_E_Ecut4[i_jet];
     jet_pv_rechit_T_Ecut3[i_jet] = jet_pv_rechit_T_Ecut3[i_jet]/jet_rechit_E_Ecut3[i_jet];
-    jet_pv_rechit_T_Ecut2[i_jet] = jet_pv_rechit_T_Ecut2[i_jet]/jet_rechit_E_Ecut2[i_jet];
+    jet_pv_rechit_T_Ecut2[i_jet] =  jet_pv_rechit_T_Ecut2[i_jet]/jet_rechit_E_Ecut2[i_jet];
     jet_pv_rechit_T_Ecut1p5[i_jet] = jet_pv_rechit_T_Ecut1p5[i_jet]/jet_rechit_E_Ecut1p5[i_jet];
     jet_pv_rechit_T_Ecut1[i_jet] = jet_pv_rechit_T_Ecut1[i_jet]/jet_rechit_E_Ecut1[i_jet];
     jet_pv_rechit_T_Ecut0p5[i_jet] = jet_pv_rechit_T_Ecut0p5[i_jet]/jet_rechit_E_Ecut0p5[i_jet]; //incrementing jet counter
     nJets++;
     i_jet++;
+
   } //loop over jets
 
   //MC AND GEN LEVEL INFO
