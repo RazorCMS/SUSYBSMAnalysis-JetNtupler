@@ -227,12 +227,78 @@ void JetNtupler::setBranches(){
   // JetTree->Branch("fJetPhotonRecHitTime", "std::vector<float>",&fJetPhotonRecHitTime);
 
   cout << "BRANCHES\n";
+  enableFatJetBranches();
   enableMCBranches();
   enableGenParticleBranches();
   if (enableTriggerInfo_) enableTriggerBranches();
   if (isQCD_)enableQCDBranches();
 };
 
+void JetNtupler::enableFatJetBranches()
+{
+  JetTree->Branch("n_fat_Jets", &n_fat_Jets,"n_fat_Jets/I");
+  JetTree->Branch("fat_jetE", fat_jetE,"fat_jetE[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetPt", fat_jetPt,"fat_jetPt[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetEta", fat_jetEta,"fat_jetEta[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetPhi", fat_jetPhi,"fat_jetPhi[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetCISV", fat_jetCISV,"fat_jetCISV[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetMass", fat_jetMass, "fat_jetMass[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetJetArea", fat_jetJetArea, "fat_jetJetArea[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetPileupE", fat_jetPileupE, "fat_jetPileupE[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetPileupId", fat_jetPileupId, "fat_jetPileupId[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetPileupIdFlag", fat_jetPileupIdFlag, "fat_jetPileupIdFlag[n_fat_Jets]/I");
+  JetTree->Branch("fat_jetPassIDLoose", fat_jetPassIDLoose, "fat_jetPassIDLoose[n_fat_Jets]/O");
+  JetTree->Branch("fat_jetPassIDTight", fat_jetPassIDTight, "fat_jetPassIDTight[n_fat_Jets]/O");
+  JetTree->Branch("fat_jetPassMuFrac", fat_jetPassMuFrac, "fat_jetPassMuFrac[n_fat_Jets]/O");
+  JetTree->Branch("fat_jetPassEleFrac", fat_jetPassEleFrac, "fat_jetPassEleFrac[n_fat_Jets]/O");
+  JetTree->Branch("fat_jetPartonFlavor", fat_jetPartonFlavor, "fat_jetPartonFlavor[n_fat_Jets]/I");
+  JetTree->Branch("fat_jetHadronFlavor", fat_jetHadronFlavor, "fat_jetHadronFlavor[n_fat_Jets]/I");
+  JetTree->Branch("fat_jetChargedEMEnergyFraction", fat_jetChargedEMEnergyFraction, "fat_jetChargedEMEnergyFraction[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetNeutralEMEnergyFraction", fat_jetNeutralEMEnergyFraction, "fat_jetNeutralEMEnergyFraction[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetChargedHadronEnergyFraction", fat_jetChargedHadronEnergyFraction, "fat_jetChargedHadronEnergyFraction[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetNeutralHadronEnergyFraction", fat_jetNeutralHadronEnergyFraction, "fat_jetNeutralHadronEnergyFraction[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_charged_hadron_multiplicity", fat_jet_charged_hadron_multiplicity, "fat_jet_charged_hadron_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_neutral_hadron_multiplicity", fat_jet_neutral_hadron_multiplicity, "fat_jet_neutral_hadron_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_photon_multiplicity", fat_jet_photon_multiplicity, "fat_jet_photon_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_electron_multiplicity", fat_jet_electron_multiplicity, "fat_jet_electron_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_muon_multiplicity", fat_jet_muon_multiplicity, "fat_jet_muon_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_HF_hadron_multiplicity", fat_jet_HF_hadron_multiplicity, "fat_jet_HF_hadron_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_HF_em_multiplicity", fat_jet_HF_em_multiplicity, "fat_jet_HF_em_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_charged_multiplicity", fat_jet_charged_multiplicity, "fat_jet_charged_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_neutral_multiplicity", fat_jet_neutral_multiplicity, "fat_jet_neutral_multiplicity[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetMatchedGenPt", fat_jetMatchedGenPt,"fat_jetMatchedGenPt[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetMatchedGenEta", fat_jetMatchedGenEta,"fat_jetMatchedGenEta[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetMatchedGenPhi", fat_jetMatchedGenPhi,"fat_jetMatchedGenPhi[n_fat_Jets]/F");
+  JetTree->Branch("fat_jetMatchedGenMass", fat_jetMatchedGenMass, "fat_jetMatchedGenMass[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_n_rechits", fat_jet_n_rechits, "fat_jet_n_rechits[n_fat_Jets]/I");
+  JetTree->Branch("fat_jet_rechits_E", fat_jet_rechits_E, "fat_jet_rechits_E[n_fat_Jets][1000]/F");
+  JetTree->Branch("fat_jet_rechits_T", fat_jet_rechits_T, "fat_jet_rechits_T[n_fat_Jets][1000]/F");
+  JetTree->Branch("fat_jet_rechit_E_Ecut3", fat_jet_rechit_E_Ecut3, "fat_jet_rechit_E_Ecut3[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_T_Ecut3", fat_jet_rechit_T_Ecut3, "fat_jet_rechit_T_Ecut3[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_E_Ecut4", fat_jet_rechit_E_Ecut4, "fat_jet_rechit_E_Ecut4[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_T_Ecut4", fat_jet_rechit_T_Ecut4, "fat_jet_rechit_T_Ecut4[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_E_Ecut2", fat_jet_rechit_E_Ecut2, "fat_jet_rechit_E_Ecut2[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_T_Ecut2", fat_jet_rechit_T_Ecut2, "fat_jet_rechit_T_Ecut2[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_E_Ecut1p5", fat_jet_rechit_E_Ecut1p5, "fat_jet_rechit_E_Ecut1p5[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_T_Ecut1p5", fat_jet_rechit_T_Ecut1p5, "fat_jet_rechit_T_Ecut1p5[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_E_Ecut1", fat_jet_rechit_E_Ecut1, "fat_jet_rechit_E_Ecut1[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_T_Ecut1", fat_jet_rechit_T_Ecut1, "fat_jet_rechit_T_Ecut1[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_E_Ecut0p5", fat_jet_rechit_E_Ecut0p5, "fat_jet_rechit_E_Ecut0p5[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_T_Ecut0p5", fat_jet_rechit_T_Ecut0p5, "fat_jet_rechit_T_Ecut0p5[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_E", fat_jet_rechit_E, "fat_jet_rechit_E[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_rechit_T", fat_jet_rechit_T, "fat_jet_rechit_T[n_fat_Jets]/F");
+
+  JetTree->Branch("fat_jet_pv_rechits_T", fat_jet_pv_rechits_T, "fat_jet_rechits_T[n_fat_Jets][1000]/F");
+  JetTree->Branch("fat_jet_pv_rechit_T_Ecut3", fat_jet_pv_rechit_T_Ecut3, "fat_jet_rechit_T_Ecut3[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_pv_rechit_T_Ecut4", fat_jet_pv_rechit_T_Ecut4, "fat_jet_rechit_T_Ecut4[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_pv_rechit_T_Ecut2", fat_jet_pv_rechit_T_Ecut2, "fat_jet_rechit_T_Ecut2[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_pv_rechit_T_Ecut1p5", fat_jet_pv_rechit_T_Ecut1p5, "fat_jet_rechit_T_Ecut1p5[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_pv_rechit_T_Ecut1", fat_jet_pv_rechit_T_Ecut1, "fat_jet_rechit_T_Ecut1[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_pv_rechit_T_Ecut0p5", fat_jet_pv_rechit_T_Ecut0p5, "fat_jet_rechit_T_Ecut0p5[n_fat_Jets]/F");
+  JetTree->Branch("fat_jet_pv_rechit_T", fat_jet_pv_rechit_T, "fat_jet_rechit_T[n_fat_Jets]/F");
+
+  return;
+};
 
 void JetNtupler::enableMCBranches(){
   JetTree->Branch("nGenJets", &nGenJets, "nGenJets/I");
@@ -344,8 +410,7 @@ void JetNtupler::enableGenParticleBranches(){
 
 
 //------ Load the miniAOD objects and reset tree variables for each event ------//
-void JetNtupler::loadEvent(const edm::Event& iEvent){
-  //load all miniAOD objects for the current event
+void JetNtupler::loadEvent(const edm::Event& iEvent){//load all miniAOD objects for the current event
   iEvent.getByToken(triggerBitsToken_, triggerBits);
   iEvent.getByToken(hepMCToken_, hepMC);
   iEvent.getByToken(triggerBitsToken_, triggerBits);
@@ -389,9 +454,9 @@ void JetNtupler::loadEvent(const edm::Event& iEvent){
 //  iEvent.getByToken(hbheIsoNoiseFilterToken_, hbheIsoNoiseFilter);
   //iEvent.getByToken(badChargedCandidateFilterToken_, badChargedCandidateFilter);
   //iEvent.getByToken(badMuonFilterToken_, badMuonFilter);
-  std::cout<<"before token\n";
+  //std::cout<<"before token\n";
   if(readGenVertexTime_) iEvent.getByToken(genParticles_t0_Token_,genParticles_t0);
-  std::cout<<"after token\n";
+  //std::cout<<"after token\n";
   if (useGen_) {
 //    iEvent.getByToken(genParticlesToken_,genParticles);
     iEvent.getByToken(genParticlesToken_,genParticles);
@@ -936,6 +1001,7 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   //MC AND GEN LEVEL INFO
   fillMC();
   fillGenParticles();
+  fill_fat_jet( iSetup );
   /*if(readGenVertexTime_)
   {
     genVertexT = *genParticles_t0; //std::cout << genVertexT << std::endl;
@@ -956,6 +1022,160 @@ void JetNtupler::beginJob(){
 void JetNtupler::endJob(){
 }
 
+
+bool JetNtupler::fill_fat_jet(const edm::EventSetup& iSetup)
+{
+  int i_fat_jet = 0;
+  for (const reco::PFJet &j : *jetsAK8)
+  {
+    //resetBranches();
+    if (j.pt() < 20) continue;
+    if (fabs(j.eta()) > 2.4) continue;
+    //*************************************
+    //Fill Jet-Level Info
+    //*************************************
+    fat_jetE[i_fat_jet] = j.energy();
+    fat_jetPt[i_fat_jet] = j.pt();
+    fat_jetEta[i_fat_jet] = j.eta();
+    fat_jetPhi[i_fat_jet] = j.phi();
+    fat_jetMass[i_fat_jet] = j.mass();
+
+    TLorentzVector thisJet;
+    thisJet.SetPtEtaPhiE(fat_jetPt[i_fat_jet], fat_jetEta[i_fat_jet], fat_jetPhi[i_fat_jet], fat_jetE[i_fat_jet]);
+    //jetCISV = j.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+
+    fat_jetJetArea[i_fat_jet] = j.jetArea();
+    fat_jetPileupE[i_fat_jet] = j.pileup();
+
+    fat_jetPileupIdFlag[i_fat_jet] = 0;
+    fat_jetPassIDLoose[i_fat_jet] = passJetID(&j, 0);
+    fat_jetPassIDTight[i_fat_jet] = passJetID(&j, 1);
+    fat_jetPassMuFrac[i_fat_jet]  = ( j.muonEnergyFraction() < 0.80 );
+    fat_jetPassEleFrac[i_fat_jet]  = ( j.electronEnergyFraction() < 0.90 );
+
+
+    // if (useGen_) {
+    //   fat_jetPartonFlavor = j.partonFlavour();
+    //   fat_jetHadronFlavor = j.hadronFlavour();
+    // }
+
+    fat_jetChargedEMEnergyFraction[i_fat_jet] = j.chargedEmEnergyFraction();
+    fat_jetNeutralEMEnergyFraction[i_fat_jet] = j.neutralEmEnergyFraction();
+    fat_jetChargedHadronEnergyFraction[i_fat_jet] = j.chargedHadronEnergyFraction();
+    fat_jetNeutralHadronEnergyFraction[i_fat_jet] = j.neutralHadronEnergyFraction();
+    fat_jet_charged_hadron_multiplicity[i_fat_jet] = j.chargedHadronMultiplicity();
+    fat_jet_neutral_hadron_multiplicity[i_fat_jet] = j.neutralHadronMultiplicity();
+    fat_jet_photon_multiplicity[i_fat_jet] = j.photonMultiplicity();
+    fat_jet_electron_multiplicity[i_fat_jet] = j.electronMultiplicity();
+    fat_jet_muon_multiplicity[i_fat_jet] = j.muonMultiplicity();
+    fat_jet_HF_hadron_multiplicity[i_fat_jet] = j.HFHadronMultiplicity();
+    fat_jet_HF_em_multiplicity[i_fat_jet] = j.HFEMMultiplicity();
+    fat_jet_charged_multiplicity[i_fat_jet] = j.chargedMultiplicity();
+    fat_jet_neutral_multiplicity[i_fat_jet] = j.neutralMultiplicity();
+
+    //***************************
+    //Find RecHits Inside the Jet
+    //***************************
+    // geometry (from ECAL ELF)
+
+    edm::ESHandle<CaloGeometry> geoHandle;
+    iSetup.get<CaloGeometryRecord>().get(geoHandle);
+    const CaloSubdetectorGeometry *barrelGeometry = geoHandle->getSubdetectorGeometry(DetId::Ecal, EcalBarrel);
+    const CaloSubdetectorGeometry *endcapGeometry = geoHandle->getSubdetectorGeometry(DetId::Ecal, EcalEndcap);
+    double ecal_radius = 129.0;
+    int n_matched_rechits = 0;
+    for (EcalRecHitCollection::const_iterator recHit = ebRecHits->begin(); recHit != ebRecHits->end(); ++recHit)
+    {
+      if ( recHit->checkFlag(0) )
+      {
+        const DetId recHitId = recHit->detid();
+        const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
+        if ( deltaR(fat_jetEta[i_fat_jet], fat_jetPhi[i_fat_jet], recHitPos.eta(), recHitPos.phi())  < 0.4)
+        {
+          fat_jet_rechit_E[i_fat_jet] += recHit->energy();
+          fat_jet_rechit_T[i_fat_jet] += recHit->time()*recHit->energy();
+          fat_jet_rechits_E[i_fat_jet][n_matched_rechits] = recHit->energy();
+          fat_jet_rechits_T[i_fat_jet][n_matched_rechits] = recHit->time();
+          double rechit_x = ecal_radius * cos(recHitPos.phi());
+          double rechit_y = ecal_radius * sin(recHitPos.phi());
+          double rechit_z = ecal_radius * sinh(recHitPos.eta());
+          double photon_pv_travel_time = (1./30) * sqrt(pow(pvX-rechit_x,2)+pow(pvY-rechit_y,2)+pow(pvZ-rechit_z,2));
+          fat_jet_pv_rechits_T[i_fat_jet][n_matched_rechits] = recHit->time()+(1./30)*ecal_radius*cosh(recHitPos.eta()) - photon_pv_travel_time;
+          fat_jet_pv_rechit_T[i_fat_jet] += recHit->energy()*fat_jet_pv_rechits_T[i_fat_jet][n_matched_rechits];
+          // std::cout << fat_jet_pv_rechits_T[i_fat_jet][n_matched_rechits] << fat_jet_rechits_T[i_fat_jet][n_matched_rechits] << std::endl;
+          if (recHit->energy() > 0.5)
+          {
+            fat_jet_rechit_E_Ecut0p5[i_fat_jet] += recHit->energy();
+            fat_jet_rechit_T_Ecut0p5[i_fat_jet] += recHit->time()*recHit->energy();
+            fat_jet_pv_rechit_T_Ecut0p5[i_fat_jet] += fat_jet_pv_rechits_T[i_fat_jet][n_matched_rechits] *recHit->energy();
+          }
+          if (recHit->energy() > 1.0)
+          {
+            fat_jet_rechit_E_Ecut1[i_fat_jet] += recHit->energy();
+            fat_jet_rechit_T_Ecut1[i_fat_jet] += recHit->time()*recHit->energy();
+            fat_jet_pv_rechit_T_Ecut1[i_fat_jet] += fat_jet_pv_rechits_T[i_fat_jet][n_matched_rechits] *recHit->energy();
+            // std::cout << "rechit time, with pv"<<fat_jet_rechit_T_Ecut1[i_fat_jet]<< fat_jet_pv_rechit_T_Ecut1[i_fat_jet]<< std::endl;
+            // std::cout << "rechits with pv, without" <<fat_jet_pv_rechits_T[i_fat_jet][n_matched_rechits] << fat_jet_rechits_T[i_fat_jet][n_matched_rechits] << std::endl;
+            // std::cout << "rechit energy and time"<<recHit->energy()<< recHit->time()<< std::endl;
+
+
+          }
+          if (recHit->energy() > 1.5)
+          {
+            fat_jet_rechit_E_Ecut1p5[i_fat_jet] += recHit->energy();
+            fat_jet_rechit_T_Ecut1p5[i_fat_jet] += recHit->time()*recHit->energy();
+            fat_jet_pv_rechit_T_Ecut1p5[i_fat_jet] += fat_jet_pv_rechits_T[i_fat_jet][n_matched_rechits] *recHit->energy();
+
+          }
+          if (recHit->energy() > 2.0)
+          {
+            fat_jet_rechit_E_Ecut2[i_fat_jet] += recHit->energy();
+            fat_jet_rechit_T_Ecut2[i_fat_jet] += recHit->time()*recHit->energy();
+            fat_jet_pv_rechit_T_Ecut2[i_fat_jet] += fat_jet_pv_rechits_T[i_fat_jet][n_matched_rechits] *recHit->energy();
+
+          }
+          if (recHit->energy() > 3.0)
+          {
+            fat_jet_rechit_E_Ecut3[i_fat_jet] += recHit->energy();
+            fat_jet_rechit_T_Ecut3[i_fat_jet] += recHit->time()*recHit->energy();
+            fat_jet_pv_rechit_T_Ecut3[i_fat_jet] += fat_jet_pv_rechits_T[i_fat_jet][n_matched_rechits] *recHit->energy();
+
+          }
+
+          if (recHit->energy() > 4.0)
+          {
+            fat_jet_rechit_E_Ecut4[i_fat_jet] += recHit->energy();
+            fat_jet_rechit_T_Ecut4[i_fat_jet] += recHit->time()*recHit->energy();
+            fat_jet_pv_rechit_T_Ecut4[i_fat_jet] += fat_jet_pv_rechits_T[i_fat_jet][n_matched_rechits] *recHit->energy();
+
+          }
+          n_matched_rechits++;
+        }
+      }
+    }
+    //cout << "Last Nphoton: " << fJetNPhotons << "\n";
+    //std::cout << "n: " << n_matched_rechits << std::endl;
+    fat_jet_n_rechits[i_fat_jet] = n_matched_rechits;
+    fat_jet_rechit_T[i_fat_jet] = fat_jet_rechit_T[i_fat_jet]/fat_jet_rechit_E[i_fat_jet];
+    fat_jet_rechit_T_Ecut4[i_fat_jet] = fat_jet_rechit_T_Ecut4[i_fat_jet]/fat_jet_rechit_E_Ecut4[i_fat_jet];
+    fat_jet_rechit_T_Ecut3[i_fat_jet] = fat_jet_rechit_T_Ecut3[i_fat_jet]/fat_jet_rechit_E_Ecut3[i_fat_jet];
+    fat_jet_rechit_T_Ecut2[i_fat_jet] = fat_jet_rechit_T_Ecut2[i_fat_jet]/fat_jet_rechit_E_Ecut2[i_fat_jet];
+    fat_jet_rechit_T_Ecut1p5[i_fat_jet] = fat_jet_rechit_T_Ecut1p5[i_fat_jet]/fat_jet_rechit_E_Ecut1p5[i_fat_jet];
+    fat_jet_rechit_T_Ecut1[i_fat_jet] =  fat_jet_rechit_T_Ecut1[i_fat_jet]/fat_jet_rechit_E_Ecut1[i_fat_jet];
+    fat_jet_rechit_T_Ecut0p5[i_fat_jet] = fat_jet_rechit_T_Ecut0p5[i_fat_jet]/fat_jet_rechit_E_Ecut0p5[i_fat_jet]; //incrementing fat_jet counter
+    fat_jet_pv_rechit_T[i_fat_jet] = fat_jet_pv_rechit_T[i_fat_jet]/fat_jet_rechit_E[i_fat_jet];
+    fat_jet_pv_rechit_T_Ecut4[i_fat_jet] = fat_jet_pv_rechit_T_Ecut4[i_fat_jet]/fat_jet_rechit_E_Ecut4[i_fat_jet];
+    fat_jet_pv_rechit_T_Ecut3[i_fat_jet] = fat_jet_pv_rechit_T_Ecut3[i_fat_jet]/fat_jet_rechit_E_Ecut3[i_fat_jet];
+    fat_jet_pv_rechit_T_Ecut2[i_fat_jet] =  fat_jet_pv_rechit_T_Ecut2[i_fat_jet]/fat_jet_rechit_E_Ecut2[i_fat_jet];
+    fat_jet_pv_rechit_T_Ecut1p5[i_fat_jet] = fat_jet_pv_rechit_T_Ecut1p5[i_fat_jet]/fat_jet_rechit_E_Ecut1p5[i_fat_jet];
+    fat_jet_pv_rechit_T_Ecut1[i_fat_jet] = fat_jet_pv_rechit_T_Ecut1[i_fat_jet]/fat_jet_rechit_E_Ecut1[i_fat_jet];
+    fat_jet_pv_rechit_T_Ecut0p5[i_fat_jet] = fat_jet_pv_rechit_T_Ecut0p5[i_fat_jet]/fat_jet_rechit_E_Ecut0p5[i_fat_jet]; //incrementing fat_jet counter
+    n_fat_Jets++;
+    i_fat_jet++;
+
+  } //loop over jets
+  return true;
+};
 
 bool JetNtupler::passJetID( const reco::PFJet *jet, int cutLevel) {
   bool result = false;
@@ -1055,9 +1275,9 @@ bool JetNtupler::fillMC()
           genVertexX = dau->vx();
           genVertexY = dau->vy();
           genVertexZ = dau->vz();
-          std::cout<<"before read\n";
+          //std::cout<<"before read\n";
           if(readGenVertexTime_) genVertexT = *genParticles_t0;
-          std::cout<<"after read\n";
+          //std::cout<<"after read\n";
           foundGenVertex = true;
           break;
         }
