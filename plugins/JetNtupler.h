@@ -3,7 +3,7 @@
 /*
 Description: Base class for miniAOD analysis with CRAB
 */
-//         Author:  LPC LLP TEAM
+//         Author:  FNAL/Caltech LLP Team
 //         Created:  Wed, 13 Geb 2019 15:00:06 GMT
 
 #ifndef RAZORTUPLIZER_H
@@ -124,16 +124,17 @@ public:
   void reset_fat_jet_variables();
   void reset_gen_llp_variable();
   void reset_gen_jet_variable();
+  void reset_qcd_variables();
 
   //------ HELPER FUNCTIONS ------//
   bool passJetID( const reco::PFJet *jet, int cutLevel);
   double deltaPhi(double phi1, double phi2);
   double deltaR(double eta1, double phi1, double eta2, double phi2);
-  void enableAK8Jets();
   void enableMCBranches();
   void enableGenParticleBranches();
   void enableTriggerBranches();
   bool fill_fat_jet();
+  void enableQCDBranches();
   bool fillMC();
   bool fillGenParticles();
   bool fillTrigger(const edm::Event& iEvent);
@@ -151,10 +152,11 @@ protected:
   //----- Member data ------//
 
   // Control Switches
-  bool    isData_;
-  bool    isFourJet_;
-  bool    useGen_;
-  bool    isFastsim_;
+  bool isData_;
+  bool isFourJet_;
+  bool useGen_;
+  bool isFastsim_;
+  bool isQCD_;
   bool enableTriggerInfo_;
   bool readGenVertexTime_;
 
@@ -365,8 +367,6 @@ protected:
   float jet_pv_rechit_T_Ecut0p5[OBJECTARRAYSIZE];
   float jet_pv_rechits_T[OBJECTARRAYSIZE][OBJECTARRAYSIZE];
 
-
-
   //AK8 Jets
   int n_fat_Jets;
   float fat_jetE[OBJECTARRAYSIZE];
@@ -434,6 +434,7 @@ protected:
 
 
 
+
   //All Photons Match To the Jet (Take Seed RecHit as a reference)
   Int_t                   fJetNPhotons;
   Float_t                 fJetPhotonPt[OBJECTARRAYSIZE];
@@ -453,6 +454,7 @@ protected:
   //event info
   bool isData;
   bool isFourJet;
+  bool isQCD;
   uint runNum;
   uint lumiNum;
   uint eventNum;
@@ -550,6 +552,17 @@ float gLLP_min_delta_r_match_jet_hcal_loose[LLP_DAUGHTER_ARRAY_SIZE];
 unsigned int gLLP_daughter_match_jet_index[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_min_delta_r_match_jet[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_min_delta_r_nocorr_match_jet[LLP_DAUGHTER_ARRAY_SIZE];
+
+// QCD
+int nGenQCDParticles;
+float genQCD_pt[GENPARTICLEARRAYSIZE];
+float genQCD_eta[GENPARTICLEARRAYSIZE];
+float genQCD_phi[GENPARTICLEARRAYSIZE];
+float genQCD_e[GENPARTICLEARRAYSIZE];
+unsigned int genParticleQCD_match_jet_index[GENPARTICLEARRAYSIZE];
+float genParticleQCD_min_delta_r_match_jet[GENPARTICLEARRAYSIZE];
+
+
 //trigger info
 std::vector<string>  *nameHLT;
 bool triggerDecision[NTriggersMAX];
