@@ -13,9 +13,9 @@ process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
 	#'/store/mc/RunIISummer17DRPremix/QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/AODSIM/92X_upgrade2017_realistic_v10-v2/00000/FED6864A-CEAB-E711-81CF-008CFAE45308.root',
 	#'/store/mc/RunIISummer17DRPremix/QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/AODSIM/92X_upgrade2017_realistic_v10-v2/00000/F661A06D-F0AB-E711-AB08-0242AC110004.root'
-	'/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-1000mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/143C8F1C-D3B0-E711-87D6-FA163EA92854.root',
-       'file:/mnt/hadoop/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-1000mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/26B84519-D3B0-E711-B2CD-FA163EC714FC.root',
-        'file:/mnt/hadoop/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-1000mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/FCCC0FEA-D4B0-E711-BCEB-0CC47AD98BF0.root'
+	#'/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-1000mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/143C8F1C-D3B0-E711-87D6-FA163EA92854.root',
+       #'file:/mnt/hadoop/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-1000mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/26B84519-D3B0-E711-B2CD-FA163EC714FC.root',
+       #'file:/mnt/hadoop/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-1000mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/FCCC0FEA-D4B0-E711-BCEB-0CC47AD98BF0.root'
 	#'file:/mnt/hadoop/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-3mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/422E4951-82AC-E711-9642-90B11C2CC76A.root',
 	#'file:/mnt/hadoop/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-3mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/DCAA63C0-C3AC-E711-89BC-0CC47A13D3A8.root'
 
@@ -36,7 +36,7 @@ process.source = cms.Source("PoolSource",
     #  'file:/mnt/hadoop/store/user/christiw/ppTohToSS1SS2_SS1Tobb_SS2Toveve_MC_prod/ppTohToSS1SS2_SS1Tobb_SS2Toveve_run_m10_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohToSS1SS2_SS1Tobb_SS2Toveve_run_m10_pl1000_ev10000_DR-AODSIM_CaltechT2/190121_105636/0000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_m_10_pl_10_ev_10000_step2_4.root'
         #'file:/mnt/hadoop/store/user/christiw/ppTohToSS1SS2_SS1Tobb_SS2Toveve_MC_prod/ppTohToSS1SS2_SS1Tobb_SS2Toveve_run_m30_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohToSS1SS2_SS1Tobb_SS2Toveve_run_m30_pl1000_ev10000_DR-AODSIM_CaltechT2/190120_072245/0000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_m_10_pl_10_ev_10000_step2_1.root',
         
-	#'file:/mnt/hadoop/store/user/christiw/ppTohToSS1SS2_SS1Tobb_SS2Toveve_MC_prod/ppTohToSS1SS2_SS1Tobb_SS2Toveve_run_m30_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohToSS1SS2_SS1Tobb_SS2Toveve_run_m30_pl1000_ev10000_DR-AODSIM_CaltechT2/190120_072245/0000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_m_10_pl_10_ev_10000_step2_2.root' 
+	'file:/mnt/hadoop/store/user/christiw/ppTohToSS1SS2_SS1Tobb_SS2Toveve_MC_prod/ppTohToSS1SS2_SS1Tobb_SS2Toveve_run_m30_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohToSS1SS2_SS1Tobb_SS2Toveve_run_m30_pl1000_ev10000_DR-AODSIM_CaltechT2/190120_072245/0000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_m_10_pl_10_ev_10000_step2_2.root' 
     )
 )
 
@@ -46,7 +46,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 #TFileService for output
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string("jetNtuple_M-500_CTau-1000mm.root"),
+	fileName = cms.string("jetNtuple_glueball_M-30_CTau-1000mm.root"),
     closeFileFast = cms.untracked.bool(True)
 )
 
@@ -87,7 +87,8 @@ process.ntuples = cms.EDAnalyzer('JetNtupler',
     isFastsim = cms.bool(False),
     enableTriggerInfo = cms.bool(True),
     readGenVertexTime = cms.bool(True),
-    isFourJet = cms.bool(True), #false means glueball model, true means four-jet model 
+    isQCD = cms.bool(False),
+    isFourJet = cms.bool(False), #false means glueball model, true means four-jet model 
     genParticles_t0 = cms.InputTag("genParticles", "t0", ""),
     triggerPathNamesFile = cms.string("SUSYBSMAnalysis/JetNtupler/data/TriggerNames_LLP_V1.dat"),
     eleHLTFilterNamesFile = cms.string("SUSYBSMAnalysis/RazorTuplizer/data/RazorElectronHLTFilterNames.dat"),
