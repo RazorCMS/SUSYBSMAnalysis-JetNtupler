@@ -121,6 +121,7 @@ public:
   void reset_event_variables();
   void reset_photon_variable();
   void reset_jet_variables();
+  void reset_fat_jet_variables();
   void reset_gen_llp_variable();
   void reset_gen_jet_variable();
 
@@ -132,6 +133,7 @@ public:
   void enableMCBranches();
   void enableGenParticleBranches();
   void enableTriggerBranches();
+  bool fill_fat_jet();
   bool fillMC();
   bool fillGenParticles();
   bool fillTrigger(const edm::Event& iEvent);

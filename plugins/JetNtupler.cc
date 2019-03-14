@@ -571,6 +571,80 @@ void JetNtupler::reset_jet_variables()
   return;
 };
 
+void JetNtupler::reset_fat_jet_variables()
+{
+  n_fat_Jets = 0;
+  for ( int i = 0; i < OBJECTARRAYSIZE; i++)
+  {
+    fat_jetE[i] = 0.0;
+    fat_jetPt[i] = 0.0;
+    fat_jetEta[i] = 0.0;
+    fat_jetPhi[i] = 0.0;
+    fat_jetCISV[i] = 0.0;
+    fat_jetMass[i] =  -99.0;
+    fat_jetJetArea[i] = -99.0;
+    fat_jetPileupE[i] = -99.0;
+    fat_jetPileupId[i] = -99.0;
+    fat_jetPileupIdFlag[i] = -1;
+    fat_jetPassIDLoose[i] = false;
+    fat_jetPassIDTight[i] = false;
+    fat_jetPassMuFrac[i] = false;
+    fat_jetPassEleFrac[i] = false;
+    fat_jetPartonFlavor[i] = 0;
+    fat_jetHadronFlavor[i] = 0;
+    fat_jetChargedEMEnergyFraction[i] = -99.0;
+    fat_jetNeutralEMEnergyFraction[i] = -99.0;
+    fat_jetChargedHadronEnergyFraction[i] = -99.0;
+    fat_jetNeutralHadronEnergyFraction[i] = -99.0;
+    fat_jet_charged_hadron_multiplicity[i] = -99;
+    fat_jet_neutral_hadron_multiplicity[i] = -99;
+    fat_jet_photon_multiplicity[i] = -99;
+    fat_jet_electron_multiplicity[i] = -99;
+    fat_jet_muon_multiplicity[i] = -99;
+    fat_jet_HF_hadron_multiplicity[i] = -99;
+    fat_jet_HF_em_multiplicity[i] = -99;
+    fat_jet_charged_multiplicity[i] = -99;
+    fat_jet_neutral_multiplicity[i] = -99;
+    fat_jetMatchedGenPt[i] = 0.0;
+    fat_jetMatchedGenEta[i] = 0.0;
+    fat_jetMatchedGenPhi[i] = 0.0;
+    fat_jetMatchedGenMass[i] = 0.0;
+    fat_jetMatchedGenTime[i] = 0.0;
+    fat_jet_n_rechits[i] = 0;
+    fat_jet_rechit_E[i] = 0.0;
+    fat_jet_rechit_T[i] = 0.0;
+    fat_jet_rechit_E_Ecut3[i] = 0.0; //energy with a 2 GeV cut
+    fat_jet_rechit_T_Ecut3[i] = 0.0;
+
+    fat_jet_rechit_E_Ecut4[i] = 0.0; //energy with a 2 GeV cut
+    fat_jet_rechit_T_Ecut4[i] = 0.0;
+    fat_jet_rechit_E_Ecut2[i] = 0.0; //energy with a 2 GeV cut
+    fat_jet_rechit_T_Ecut2[i] = 0.0;
+    fat_jet_rechit_E_Ecut1p5[i] = 0.0; //energy with a 2 GeV cut
+    fat_jet_rechit_T_Ecut1p5[i] = 0.0;
+    fat_jet_rechit_E_Ecut1[i] = 0.0; //energy with a 2 GeV cut
+    fat_jet_rechit_T_Ecut1[i] = 0.0;
+    fat_jet_rechit_E_Ecut0p5[i] = 0.0; //energy with a 2 GeV cut
+    fat_jet_rechit_T_Ecut0p5[i] = 0.0;
+
+
+    fat_jet_pv_rechit_T[i] = 0.0;
+    fat_jet_pv_rechit_T_Ecut4[i] = 0.0;
+    fat_jet_pv_rechit_T_Ecut2[i] = 0.0;
+    fat_jet_pv_rechit_T_Ecut1p5[i] = 0.0;
+    fat_jet_pv_rechit_T_Ecut1[i] = 0.0;
+    fat_jet_pv_rechit_T_Ecut0p5[i] = 0.0;
+
+    for(int j =0; j < OBJECTARRAYSIZE;j++)
+    {
+      fat_jet_rechits_E[i][j] = -666.;
+      fat_jet_rechits_T[i][j] = -666.;
+      fat_jet_pv_rechits_T[i][j] = -666.;
+    }
+  }
+  return;
+};
+
 void JetNtupler::reset_gen_llp_variable()
 {
   for ( int i = 0; i < LLP_ARRAY_SIZE; i++ )
