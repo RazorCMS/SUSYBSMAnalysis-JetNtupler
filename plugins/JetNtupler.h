@@ -130,11 +130,14 @@ public:
   bool passJetID( const reco::PFJet *jet, int cutLevel);
   double deltaPhi(double phi1, double phi2);
   double deltaR(double eta1, double phi1, double eta2, double phi2);
+  void enableFatJetBranches();
   void enableMCBranches();
   void enableGenParticleBranches();
   void enableTriggerBranches();
-  bool fill_fat_jet();
   void enableQCDBranches();
+
+
+  bool fill_fat_jet(const edm::EventSetup& iSetup);
   bool fillMC();
   bool fillGenParticles();
   bool fillTrigger(const edm::Event& iEvent);
