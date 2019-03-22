@@ -472,6 +472,7 @@ protected:
   //MC
 int nGenJets;
 float genJetE[OBJECTARRAYSIZE];
+float genJetME[OBJECTARRAYSIZE];
 float genJetPt[OBJECTARRAYSIZE];
 float genJetEta[OBJECTARRAYSIZE];
 float genJetPhi[OBJECTARRAYSIZE];
