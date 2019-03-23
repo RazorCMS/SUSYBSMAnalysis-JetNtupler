@@ -16,6 +16,7 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   isFastsim_(iConfig.getParameter<bool> ("isFastsim")),
   isQCD_(iConfig.getParameter<bool> ("isQCD")),
   enableTriggerInfo_(iConfig.getParameter<bool> ("enableTriggerInfo")),
+  enableRecHitInfo_(iConfig.getParameter<bool> ("enableRecHitInfo")),
   readGenVertexTime_(iConfig.getParameter<bool> ("readGenVertexTime")),
   triggerPathNamesFile_(iConfig.getParameter<string> ("triggerPathNamesFile")),
   eleHLTFilterNamesFile_(iConfig.getParameter<string> ("eleHLTFilterNamesFile")),
@@ -80,8 +81,8 @@ JetNtupler::JetNtupler(const edm::ParameterSet& iConfig):
   edm::Service<TFileService> fs;
 
   //set up output tree
-  JetTree = fs->make<TTree>("Jets", "selected AOD information");
-  //JetTree = new TTree("Jets", "selected AOD information");
+  llpTree = fs->make<TTree>("llp", "selected AOD information for llp analyses");
+  //llpTree = new TTree("Jets", "selected AOD information");
   NEvents = fs->make<TH1F>("NEvents",";;NEvents;",1,-0.5,0.5);
   //*****************************************************************************************
   //Read in HLT Trigger Path List from config file
@@ -135,94 +136,104 @@ JetNtupler::~JetNtupler()
 //------ Enable the desired set of branches ------//
 void JetNtupler::setBranches(){
 
-  JetTree->Branch("isData", &isData, "isData/O");
-  JetTree->Branch("isFourJet", &isFourJet, "isFourJet/O");
-  JetTree->Branch("isQCD", &isQCD, "isQCD/O");
-  JetTree->Branch("runNum", &runNum, "runNum/i");
-  JetTree->Branch("lumiNum", &lumiNum, "lumiNum/i");
-  JetTree->Branch("eventNum", &eventNum, "eventNum/i");
-  JetTree->Branch("pvX", &pvX, "pvX/F");
-  JetTree->Branch("pvY", &pvY, "pvY/F");
-  JetTree->Branch("pvZ", &pvZ, "pvZ/F");
-  JetTree->Branch("nPV", &nPV, "nPV/I");
-  JetTree->Branch("Rho", &Rho, "Rho/F");
-  JetTree->Branch("nPU", &nPU, "nPU/I");
-  JetTree->Branch("nPUmean", &nPUmean, "nPUmean/F");
+  llpTree->Branch("isData", &isData, "isData/O");
+  llpTree->Branch("isFourJet", &isFourJet, "isFourJet/O");
+  llpTree->Branch("isQCD", &isQCD, "isQCD/O");
+  llpTree->Branch("runNum", &runNum, "runNum/i");
+  llpTree->Branch("lumiNum", &lumiNum, "lumiNum/i");
+  llpTree->Branch("eventNum", &eventNum, "eventNum/i");
+  llpTree->Branch("pvX", &pvX, "pvX/F");
+  llpTree->Branch("pvY", &pvY, "pvY/F");
+  llpTree->Branch("pvZ", &pvZ, "pvZ/F");
+  llpTree->Branch("nPV", &nPV, "nPV/I");
+  llpTree->Branch("Rho", &Rho, "Rho/F");
+  llpTree->Branch("nPU", &nPU, "nPU/I");
+  llpTree->Branch("nPUmean", &nPUmean, "nPUmean/F");
 
-  JetTree->Branch("nJets", &nJets,"nJets/I");
-  JetTree->Branch("jetE", jetE,"jetE[nJets]/F");
-  JetTree->Branch("jetPt", jetPt,"jetPt[nJets]/F");
-  JetTree->Branch("jetEta", jetEta,"jetEta[nJets]/F");
-  JetTree->Branch("jetPhi", jetPhi,"jetPhi[nJets]/F");
-  JetTree->Branch("jetCISV", jetCISV,"jetCISV[nJets]/F");
-  JetTree->Branch("jetMass", jetMass, "jetMass[nJets]/F");
-  JetTree->Branch("jetJetArea", jetJetArea, "jetJetArea[nJets]/F");
-  JetTree->Branch("jetPileupE", jetPileupE, "jetPileupE[nJets]/F");
-  JetTree->Branch("jetPileupId", jetPileupId, "jetPileupId[nJets]/F");
-  JetTree->Branch("jetPileupIdFlag", jetPileupIdFlag, "jetPileupIdFlag[nJets]/I");
-  JetTree->Branch("jetPassIDLoose", jetPassIDLoose, "jetPassIDLoose[nJets]/O");
-  JetTree->Branch("jetPassIDTight", jetPassIDTight, "jetPassIDTight[nJets]/O");
-  JetTree->Branch("jetPassMuFrac", jetPassMuFrac, "jetPassMuFrac[nJets]/O");
-  JetTree->Branch("jetPassEleFrac", jetPassEleFrac, "jetPassEleFrac[nJets]/O");
-  JetTree->Branch("jetPartonFlavor", jetPartonFlavor, "jetPartonFlavor[nJets]/I");
-  JetTree->Branch("jetHadronFlavor", jetHadronFlavor, "jetHadronFlavor[nJets]/I");
-  JetTree->Branch("jetChargedEMEnergyFraction", jetChargedEMEnergyFraction, "jetChargedEMEnergyFraction[nJets]/F");
-  JetTree->Branch("jetNeutralEMEnergyFraction", jetNeutralEMEnergyFraction, "jetNeutralEMEnergyFraction[nJets]/F");
-  JetTree->Branch("jetChargedHadronEnergyFraction", jetChargedHadronEnergyFraction, "jetChargedHadronEnergyFraction[nJets]/F");
-  JetTree->Branch("jetNeutralHadronEnergyFraction", jetNeutralHadronEnergyFraction, "jetNeutralHadronEnergyFraction[nJets]/F");
-  JetTree->Branch("jet_charged_hadron_multiplicity", jet_charged_hadron_multiplicity, "jet_charged_hadron_multiplicity[nJets]/F");
-  JetTree->Branch("jet_neutral_hadron_multiplicity", jet_neutral_hadron_multiplicity, "jet_neutral_hadron_multiplicity[nJets]/F");
-  JetTree->Branch("jet_photon_multiplicity", jet_photon_multiplicity, "jet_photon_multiplicity[nJets]/F");
-  JetTree->Branch("jet_electron_multiplicity", jet_electron_multiplicity, "jet_electron_multiplicity[nJets]/F");
-  JetTree->Branch("jet_muon_multiplicity", jet_muon_multiplicity, "jet_muon_multiplicity[nJets]/F");
-  JetTree->Branch("jet_HF_hadron_multiplicity", jet_HF_hadron_multiplicity, "jet_HF_hadron_multiplicity[nJets]/F");
-  JetTree->Branch("jet_HF_em_multiplicity", jet_HF_em_multiplicity, "jet_HF_em_multiplicity[nJets]/F");
-  JetTree->Branch("jet_charged_multiplicity", jet_charged_multiplicity, "jet_charged_multiplicity[nJets]/F");
-  JetTree->Branch("jet_neutral_multiplicity", jet_neutral_multiplicity, "jet_neutral_multiplicity[nJets]/F");
-  JetTree->Branch("jetMatchedGenPt", jetMatchedGenPt,"jetMatchedGenPt[nJets]/F");
-  JetTree->Branch("jetMatchedGenEta", jetMatchedGenEta,"jetMatchedGenEta[nJets]/F");
-  JetTree->Branch("jetMatchedGenPhi", jetMatchedGenPhi,"jetMatchedGenPhi[nJets]/F");
-  JetTree->Branch("jetMatchedGenMass", jetMatchedGenMass, "jetMatchedGenMass[nJets]/F");
-  JetTree->Branch("jet_n_rechits", jet_n_rechits, "jet_n_rechits[nJets]/I");
-  JetTree->Branch("jet_rechits_E", jet_rechits_E, "jet_rechits_E[nJets][1000]/F");
-  JetTree->Branch("jet_rechits_T", jet_rechits_T, "jet_rechits_T[nJets][1000]/F");
-  JetTree->Branch("jet_rechit_E_Ecut3", jet_rechit_E_Ecut3, "jet_rechit_E_Ecut3[nJets]/F");
-  JetTree->Branch("jet_rechit_T_Ecut3", jet_rechit_T_Ecut3, "jet_rechit_T_Ecut3[nJets]/F");
-  JetTree->Branch("jet_rechit_E_Ecut4", jet_rechit_E_Ecut4, "jet_rechit_E_Ecut4[nJets]/F");
-  JetTree->Branch("jet_rechit_T_Ecut4", jet_rechit_T_Ecut4, "jet_rechit_T_Ecut4[nJets]/F");
-  JetTree->Branch("jet_rechit_E_Ecut2", jet_rechit_E_Ecut2, "jet_rechit_E_Ecut2[nJets]/F");
-  JetTree->Branch("jet_rechit_T_Ecut2", jet_rechit_T_Ecut2, "jet_rechit_T_Ecut2[nJets]/F");
-  JetTree->Branch("jet_rechit_E_Ecut1p5", jet_rechit_E_Ecut1p5, "jet_rechit_E_Ecut1p5[nJets]/F");
-  JetTree->Branch("jet_rechit_T_Ecut1p5", jet_rechit_T_Ecut1p5, "jet_rechit_T_Ecut1p5[nJets]/F");
-  JetTree->Branch("jet_rechit_E_Ecut1", jet_rechit_E_Ecut1, "jet_rechit_E_Ecut1[nJets]/F");
-  JetTree->Branch("jet_rechit_T_Ecut1", jet_rechit_T_Ecut1, "jet_rechit_T_Ecut1[nJets]/F");
-  JetTree->Branch("jet_rechit_E_Ecut0p5", jet_rechit_E_Ecut0p5, "jet_rechit_E_Ecut0p5[nJets]/F");
-  JetTree->Branch("jet_rechit_T_Ecut0p5", jet_rechit_T_Ecut0p5, "jet_rechit_T_Ecut0p5[nJets]/F");
-  JetTree->Branch("jet_rechit_E", jet_rechit_E, "jet_rechit_E[nJets]/F");
-  JetTree->Branch("jet_rechit_T", jet_rechit_T, "jet_rechit_T[nJets]/F");
+  llpTree->Branch("nJets", &nJets,"nJets/I");
+  llpTree->Branch("jetE", jetE,"jetE[nJets]/F");
+  llpTree->Branch("jetPt", jetPt,"jetPt[nJets]/F");
+  llpTree->Branch("jetEta", jetEta,"jetEta[nJets]/F");
+  llpTree->Branch("jetPhi", jetPhi,"jetPhi[nJets]/F");
+  llpTree->Branch("jetCISV", jetCISV,"jetCISV[nJets]/F");
+  llpTree->Branch("jetMass", jetMass, "jetMass[nJets]/F");
+  llpTree->Branch("jetJetArea", jetJetArea, "jetJetArea[nJets]/F");
+  llpTree->Branch("jetPileupE", jetPileupE, "jetPileupE[nJets]/F");
+  llpTree->Branch("jetPileupId", jetPileupId, "jetPileupId[nJets]/F");
+  llpTree->Branch("jetPileupIdFlag", jetPileupIdFlag, "jetPileupIdFlag[nJets]/I");
+  llpTree->Branch("jetPassIDLoose", jetPassIDLoose, "jetPassIDLoose[nJets]/O");
+  llpTree->Branch("jetPassIDTight", jetPassIDTight, "jetPassIDTight[nJets]/O");
+  llpTree->Branch("jetPassMuFrac", jetPassMuFrac, "jetPassMuFrac[nJets]/O");
+  llpTree->Branch("jetPassEleFrac", jetPassEleFrac, "jetPassEleFrac[nJets]/O");
+  llpTree->Branch("jetPartonFlavor", jetPartonFlavor, "jetPartonFlavor[nJets]/I");
+  llpTree->Branch("jetHadronFlavor", jetHadronFlavor, "jetHadronFlavor[nJets]/I");
+  llpTree->Branch("jetChargedEMEnergyFraction", jetChargedEMEnergyFraction, "jetChargedEMEnergyFraction[nJets]/F");
+  llpTree->Branch("jetNeutralEMEnergyFraction", jetNeutralEMEnergyFraction, "jetNeutralEMEnergyFraction[nJets]/F");
+  llpTree->Branch("jetChargedHadronEnergyFraction", jetChargedHadronEnergyFraction, "jetChargedHadronEnergyFraction[nJets]/F");
+  llpTree->Branch("jetNeutralHadronEnergyFraction", jetNeutralHadronEnergyFraction, "jetNeutralHadronEnergyFraction[nJets]/F");
+  llpTree->Branch("jet_charged_hadron_multiplicity", jet_charged_hadron_multiplicity, "jet_charged_hadron_multiplicity[nJets]/F");
+  llpTree->Branch("jet_neutral_hadron_multiplicity", jet_neutral_hadron_multiplicity, "jet_neutral_hadron_multiplicity[nJets]/F");
+  llpTree->Branch("jet_photon_multiplicity", jet_photon_multiplicity, "jet_photon_multiplicity[nJets]/F");
+  llpTree->Branch("jet_electron_multiplicity", jet_electron_multiplicity, "jet_electron_multiplicity[nJets]/F");
+  llpTree->Branch("jet_muon_multiplicity", jet_muon_multiplicity, "jet_muon_multiplicity[nJets]/F");
+  llpTree->Branch("jet_HF_hadron_multiplicity", jet_HF_hadron_multiplicity, "jet_HF_hadron_multiplicity[nJets]/F");
+  llpTree->Branch("jet_HF_em_multiplicity", jet_HF_em_multiplicity, "jet_HF_em_multiplicity[nJets]/F");
+  llpTree->Branch("jet_charged_multiplicity", jet_charged_multiplicity, "jet_charged_multiplicity[nJets]/F");
+  llpTree->Branch("jet_neutral_multiplicity", jet_neutral_multiplicity, "jet_neutral_multiplicity[nJets]/F");
+  llpTree->Branch("jetMatchedGenPt", jetMatchedGenPt,"jetMatchedGenPt[nJets]/F");
+  llpTree->Branch("jetMatchedGenEta", jetMatchedGenEta,"jetMatchedGenEta[nJets]/F");
+  llpTree->Branch("jetMatchedGenPhi", jetMatchedGenPhi,"jetMatchedGenPhi[nJets]/F");
+  llpTree->Branch("jetMatchedGenMass", jetMatchedGenMass, "jetMatchedGenMass[nJets]/F");
 
-  JetTree->Branch("jet_pv_rechits_T", jet_pv_rechits_T, "jet_rechits_T[nJets][1000]/F");
-  JetTree->Branch("jet_pv_rechit_T_Ecut3", jet_pv_rechit_T_Ecut3, "jet_rechit_T_Ecut3[nJets]/F");
-  JetTree->Branch("jet_pv_rechit_T_Ecut4", jet_pv_rechit_T_Ecut4, "jet_rechit_T_Ecut4[nJets]/F");
-  JetTree->Branch("jet_pv_rechit_T_Ecut2", jet_pv_rechit_T_Ecut2, "jet_rechit_T_Ecut2[nJets]/F");
-  JetTree->Branch("jet_pv_rechit_T_Ecut1p5", jet_pv_rechit_T_Ecut1p5, "jet_rechit_T_Ecut1p5[nJets]/F");
-  JetTree->Branch("jet_pv_rechit_T_Ecut1", jet_pv_rechit_T_Ecut1, "jet_rechit_T_Ecut1[nJets]/F");
-  JetTree->Branch("jet_pv_rechit_T_Ecut0p5", jet_pv_rechit_T_Ecut0p5, "jet_rechit_T_Ecut0p5[nJets]/F");
-  JetTree->Branch("jet_pv_rechit_T", jet_pv_rechit_T, "jet_rechit_T[nJets]/F");
 
-  JetTree->Branch("nPhotons", &fJetNPhotons,"nPhotons/I");
-  JetTree->Branch("phoPt", fJetPhotonPt,"phoPt[nPhotons]/F");
-  JetTree->Branch("phoEta", fJetPhotonEta,"phoEta[nPhotons]/F");
-  JetTree->Branch("phoPhi", fJetPhotonPhi,"phoPhi[nPhotons]/F");
-  JetTree->Branch("phoSeedRecHitEta", fJetPhotonSeedRecHitEta, "phoSeedRecHitEta[nPhotons]/F");
-  JetTree->Branch("phoSeedRecHitPhi", fJetPhotonSeedRecHitPhi, "phoSeedRecHitPhi[nPhotons]/F");
-  JetTree->Branch("phoSeedRecHitE", fJetPhotonSeedRecHitE, "phoSeedRecHitE[nPhotons]/F");
-  JetTree->Branch("phoSeedRecHitT", fJetPhotonSeedRecHitTime, "phoSeedRecHitT[nPhotons]/F");
 
-  // JetTree->Branch("fJetPhotonRecHitEta", "std::vector<float>",&fJetPhotonRecHitEta);
-  // JetTree->Branch("fJetPhotonRecHitPhi", "std::vector<float>",&fJetPhotonRecHitPhi);
-  // JetTree->Branch("fJetPhotonRecHitE", "std::vector<float>",&fJetPhotonRecHitE);
-  // JetTree->Branch("fJetPhotonRecHitTime", "std::vector<float>",&fJetPhotonRecHitTime);
+
+  if( enableRecHitInfo_ )
+  {
+
+    llpTree->Branch("jet_n_rechits", jet_n_rechits, "jet_n_rechits[nJets]/I");
+    llpTree->Branch("jet_rechit_E_Ecut3", jet_rechit_E_Ecut3, "jet_rechit_E_Ecut3[nJets]/F");
+    llpTree->Branch("jet_rechit_T_Ecut3", jet_rechit_T_Ecut3, "jet_rechit_T_Ecut3[nJets]/F");
+    llpTree->Branch("jet_rechit_E_Ecut4", jet_rechit_E_Ecut4, "jet_rechit_E_Ecut4[nJets]/F");
+    llpTree->Branch("jet_rechit_T_Ecut4", jet_rechit_T_Ecut4, "jet_rechit_T_Ecut4[nJets]/F");
+    llpTree->Branch("jet_rechit_E_Ecut2", jet_rechit_E_Ecut2, "jet_rechit_E_Ecut2[nJets]/F");
+    llpTree->Branch("jet_rechit_T_Ecut2", jet_rechit_T_Ecut2, "jet_rechit_T_Ecut2[nJets]/F");
+    llpTree->Branch("jet_rechit_E_Ecut1p5", jet_rechit_E_Ecut1p5, "jet_rechit_E_Ecut1p5[nJets]/F");
+    llpTree->Branch("jet_rechit_T_Ecut1p5", jet_rechit_T_Ecut1p5, "jet_rechit_T_Ecut1p5[nJets]/F");
+    llpTree->Branch("jet_rechit_E_Ecut1", jet_rechit_E_Ecut1, "jet_rechit_E_Ecut1[nJets]/F");
+    llpTree->Branch("jet_rechit_T_Ecut1", jet_rechit_T_Ecut1, "jet_rechit_T_Ecut1[nJets]/F");
+    llpTree->Branch("jet_rechit_E_Ecut0p5", jet_rechit_E_Ecut0p5, "jet_rechit_E_Ecut0p5[nJets]/F");
+    llpTree->Branch("jet_rechit_T_Ecut0p5", jet_rechit_T_Ecut0p5, "jet_rechit_T_Ecut0p5[nJets]/F");
+    llpTree->Branch("jet_rechit_E", jet_rechit_E, "jet_rechit_E[nJets]/F");
+    llpTree->Branch("jet_rechit_T", jet_rechit_T, "jet_rechit_T[nJets]/F");
+
+
+    llpTree->Branch("jet_pv_rechit_T_Ecut3", jet_pv_rechit_T_Ecut3, "jet_rechit_T_Ecut3[nJets]/F");
+    llpTree->Branch("jet_pv_rechit_T_Ecut4", jet_pv_rechit_T_Ecut4, "jet_rechit_T_Ecut4[nJets]/F");
+    llpTree->Branch("jet_pv_rechit_T_Ecut2", jet_pv_rechit_T_Ecut2, "jet_rechit_T_Ecut2[nJets]/F");
+    llpTree->Branch("jet_pv_rechit_T_Ecut1p5", jet_pv_rechit_T_Ecut1p5, "jet_rechit_T_Ecut1p5[nJets]/F");
+    llpTree->Branch("jet_pv_rechit_T_Ecut1", jet_pv_rechit_T_Ecut1, "jet_rechit_T_Ecut1[nJets]/F");
+    llpTree->Branch("jet_pv_rechit_T_Ecut0p5", jet_pv_rechit_T_Ecut0p5, "jet_rechit_T_Ecut0p5[nJets]/F");
+    llpTree->Branch("jet_pv_rechit_T", jet_pv_rechit_T, "jet_rechit_T[nJets]/F");
+
+    llpTree->Branch("jet_rechits_E", jet_rechits_E, "jet_rechits_E[nJets][1000]/F");
+    llpTree->Branch("jet_rechits_T", jet_rechits_T, "jet_rechits_T[nJets][1000]/F");
+    llpTree->Branch("jet_pv_rechits_T", jet_pv_rechits_T, "jet_rechits_T[nJets][1000]/F");
+  }
+
+  llpTree->Branch("nPhotons", &fJetNPhotons,"nPhotons/I");
+  llpTree->Branch("phoPt", fJetPhotonPt,"phoPt[nPhotons]/F");
+  llpTree->Branch("phoEta", fJetPhotonEta,"phoEta[nPhotons]/F");
+  llpTree->Branch("phoPhi", fJetPhotonPhi,"phoPhi[nPhotons]/F");
+  llpTree->Branch("phoSeedRecHitEta", fJetPhotonSeedRecHitEta, "phoSeedRecHitEta[nPhotons]/F");
+  llpTree->Branch("phoSeedRecHitPhi", fJetPhotonSeedRecHitPhi, "phoSeedRecHitPhi[nPhotons]/F");
+  llpTree->Branch("phoSeedRecHitE", fJetPhotonSeedRecHitE, "phoSeedRecHitE[nPhotons]/F");
+  llpTree->Branch("phoSeedRecHitT", fJetPhotonSeedRecHitTime, "phoSeedRecHitT[nPhotons]/F");
+
+  // llpTree->Branch("fJetPhotonRecHitEta", "std::vector<float>",&fJetPhotonRecHitEta);
+  // llpTree->Branch("fJetPhotonRecHitPhi", "std::vector<float>",&fJetPhotonRecHitPhi);
+  // llpTree->Branch("fJetPhotonRecHitE", "std::vector<float>",&fJetPhotonRecHitE);
+  // llpTree->Branch("fJetPhotonRecHitTime", "std::vector<float>",&fJetPhotonRecHitTime);
 
   cout << "BRANCHES\n";
   enableFatJetBranches();
@@ -234,89 +245,95 @@ void JetNtupler::setBranches(){
 
 void JetNtupler::enableFatJetBranches()
 {
-  JetTree->Branch("n_fat_Jets", &n_fat_Jets,"n_fat_Jets/I");
-  JetTree->Branch("fat_jetE", fat_jetE,"fat_jetE[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetPt", fat_jetPt,"fat_jetPt[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetEta", fat_jetEta,"fat_jetEta[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetPhi", fat_jetPhi,"fat_jetPhi[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetCISV", fat_jetCISV,"fat_jetCISV[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetMass", fat_jetMass, "fat_jetMass[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetJetArea", fat_jetJetArea, "fat_jetJetArea[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetPileupE", fat_jetPileupE, "fat_jetPileupE[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetPileupId", fat_jetPileupId, "fat_jetPileupId[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetPileupIdFlag", fat_jetPileupIdFlag, "fat_jetPileupIdFlag[n_fat_Jets]/I");
-  JetTree->Branch("fat_jetPassIDLoose", fat_jetPassIDLoose, "fat_jetPassIDLoose[n_fat_Jets]/O");
-  JetTree->Branch("fat_jetPassIDTight", fat_jetPassIDTight, "fat_jetPassIDTight[n_fat_Jets]/O");
-  JetTree->Branch("fat_jetPassMuFrac", fat_jetPassMuFrac, "fat_jetPassMuFrac[n_fat_Jets]/O");
-  JetTree->Branch("fat_jetPassEleFrac", fat_jetPassEleFrac, "fat_jetPassEleFrac[n_fat_Jets]/O");
-  JetTree->Branch("fat_jetPartonFlavor", fat_jetPartonFlavor, "fat_jetPartonFlavor[n_fat_Jets]/I");
-  JetTree->Branch("fat_jetHadronFlavor", fat_jetHadronFlavor, "fat_jetHadronFlavor[n_fat_Jets]/I");
-  JetTree->Branch("fat_jetChargedEMEnergyFraction", fat_jetChargedEMEnergyFraction, "fat_jetChargedEMEnergyFraction[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetNeutralEMEnergyFraction", fat_jetNeutralEMEnergyFraction, "fat_jetNeutralEMEnergyFraction[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetChargedHadronEnergyFraction", fat_jetChargedHadronEnergyFraction, "fat_jetChargedHadronEnergyFraction[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetNeutralHadronEnergyFraction", fat_jetNeutralHadronEnergyFraction, "fat_jetNeutralHadronEnergyFraction[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_charged_hadron_multiplicity", fat_jet_charged_hadron_multiplicity, "fat_jet_charged_hadron_multiplicity[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_neutral_hadron_multiplicity", fat_jet_neutral_hadron_multiplicity, "fat_jet_neutral_hadron_multiplicity[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_photon_multiplicity", fat_jet_photon_multiplicity, "fat_jet_photon_multiplicity[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_electron_multiplicity", fat_jet_electron_multiplicity, "fat_jet_electron_multiplicity[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_muon_multiplicity", fat_jet_muon_multiplicity, "fat_jet_muon_multiplicity[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_HF_hadron_multiplicity", fat_jet_HF_hadron_multiplicity, "fat_jet_HF_hadron_multiplicity[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_HF_em_multiplicity", fat_jet_HF_em_multiplicity, "fat_jet_HF_em_multiplicity[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_charged_multiplicity", fat_jet_charged_multiplicity, "fat_jet_charged_multiplicity[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_neutral_multiplicity", fat_jet_neutral_multiplicity, "fat_jet_neutral_multiplicity[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetMatchedGenPt", fat_jetMatchedGenPt,"fat_jetMatchedGenPt[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetMatchedGenEta", fat_jetMatchedGenEta,"fat_jetMatchedGenEta[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetMatchedGenPhi", fat_jetMatchedGenPhi,"fat_jetMatchedGenPhi[n_fat_Jets]/F");
-  JetTree->Branch("fat_jetMatchedGenMass", fat_jetMatchedGenMass, "fat_jetMatchedGenMass[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_n_rechits", fat_jet_n_rechits, "fat_jet_n_rechits[n_fat_Jets]/I");
-  JetTree->Branch("fat_jet_rechits_E", fat_jet_rechits_E, "fat_jet_rechits_E[n_fat_Jets][1000]/F");
-  JetTree->Branch("fat_jet_rechits_T", fat_jet_rechits_T, "fat_jet_rechits_T[n_fat_Jets][1000]/F");
-  JetTree->Branch("fat_jet_rechit_E_Ecut3", fat_jet_rechit_E_Ecut3, "fat_jet_rechit_E_Ecut3[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_rechit_T_Ecut3", fat_jet_rechit_T_Ecut3, "fat_jet_rechit_T_Ecut3[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_rechit_E_Ecut4", fat_jet_rechit_E_Ecut4, "fat_jet_rechit_E_Ecut4[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_rechit_T_Ecut4", fat_jet_rechit_T_Ecut4, "fat_jet_rechit_T_Ecut4[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_rechit_E_Ecut2", fat_jet_rechit_E_Ecut2, "fat_jet_rechit_E_Ecut2[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_rechit_T_Ecut2", fat_jet_rechit_T_Ecut2, "fat_jet_rechit_T_Ecut2[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_rechit_E_Ecut1p5", fat_jet_rechit_E_Ecut1p5, "fat_jet_rechit_E_Ecut1p5[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_rechit_T_Ecut1p5", fat_jet_rechit_T_Ecut1p5, "fat_jet_rechit_T_Ecut1p5[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_rechit_E_Ecut1", fat_jet_rechit_E_Ecut1, "fat_jet_rechit_E_Ecut1[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_rechit_T_Ecut1", fat_jet_rechit_T_Ecut1, "fat_jet_rechit_T_Ecut1[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_rechit_E_Ecut0p5", fat_jet_rechit_E_Ecut0p5, "fat_jet_rechit_E_Ecut0p5[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_rechit_T_Ecut0p5", fat_jet_rechit_T_Ecut0p5, "fat_jet_rechit_T_Ecut0p5[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_rechit_E", fat_jet_rechit_E, "fat_jet_rechit_E[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_rechit_T", fat_jet_rechit_T, "fat_jet_rechit_T[n_fat_Jets]/F");
+  llpTree->Branch("n_fat_Jets", &n_fat_Jets,"n_fat_Jets/I");
+  llpTree->Branch("fat_jetE", fat_jetE,"fat_jetE[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetPt", fat_jetPt,"fat_jetPt[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetEta", fat_jetEta,"fat_jetEta[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetPhi", fat_jetPhi,"fat_jetPhi[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetCISV", fat_jetCISV,"fat_jetCISV[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetMass", fat_jetMass, "fat_jetMass[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetJetArea", fat_jetJetArea, "fat_jetJetArea[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetPileupE", fat_jetPileupE, "fat_jetPileupE[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetPileupId", fat_jetPileupId, "fat_jetPileupId[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetPileupIdFlag", fat_jetPileupIdFlag, "fat_jetPileupIdFlag[n_fat_Jets]/I");
+  llpTree->Branch("fat_jetPassIDLoose", fat_jetPassIDLoose, "fat_jetPassIDLoose[n_fat_Jets]/O");
+  llpTree->Branch("fat_jetPassIDTight", fat_jetPassIDTight, "fat_jetPassIDTight[n_fat_Jets]/O");
+  llpTree->Branch("fat_jetPassMuFrac", fat_jetPassMuFrac, "fat_jetPassMuFrac[n_fat_Jets]/O");
+  llpTree->Branch("fat_jetPassEleFrac", fat_jetPassEleFrac, "fat_jetPassEleFrac[n_fat_Jets]/O");
+  llpTree->Branch("fat_jetPartonFlavor", fat_jetPartonFlavor, "fat_jetPartonFlavor[n_fat_Jets]/I");
+  llpTree->Branch("fat_jetHadronFlavor", fat_jetHadronFlavor, "fat_jetHadronFlavor[n_fat_Jets]/I");
+  llpTree->Branch("fat_jetChargedEMEnergyFraction", fat_jetChargedEMEnergyFraction, "fat_jetChargedEMEnergyFraction[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetNeutralEMEnergyFraction", fat_jetNeutralEMEnergyFraction, "fat_jetNeutralEMEnergyFraction[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetChargedHadronEnergyFraction", fat_jetChargedHadronEnergyFraction, "fat_jetChargedHadronEnergyFraction[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetNeutralHadronEnergyFraction", fat_jetNeutralHadronEnergyFraction, "fat_jetNeutralHadronEnergyFraction[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_charged_hadron_multiplicity", fat_jet_charged_hadron_multiplicity, "fat_jet_charged_hadron_multiplicity[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_neutral_hadron_multiplicity", fat_jet_neutral_hadron_multiplicity, "fat_jet_neutral_hadron_multiplicity[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_photon_multiplicity", fat_jet_photon_multiplicity, "fat_jet_photon_multiplicity[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_electron_multiplicity", fat_jet_electron_multiplicity, "fat_jet_electron_multiplicity[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_muon_multiplicity", fat_jet_muon_multiplicity, "fat_jet_muon_multiplicity[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_HF_hadron_multiplicity", fat_jet_HF_hadron_multiplicity, "fat_jet_HF_hadron_multiplicity[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_HF_em_multiplicity", fat_jet_HF_em_multiplicity, "fat_jet_HF_em_multiplicity[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_charged_multiplicity", fat_jet_charged_multiplicity, "fat_jet_charged_multiplicity[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_neutral_multiplicity", fat_jet_neutral_multiplicity, "fat_jet_neutral_multiplicity[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetMatchedGenPt", fat_jetMatchedGenPt,"fat_jetMatchedGenPt[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetMatchedGenEta", fat_jetMatchedGenEta,"fat_jetMatchedGenEta[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetMatchedGenPhi", fat_jetMatchedGenPhi,"fat_jetMatchedGenPhi[n_fat_Jets]/F");
+  llpTree->Branch("fat_jetMatchedGenMass", fat_jetMatchedGenMass, "fat_jetMatchedGenMass[n_fat_Jets]/F");
 
-  JetTree->Branch("fat_jet_pv_rechits_T", fat_jet_pv_rechits_T, "fat_jet_rechits_T[n_fat_Jets][1000]/F");
-  JetTree->Branch("fat_jet_pv_rechit_T_Ecut3", fat_jet_pv_rechit_T_Ecut3, "fat_jet_rechit_T_Ecut3[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_pv_rechit_T_Ecut4", fat_jet_pv_rechit_T_Ecut4, "fat_jet_rechit_T_Ecut4[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_pv_rechit_T_Ecut2", fat_jet_pv_rechit_T_Ecut2, "fat_jet_rechit_T_Ecut2[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_pv_rechit_T_Ecut1p5", fat_jet_pv_rechit_T_Ecut1p5, "fat_jet_rechit_T_Ecut1p5[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_pv_rechit_T_Ecut1", fat_jet_pv_rechit_T_Ecut1, "fat_jet_rechit_T_Ecut1[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_pv_rechit_T_Ecut0p5", fat_jet_pv_rechit_T_Ecut0p5, "fat_jet_rechit_T_Ecut0p5[n_fat_Jets]/F");
-  JetTree->Branch("fat_jet_pv_rechit_T", fat_jet_pv_rechit_T, "fat_jet_rechit_T[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_rechit_E_Ecut3", fat_jet_rechit_E_Ecut3, "fat_jet_rechit_E_Ecut3[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_rechit_T_Ecut3", fat_jet_rechit_T_Ecut3, "fat_jet_rechit_T_Ecut3[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_rechit_E_Ecut4", fat_jet_rechit_E_Ecut4, "fat_jet_rechit_E_Ecut4[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_rechit_T_Ecut4", fat_jet_rechit_T_Ecut4, "fat_jet_rechit_T_Ecut4[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_rechit_E_Ecut2", fat_jet_rechit_E_Ecut2, "fat_jet_rechit_E_Ecut2[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_rechit_T_Ecut2", fat_jet_rechit_T_Ecut2, "fat_jet_rechit_T_Ecut2[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_rechit_E_Ecut1p5", fat_jet_rechit_E_Ecut1p5, "fat_jet_rechit_E_Ecut1p5[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_rechit_T_Ecut1p5", fat_jet_rechit_T_Ecut1p5, "fat_jet_rechit_T_Ecut1p5[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_rechit_E_Ecut1", fat_jet_rechit_E_Ecut1, "fat_jet_rechit_E_Ecut1[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_rechit_T_Ecut1", fat_jet_rechit_T_Ecut1, "fat_jet_rechit_T_Ecut1[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_rechit_E_Ecut0p5", fat_jet_rechit_E_Ecut0p5, "fat_jet_rechit_E_Ecut0p5[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_rechit_T_Ecut0p5", fat_jet_rechit_T_Ecut0p5, "fat_jet_rechit_T_Ecut0p5[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_rechit_E", fat_jet_rechit_E, "fat_jet_rechit_E[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_rechit_T", fat_jet_rechit_T, "fat_jet_rechit_T[n_fat_Jets]/F");
+
+  llpTree->Branch("fat_jet_pv_rechit_T_Ecut3", fat_jet_pv_rechit_T_Ecut3, "fat_jet_rechit_T_Ecut3[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_pv_rechit_T_Ecut4", fat_jet_pv_rechit_T_Ecut4, "fat_jet_rechit_T_Ecut4[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_pv_rechit_T_Ecut2", fat_jet_pv_rechit_T_Ecut2, "fat_jet_rechit_T_Ecut2[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_pv_rechit_T_Ecut1p5", fat_jet_pv_rechit_T_Ecut1p5, "fat_jet_rechit_T_Ecut1p5[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_pv_rechit_T_Ecut1", fat_jet_pv_rechit_T_Ecut1, "fat_jet_rechit_T_Ecut1[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_pv_rechit_T_Ecut0p5", fat_jet_pv_rechit_T_Ecut0p5, "fat_jet_rechit_T_Ecut0p5[n_fat_Jets]/F");
+  llpTree->Branch("fat_jet_pv_rechit_T", fat_jet_pv_rechit_T, "fat_jet_rechit_T[n_fat_Jets]/F");
+
+  if( enableRecHitInfo_ )
+  {
+    llpTree->Branch("fat_jet_n_rechits", fat_jet_n_rechits, "fat_jet_n_rechits[n_fat_Jets]/I");
+    llpTree->Branch("fat_jet_rechits_E", fat_jet_rechits_E, "fat_jet_rechits_E[n_fat_Jets][1000]/F");
+    llpTree->Branch("fat_jet_rechits_T", fat_jet_rechits_T, "fat_jet_rechits_T[n_fat_Jets][1000]/F");
+    llpTree->Branch("fat_jet_pv_rechits_T", fat_jet_pv_rechits_T, "fat_jet_rechits_T[n_fat_Jets][1000]/F");
+  }
+
 
   return;
 };
 
 void JetNtupler::enableMCBranches(){
-  JetTree->Branch("nGenJets", &nGenJets, "nGenJets/I");
-  JetTree->Branch("genJetE", genJetE, "genJetE[nGenJets]/F");
-  JetTree->Branch("genJetPt", genJetPt, "genJetPt[nGenJets]/F");
-  JetTree->Branch("genJetEta", genJetEta, "genJetEta[nGenJets]/F");
-  JetTree->Branch("genJetPhi", genJetPhi, "genJetPhi[nGenJets]/F");
-  JetTree->Branch("genMetPt", &genMetPt, "genMetPt/F");
-  JetTree->Branch("genMetPhi", &genMetPhi, "genMetPhi/F");
-  JetTree->Branch("genVertexX", &genVertexX, "genVertexX/F");
-  JetTree->Branch("genVertexY", &genVertexY, "genVertexY/F");
-  JetTree->Branch("genVertexZ", &genVertexZ, "genVertexZ/F");
-  JetTree->Branch("genVertexT", &genVertexT, "genVertexT/F");
-  JetTree->Branch("genWeight", &genWeight, "genWeight/F");
-  JetTree->Branch("genSignalProcessID", &genSignalProcessID, "genSignalProcessID/i");
-  JetTree->Branch("genQScale", &genQScale, "genQScale/F");
-  JetTree->Branch("genAlphaQCD", &genAlphaQCD, "genAlphaQCD/F");
-  JetTree->Branch("genAlphaQED", &genAlphaQED, "genAlphaQED/F");
-  JetTree->Branch("genJet_match_jet_index", &genJet_match_jet_index, "genJet_match_jet_index[nGenJets]/i");
-  JetTree->Branch("genJet_min_delta_r_match_jet", &genJet_min_delta_r_match_jet, "genJet_min_delta_r_match_jet[nGenJets]/F");
+  llpTree->Branch("nGenJets", &nGenJets, "nGenJets/I");
+  llpTree->Branch("genJetE", genJetE, "genJetE[nGenJets]/F");
+  llpTree->Branch("genJetPt", genJetPt, "genJetPt[nGenJets]/F");
+  llpTree->Branch("genJetEta", genJetEta, "genJetEta[nGenJets]/F");
+  llpTree->Branch("genJetPhi", genJetPhi, "genJetPhi[nGenJets]/F");
+  llpTree->Branch("genMetPt", &genMetPt, "genMetPt/F");
+  llpTree->Branch("genMetPhi", &genMetPhi, "genMetPhi/F");
+  llpTree->Branch("genVertexX", &genVertexX, "genVertexX/F");
+  llpTree->Branch("genVertexY", &genVertexY, "genVertexY/F");
+  llpTree->Branch("genVertexZ", &genVertexZ, "genVertexZ/F");
+  llpTree->Branch("genVertexT", &genVertexT, "genVertexT/F");
+  llpTree->Branch("genWeight", &genWeight, "genWeight/F");
+  llpTree->Branch("genSignalProcessID", &genSignalProcessID, "genSignalProcessID/i");
+  llpTree->Branch("genQScale", &genQScale, "genQScale/F");
+  llpTree->Branch("genAlphaQCD", &genAlphaQCD, "genAlphaQCD/F");
+  llpTree->Branch("genAlphaQED", &genAlphaQED, "genAlphaQED/F");
+  llpTree->Branch("genJet_match_jet_index", &genJet_match_jet_index, "genJet_match_jet_index[nGenJets]/i");
+  llpTree->Branch("genJet_min_delta_r_match_jet", &genJet_min_delta_r_match_jet, "genJet_min_delta_r_match_jet[nGenJets]/F");
 
 
 
@@ -324,85 +341,85 @@ void JetNtupler::enableMCBranches(){
   pdfWeights = new std::vector<float>; pdfWeights->clear();
   alphasWeights = new std::vector<float>; alphasWeights->clear();
   if (isFastsim_) {
-    JetTree->Branch("lheComments", "std::string",&lheComments);
+    llpTree->Branch("lheComments", "std::string",&lheComments);
   }
-  JetTree->Branch("scaleWeights", "std::vector<float>",&scaleWeights);
-  JetTree->Branch("pdfWeights", "std::vector<float>",&pdfWeights);
-  JetTree->Branch("alphasWeights", "std::vector<float>",&alphasWeights);
+  llpTree->Branch("scaleWeights", "std::vector<float>",&scaleWeights);
+  llpTree->Branch("pdfWeights", "std::vector<float>",&pdfWeights);
+  llpTree->Branch("alphasWeights", "std::vector<float>",&alphasWeights);
   */
 };
 void JetNtupler::enableQCDBranches()
 {
   //QCD BRANCHES
-  JetTree->Branch("nGenQCDParticles", &nGenQCDParticles, "nGenQCDParticles/I");
-  JetTree->Branch("genQCD_e", genQCD_e, "genQCD_e[nGenQCDParticles]/F");
-  JetTree->Branch("genQCD_pt", genQCD_pt, "genQCD_pt[nGenQCDParticles]/F");
-  JetTree->Branch("genQCD_eta", genQCD_eta, "genQCD_eta[nGenQCDParticles]/F");
-  JetTree->Branch("genQCD_phi", genQCD_phi, "genQCD_phi[nGenQCDParticles]/F");
-  JetTree->Branch("genParticleQCD_match_jet_index", &genParticleQCD_match_jet_index, "genParticleQCD_match_jet_index[nGenQCDParticles]/i");
-  JetTree->Branch("genParticleQCD_min_delta_r_match_jet", &genParticleQCD_min_delta_r_match_jet, "genParticleQCD_min_delta_r_match_jet[nGenQCDParticles]/F");
+  llpTree->Branch("nGenQCDParticles", &nGenQCDParticles, "nGenQCDParticles/I");
+  llpTree->Branch("genQCD_e", genQCD_e, "genQCD_e[nGenQCDParticles]/F");
+  llpTree->Branch("genQCD_pt", genQCD_pt, "genQCD_pt[nGenQCDParticles]/F");
+  llpTree->Branch("genQCD_eta", genQCD_eta, "genQCD_eta[nGenQCDParticles]/F");
+  llpTree->Branch("genQCD_phi", genQCD_phi, "genQCD_phi[nGenQCDParticles]/F");
+  llpTree->Branch("genParticleQCD_match_jet_index", &genParticleQCD_match_jet_index, "genParticleQCD_match_jet_index[nGenQCDParticles]/i");
+  llpTree->Branch("genParticleQCD_min_delta_r_match_jet", &genParticleQCD_min_delta_r_match_jet, "genParticleQCD_min_delta_r_match_jet[nGenQCDParticles]/F");
 };
 void JetNtupler::enableTriggerBranches()
 {
   nameHLT = new std::vector<std::string>; nameHLT->clear();
-  JetTree->Branch("HLTDecision", &triggerDecision, ("HLTDecision[" + std::to_string(NTriggersMAX) +  "]/O").c_str());
-  //JetTree->Branch("HLTPrescale", &triggerHLTPrescale, ("HLTPrescale[" + std::to_string(NTriggersMAX) +  "]/I").c_str());
-  //JetTree->Branch("HLTMR", &HLTMR, "HLTMR/F");
-  //JetTree->Branch("HLTRSQ", &HLTRSQ, "HLTRSQ/F");
+  llpTree->Branch("HLTDecision", &triggerDecision, ("HLTDecision[" + std::to_string(NTriggersMAX) +  "]/O").c_str());
+  //llpTree->Branch("HLTPrescale", &triggerHLTPrescale, ("HLTPrescale[" + std::to_string(NTriggersMAX) +  "]/I").c_str());
+  //llpTree->Branch("HLTMR", &HLTMR, "HLTMR/F");
+  //llpTree->Branch("HLTRSQ", &HLTRSQ, "HLTRSQ/F");
 };
 
 void JetNtupler::enableGenParticleBranches(){
-  JetTree->Branch("gLLP_prod_vertex_x", gLLP_prod_vertex_x, "gLLP_prod_vertex_x[2]/F");
-  JetTree->Branch("gLLP_prod_vertex_y", gLLP_prod_vertex_y, "gLLP_prod_vertex_y[2]/F");
-  JetTree->Branch("gLLP_prod_vertex_z", gLLP_prod_vertex_z, "gLLP_prod_vertex_z[2]/F");
-  JetTree->Branch("gLLP_decay_vertex_x", gLLP_decay_vertex_x, "gLLP_decay_vertex_x[2]/F");
-  JetTree->Branch("gLLP_decay_vertex_y", gLLP_decay_vertex_y, "gLLP_decay_vertex_y[2]/F");
-  JetTree->Branch("gLLP_decay_vertex_z", gLLP_decay_vertex_z, "gLLP_decay_vertex_z[2]/F");
-  JetTree->Branch("gLLP_beta", gLLP_beta, "gLLP_beta[2]/F");
-  JetTree->Branch("gLLP_travel_time", gLLP_travel_time, "gLLP_travel_time[2]/F");
+  llpTree->Branch("gLLP_prod_vertex_x", gLLP_prod_vertex_x, "gLLP_prod_vertex_x[2]/F");
+  llpTree->Branch("gLLP_prod_vertex_y", gLLP_prod_vertex_y, "gLLP_prod_vertex_y[2]/F");
+  llpTree->Branch("gLLP_prod_vertex_z", gLLP_prod_vertex_z, "gLLP_prod_vertex_z[2]/F");
+  llpTree->Branch("gLLP_decay_vertex_x", gLLP_decay_vertex_x, "gLLP_decay_vertex_x[2]/F");
+  llpTree->Branch("gLLP_decay_vertex_y", gLLP_decay_vertex_y, "gLLP_decay_vertex_y[2]/F");
+  llpTree->Branch("gLLP_decay_vertex_z", gLLP_decay_vertex_z, "gLLP_decay_vertex_z[2]/F");
+  llpTree->Branch("gLLP_beta", gLLP_beta, "gLLP_beta[2]/F");
+  llpTree->Branch("gLLP_travel_time", gLLP_travel_time, "gLLP_travel_time[2]/F");
 
-  JetTree->Branch("gLLP_daughter_travel_time", gLLP_daughter_travel_time, "gLLP_daughter_travel_time[4]/F");
-  JetTree->Branch("gLLP_daughter_pt", gLLP_daughter_pt, "gLLP_daughter_pt[4]/F");
-  JetTree->Branch("gLLP_daughter_eta", gLLP_daughter_eta, "gLLP_daughter_eta[4]/F");
-  JetTree->Branch("gLLP_daughter_phi", gLLP_daughter_phi, "gLLP_daughter_phi[4]/F");
-  JetTree->Branch("gLLP_daughter_eta_ecalcorr", gLLP_daughter_eta_ecalcorr, "gLLP_daughter_eta_ecalcorr[4]/F");
-  JetTree->Branch("gLLP_daughter_phi_ecalcorr", gLLP_daughter_phi_ecalcorr, "gLLP_daughter_phi_ecalcorr[4]/F");
-  JetTree->Branch("gLLP_daughter_eta_hcalcorr", gLLP_daughter_eta_hcalcorr, "gLLP_daughter_eta_hcalcorr[4]/F");
-  JetTree->Branch("gLLP_daughter_phi_hcalcorr", gLLP_daughter_phi_hcalcorr, "gLLP_daughter_phi_hcalcorr[4]/F");
-  JetTree->Branch("gLLP_daughter_e", gLLP_daughter_e, "gLLP_daughter_e[4]/F");
-  JetTree->Branch("photon_travel_time", photon_travel_time, "photon_travel_time[4]/F");
-  JetTree->Branch("gen_time", gen_time, "gen_time[4]/F");
-  JetTree->Branch("gen_time_pv", gen_time_pv, "gen_time_pv[4]/F");
-
-
-  JetTree->Branch("gLLP_daughter_match_genJet_index", gLLP_daughter_match_genJet_index, "gLLP_daughter_match_genJet_index[4]/i");
-  JetTree->Branch("gLLP_min_delta_r_match_genJet", gLLP_min_delta_r_match_genJet, "gLLP_min_delta_r_match_genJet[4]/F");
-  JetTree->Branch("gLLP_daughter_match_jet_index_hcal", gLLP_daughter_match_jet_index_hcal, "gLLP_daughter_match_jet_index_hcal[4]/i");
-  JetTree->Branch("gLLP_min_delta_r_match_jet_hcal", gLLP_min_delta_r_match_jet_hcal, "gLLP_min_delta_r_match_jet_hcal[4]/F");
-  JetTree->Branch("gLLP_daughter_match_jet_index_hcal_loose", gLLP_daughter_match_jet_index_hcal_loose, "gLLP_daughter_match_jet_index_hcal_loose[4]/i");
-  JetTree->Branch("gLLP_min_delta_r_match_jet_hcal_loose", gLLP_min_delta_r_match_jet_hcal_loose, "gLLP_min_delta_r_match_jet_hcal_loose[4]/F");
-  JetTree->Branch("gLLP_daughter_match_jet_index_loose", gLLP_daughter_match_jet_index_loose, "gLLP_daughter_match_jet_index_loose[4]/i");
-  JetTree->Branch("gLLP_min_delta_r_match_jet_loose", gLLP_min_delta_r_match_jet_loose, "gLLP_min_delta_r_match_jet_loose[4]/F");
-  JetTree->Branch("gLLP_daughter_match_jet_index", gLLP_daughter_match_jet_index, "gLLP_daughter_match_jet_index[4]/i");
-  JetTree->Branch("gLLP_min_delta_r_match_jet", gLLP_min_delta_r_match_jet, "gLLP_min_delta_r_match_jet[4]/F");
-  JetTree->Branch("gLLP_min_delta_r_nocorr_match_jet", gLLP_min_delta_r_nocorr_match_jet, "gLLP_min_delta_r_nocorr_match_jet[4]/F");
+  llpTree->Branch("gLLP_daughter_travel_time", gLLP_daughter_travel_time, "gLLP_daughter_travel_time[4]/F");
+  llpTree->Branch("gLLP_daughter_pt", gLLP_daughter_pt, "gLLP_daughter_pt[4]/F");
+  llpTree->Branch("gLLP_daughter_eta", gLLP_daughter_eta, "gLLP_daughter_eta[4]/F");
+  llpTree->Branch("gLLP_daughter_phi", gLLP_daughter_phi, "gLLP_daughter_phi[4]/F");
+  llpTree->Branch("gLLP_daughter_eta_ecalcorr", gLLP_daughter_eta_ecalcorr, "gLLP_daughter_eta_ecalcorr[4]/F");
+  llpTree->Branch("gLLP_daughter_phi_ecalcorr", gLLP_daughter_phi_ecalcorr, "gLLP_daughter_phi_ecalcorr[4]/F");
+  llpTree->Branch("gLLP_daughter_eta_hcalcorr", gLLP_daughter_eta_hcalcorr, "gLLP_daughter_eta_hcalcorr[4]/F");
+  llpTree->Branch("gLLP_daughter_phi_hcalcorr", gLLP_daughter_phi_hcalcorr, "gLLP_daughter_phi_hcalcorr[4]/F");
+  llpTree->Branch("gLLP_daughter_e", gLLP_daughter_e, "gLLP_daughter_e[4]/F");
+  llpTree->Branch("photon_travel_time", photon_travel_time, "photon_travel_time[4]/F");
+  llpTree->Branch("gen_time", gen_time, "gen_time[4]/F");
+  llpTree->Branch("gen_time_pv", gen_time_pv, "gen_time_pv[4]/F");
 
 
-  JetTree->Branch("nGenParticle", &nGenParticle, "nGenParticle/I");
-  JetTree->Branch("gParticleMotherId", gParticleMotherId, "gParticleMotherId[nGenParticle]/I");
-  JetTree->Branch("gParticleMotherIndex", gParticleMotherIndex, "gParticleMotherIndex[nGenParticle]/I");
-  JetTree->Branch("gParticleId", gParticleId, "gParticleId[nGenParticle]/I");
-  JetTree->Branch("gParticleStatus", gParticleStatus, "gParticleStatus[nGenParticle]/I");
-  JetTree->Branch("gParticleE", gParticleE, "gParticleE[nGenParticle]/F");
-  JetTree->Branch("gParticlePt", gParticlePt, "gParticlePt[nGenParticle]/F");
-  JetTree->Branch("gParticlePx", gParticlePx, "gParticlePx[nGenParticle]/F");
-  JetTree->Branch("gParticlePy", gParticlePy, "gParticlePy[nGenParticle]/F");
-  JetTree->Branch("gParticlePz", gParticlePz, "gParticlePz[nGenParticle]/F");
-  JetTree->Branch("gParticleEta", gParticleEta, "gParticleEta[nGenParticle]/F");
-  JetTree->Branch("gParticlePhi", gParticlePhi, "gParticlePhi[nGenParticle]/F");
-  JetTree->Branch("gParticleDecayVertexX", gParticleDecayVertexX, "gParticleDecayVertexX[nGenParticle]/F");
-  JetTree->Branch("gParticleDecayVertexY", gParticleDecayVertexY, "gParticleDecayVertexY[nGenParticle]/F");
-  JetTree->Branch("gParticleDecayVertexZ", gParticleDecayVertexZ, "gParticleDecayVertexZ[nGenParticle]/F");
+  llpTree->Branch("gLLP_daughter_match_genJet_index", gLLP_daughter_match_genJet_index, "gLLP_daughter_match_genJet_index[4]/i");
+  llpTree->Branch("gLLP_min_delta_r_match_genJet", gLLP_min_delta_r_match_genJet, "gLLP_min_delta_r_match_genJet[4]/F");
+  llpTree->Branch("gLLP_daughter_match_jet_index_hcal", gLLP_daughter_match_jet_index_hcal, "gLLP_daughter_match_jet_index_hcal[4]/i");
+  llpTree->Branch("gLLP_min_delta_r_match_jet_hcal", gLLP_min_delta_r_match_jet_hcal, "gLLP_min_delta_r_match_jet_hcal[4]/F");
+  llpTree->Branch("gLLP_daughter_match_jet_index_hcal_loose", gLLP_daughter_match_jet_index_hcal_loose, "gLLP_daughter_match_jet_index_hcal_loose[4]/i");
+  llpTree->Branch("gLLP_min_delta_r_match_jet_hcal_loose", gLLP_min_delta_r_match_jet_hcal_loose, "gLLP_min_delta_r_match_jet_hcal_loose[4]/F");
+  llpTree->Branch("gLLP_daughter_match_jet_index_loose", gLLP_daughter_match_jet_index_loose, "gLLP_daughter_match_jet_index_loose[4]/i");
+  llpTree->Branch("gLLP_min_delta_r_match_jet_loose", gLLP_min_delta_r_match_jet_loose, "gLLP_min_delta_r_match_jet_loose[4]/F");
+  llpTree->Branch("gLLP_daughter_match_jet_index", gLLP_daughter_match_jet_index, "gLLP_daughter_match_jet_index[4]/i");
+  llpTree->Branch("gLLP_min_delta_r_match_jet", gLLP_min_delta_r_match_jet, "gLLP_min_delta_r_match_jet[4]/F");
+  llpTree->Branch("gLLP_min_delta_r_nocorr_match_jet", gLLP_min_delta_r_nocorr_match_jet, "gLLP_min_delta_r_nocorr_match_jet[4]/F");
+
+
+  llpTree->Branch("nGenParticle", &nGenParticle, "nGenParticle/I");
+  llpTree->Branch("gParticleMotherId", gParticleMotherId, "gParticleMotherId[nGenParticle]/I");
+  llpTree->Branch("gParticleMotherIndex", gParticleMotherIndex, "gParticleMotherIndex[nGenParticle]/I");
+  llpTree->Branch("gParticleId", gParticleId, "gParticleId[nGenParticle]/I");
+  llpTree->Branch("gParticleStatus", gParticleStatus, "gParticleStatus[nGenParticle]/I");
+  llpTree->Branch("gParticleE", gParticleE, "gParticleE[nGenParticle]/F");
+  llpTree->Branch("gParticlePt", gParticlePt, "gParticlePt[nGenParticle]/F");
+  llpTree->Branch("gParticlePx", gParticlePx, "gParticlePx[nGenParticle]/F");
+  llpTree->Branch("gParticlePy", gParticlePy, "gParticlePy[nGenParticle]/F");
+  llpTree->Branch("gParticlePz", gParticlePz, "gParticlePz[nGenParticle]/F");
+  llpTree->Branch("gParticleEta", gParticleEta, "gParticleEta[nGenParticle]/F");
+  llpTree->Branch("gParticlePhi", gParticlePhi, "gParticlePhi[nGenParticle]/F");
+  llpTree->Branch("gParticleDecayVertexX", gParticleDecayVertexX, "gParticleDecayVertexX[nGenParticle]/F");
+  llpTree->Branch("gParticleDecayVertexY", gParticleDecayVertexY, "gParticleDecayVertexY[nGenParticle]/F");
+  llpTree->Branch("gParticleDecayVertexZ", gParticleDecayVertexZ, "gParticleDecayVertexZ[nGenParticle]/F");
 }
 
 
@@ -923,7 +940,7 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   //MC AND GEN LEVEL INFO
   fillMC();
   fillGenParticles();
-  fill_fat_jet( iSetup );
+  //fill_fat_jet( iSetup );
   /*if(readGenVertexTime_)
   {
     genVertexT = *genParticles_t0; //std::cout << genVertexT << std::endl;
@@ -932,7 +949,7 @@ void JetNtupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   //fillMC();
 
   if ( enableTriggerInfo_ ) fillTrigger( iEvent );
-  JetTree->Fill();
+  llpTree->Fill();
 }
 
 //------ Method called once each job just before starting event loop ------//

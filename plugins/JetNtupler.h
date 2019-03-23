@@ -161,6 +161,7 @@ protected:
   bool isFastsim_;
   bool isQCD_;
   bool enableTriggerInfo_;
+  bool enableRecHitInfo_;
   bool readGenVertexTime_;
 
   // Mapping of the HLT Triggers and Filters
@@ -300,7 +301,7 @@ protected:
   const reco::Vertex *myPV_GenMatch;
 
   //output tree
-  TTree *JetTree;
+  TTree *llpTree;
   TH1F *NEvents;
 
   //------ Variables for tree ------//
