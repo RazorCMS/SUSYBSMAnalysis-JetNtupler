@@ -321,6 +321,7 @@ void JetNtupler::enableMCBranches(){
   llpTree->Branch("genJetPt", genJetPt, "genJetPt[nGenJets]/F");
   llpTree->Branch("genJetEta", genJetEta, "genJetEta[nGenJets]/F");
   llpTree->Branch("genJetPhi", genJetPhi, "genJetPhi[nGenJets]/F");
+  llpTree->Branch("genJetME", genJetME, "genJetME[nGenJets]/F");
   llpTree->Branch("genMetPt", &genMetPt, "genMetPt/F");
   llpTree->Branch("genMetPhi", &genMetPhi, "genMetPhi/F");
   llpTree->Branch("genVertexX", &genVertexX, "genVertexX/F");
@@ -334,8 +335,6 @@ void JetNtupler::enableMCBranches(){
   llpTree->Branch("genAlphaQED", &genAlphaQED, "genAlphaQED/F");
   llpTree->Branch("genJet_match_jet_index", &genJet_match_jet_index, "genJet_match_jet_index[nGenJets]/i");
   llpTree->Branch("genJet_min_delta_r_match_jet", &genJet_min_delta_r_match_jet, "genJet_min_delta_r_match_jet[nGenJets]/F");
-
-
 
   /*scaleWeights = new std::vector<float>; scaleWeights->clear();
   pdfWeights = new std::vector<float>; pdfWeights->clear();
@@ -654,6 +653,7 @@ void JetNtupler::reset_gen_jet_variable()
     genJetPt[i] = -666.;
     genJetEta[i] = -666.;
     genJetPhi[i] = -666.;
+    genJetME[i] = -666.;
     genJet_match_jet_index[i] = 666;
     genJet_min_delta_r_match_jet[i] = -666.;
   }
@@ -1197,6 +1197,7 @@ bool JetNtupler::fillMC()
     genJetPt[nGenJets] = j.pt();
     genJetEta[nGenJets] = j.eta();
     genJetPhi[nGenJets] = j.phi();
+    genJetME[nGenJets] = j.invisibleEnergy();
     nGenJets++;
   }
 
@@ -1357,7 +1358,7 @@ bool JetNtupler::fillMC()
 bool JetNtupler::fillGenParticles(){
   std::vector<const reco::Candidate*> prunedV;//Allows easier comparison for mother finding
   //Fills selected gen particles
-  double pt_cut = isFourJet ? 20.:0.;
+  double pt_cut = isFourJet ? 20.:20.;
   int llp_id = isFourJet ? 35:9000006;
 
   for(size_t i=0; i<genParticles->size();i++)
@@ -1528,6 +1529,7 @@ bool JetNtupler::fillGenParticles(){
             if( id > 1 ) break;
             TLorentzVector tmp;
             tmp.SetPxPyPzE(tmpParticle->daughter(id)->px(), tmpParticle->daughter(id)->py(), tmpParticle->daughter(id)->pz(), tmpParticle->daughter(id)->energy());
+            if(tmp.Pt()<pt_cut) continue;
             gLLP_daughter_pt[id] = tmp.Pt();
             gLLP_daughter_eta[id] = tmp.Eta();
             gLLP_daughter_phi[id] = tmp.Phi();
@@ -1675,7 +1677,8 @@ bool JetNtupler::fillGenParticles(){
     	      if( id > 1 ) break;
     	      TLorentzVector tmp;
     	      tmp.SetPxPyPzE(tmpParticle->daughter(id)->px(), tmpParticle->daughter(id)->py(), tmpParticle->daughter(id)->pz(), tmpParticle->daughter(id)->energy());
-    	      gLLP_daughter_pt[id+2] = tmp.Pt();
+            if(tmp.Pt()<pt_cut) continue;
+            gLLP_daughter_pt[id+2] = tmp.Pt();
     	      gLLP_daughter_eta[id+2] = tmp.Eta();
     	      gLLP_daughter_phi[id+2] = tmp.Phi();
     	      gLLP_daughter_e[id+2]  = tmp.E();
