@@ -35,7 +35,6 @@ process.source = cms.Source("PoolSource",
 
 ### AODSIM Location
 
-## AODSIM
 They are all on Caltech tier2: (should be accessible through xrootd)
 ```/mnt/hadoop/store/user/christiw/RunII2016/```
 The different directories are different h production mode
