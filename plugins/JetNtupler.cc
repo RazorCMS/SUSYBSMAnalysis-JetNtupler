@@ -1358,7 +1358,7 @@ bool JetNtupler::fillMC()
 bool JetNtupler::fillGenParticles(){
   std::vector<const reco::Candidate*> prunedV;//Allows easier comparison for mother finding
   //Fills selected gen particles
-  double pt_cut = isFourJet ? 20.:20.;
+  double pt_cut = isFourJet ? 0.0:0.0;
   int llp_id = isFourJet ? 35:9000006;
 
   for(size_t i=0; i<genParticles->size();i++)
