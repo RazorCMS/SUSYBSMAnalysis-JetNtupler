@@ -1358,7 +1358,8 @@ bool JetNtupler::fillMC()
 bool JetNtupler::fillGenParticles(){
   std::vector<const reco::Candidate*> prunedV;//Allows easier comparison for mother finding
   //Fills selected gen particles
-  double pt_cut = isFourJet ? 20.:20.;
+  //  //double pt_cut = isFourJet ? 20.:20.;//this needs to be done downstream
+  const double pt_cut = 0.0;
   int llp_id = isFourJet ? 35:9000006;
 
   for(size_t i=0; i<genParticles->size();i++)
@@ -1460,9 +1461,10 @@ bool JetNtupler::fillGenParticles(){
     {
       gParticleMotherIndex[i] = -1;
     }
-    //LLPs vextex
 
-
+    //***************************************
+    //Find LLPs production and decay vertices
+    //***************************************
     if ( (gParticleId[i] == llp_id || gParticleId[i] == llp_id+1) && gParticleStatus[i] == 22 )
     {
       if (gParticleId[i] == llp_id)
@@ -1470,7 +1472,6 @@ bool JetNtupler::fillGenParticles(){
         gLLP_prod_vertex_x[0] = prunedV[i]->vx();
         gLLP_prod_vertex_y[0] = prunedV[i]->vy();
         gLLP_prod_vertex_z[0] = prunedV[i]->vz();
-      //std::cout << prunedV[i]->tau() << std::endl;
       }
       else if (gParticleId[i] == llp_id+1)
       {
@@ -1483,8 +1484,6 @@ bool JetNtupler::fillGenParticles(){
       bool foundDaughter = false;
       bool noDaughter = false;
       const reco::Candidate *tmpParticle = prunedV[i];
-
-    //std::cout << "tmpParticle->numberOfDaughters(): " << tmpParticle->numberOfDaughters() << std::endl;
 
       while (!foundDaughter && !noDaughter)
       {
@@ -1800,8 +1799,10 @@ bool JetNtupler::fillGenParticles(){
     	  }//if particle ID = 36
     	}//if found daughters
     }
+    //******************************
+    //QCD Matching
+    //******************************
     if (isQCD_) {
-
       if (abs(gParticleId[i])  <= 6 || abs(gParticleId[i]) == 21)
       {
 	      if (gParticleStatus[i] == 23)
